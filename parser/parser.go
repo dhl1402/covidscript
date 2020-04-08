@@ -177,189 +177,80 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 // identifier: variable expression, binary expression, call expression, member access exression
 func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 	var bexp *BinaryExpression
-	var maexp *MemberExpression
 	var i int
-	for i = 0; i < len(tokens); i++ { // skip first '{'
+	for i = 0; i < len(tokens); i++ {
 		t := tokens[i]
 		var nt *lexer.Token
 		if i+1 < len(tokens) {
 			nt = &tokens[i+1]
 		}
-		if ptype, ok := t.ParsePrimitiveType(); ok || t.IsIdentifier() {
+		if ptype, ok := t.ParsePrimitiveType(); ok {
 			var tmpExp Expression
-			if ok {
-				tmpExp = LiteralExpression{
-					Type:   ptype,
-					Value:  t.Value,
-					Line:   t.Line,
-					CharAt: t.CharAt,
+			tmpExp = LiteralExpression{
+				Type:   ptype,
+				Value:  t.Value,
+				Line:   t.Line,
+				CharAt: t.CharAt,
+			}
+			if bexp == nil || bexp.Left == nil {
+				if nt == nil || !nt.IsOperatorSymbol() {
+					return tmpExp, 1, nil
 				}
-			} else if t.IsIdentifier() {
-				tmpExp = VariableExpression{
-					Name:   t.Value,
-					Line:   t.Line,
-					CharAt: t.CharAt,
-				}
-				if maexp != nil {
-					maexp.PropertyIdentifier = Identifier{
-						Name:   t.Value,
-						Line:   t.Line,
-						CharAt: t.CharAt,
-					}
-					if nt == nil || !nt.IsOperatorSymbol() {
-						return *maexp, i, nil
-					}
+				if bexp == nil {
 					bexp = &BinaryExpression{
-						Left:    *maexp,
+						Left:    tmpExp,
 						Nesting: 0,
 						Line:    t.Line,
 						CharAt:  t.CharAt,
 					}
-					continue
-				}
-			}
-			if bexp == nil {
-				if nt == nil || !nt.IsOperatorSymbol() {
-					return tmpExp, 1, nil
-				}
-				bexp = &BinaryExpression{
-					Left:    tmpExp,
-					Nesting: 0,
-					Line:    t.Line,
-					CharAt:  t.CharAt,
+				} else {
+					bexp.Left = tmpExp
 				}
 			} else {
-				exp, processed, err := parseExpression(tokens[i:])
-				if err != nil {
-					return nil, 0, err
-				}
-				if rightBexp, ok := exp.(BinaryExpression); ok {
-					bexp.Nesting = rightBexp.Nesting + 1
-					mergeBinaryExpression(bexp, rightBexp)
+				bexp.Right = tmpExp
+				if lbexp, ok := bexp.Left.(BinaryExpression); ok && lbexp.Operator.Compare(bexp.Operator) > 0 && !lbexp.Group {
+					swapBinaryExpression(bexp, &lbexp)
+					bexp.Left = lbexp
+					bexp.Nesting = lbexp.Nesting + 1
 				} else {
-					bexp.Right = exp
+					bexp = &BinaryExpression{
+						Left:    *bexp,
+						Nesting: bexp.Nesting + 1,
+						Line:    bexp.Line,
+						CharAt:  bexp.CharAt,
+					}
 				}
-				return *bexp, i + processed, nil
 			}
 		} else if t.IsOperatorSymbol() {
 			if bexp == nil {
 				return nil, 0, fmt.Errorf("TODO")
 			}
-			if t.Value == "." {
-				maexp = &MemberExpression{
-					Object: bexp.Left,
-					Line:   bexp.Line,
-					CharAt: bexp.CharAt,
-				}
-				bexp = nil
-			} else {
-				bexp.Operator = operator.Operator{
-					Symbol: t.Value,
-					Line:   t.Line,
-					CharAt: t.CharAt,
-				}
+			bexp.Operator = operator.Operator{
+				Symbol: t.Value,
+				Line:   t.Line,
+				CharAt: t.CharAt,
 			}
 		} else if t.Value == "(" {
-			exp, processed, err := parseExpression(tokens[i+1:]) // i + 1 -> skip '('
-			if err != nil {
-				return nil, 0, err
-			}
-			openParenIndex := i
-			i = i + processed + 1 // tokens[i].Value should be '(' now
-			if i >= len(tokens) || tokens[i].Value != ")" {
-				return nil, 0, fmt.Errorf("TODO")
-			}
-			switch e := exp.(type) {
-			case LiteralExpression, BinaryExpression:
-				if bexp == nil {
-					expEnded := i+1 >= len(tokens) || !tokens[i+1].IsOperatorSymbol()
-					bexp = &BinaryExpression{
-						Left:    e,
-						Nesting: 0,
-						Line:    t.Line,
-						CharAt:  t.CharAt,
-					}
-
-					bexpInParen, ok := e.(BinaryExpression)
-					if ok {
-						bexpInParen.Group = true
-						bexp.Left = bexpInParen
-						bexp.Nesting = bexpInParen.Nesting + 1
-					}
-
-					if expEnded {
-						if ok {
-							return bexpInParen, i, nil
-						}
-						return e, i, nil
-					}
-				} else {
-					exp, processed, err := parseExpression(tokens[openParenIndex:])
-					if err != nil {
-						return nil, 0, err
-					}
-					if rightBexp, ok := exp.(BinaryExpression); ok {
-						bexp.Nesting = rightBexp.Nesting + 1
-						mergeBinaryExpression(bexp, rightBexp)
-					} else {
-						bexp.Right = exp
-					}
-					return *bexp, openParenIndex + processed, nil
+			// TODO: handle function call
+		} else if t.Value == ")" {
+			// TODO: handle function call
+			if bexp != nil {
+				if lbexp, ok := bexp.Left.(BinaryExpression); ok {
+					lbexp.Group = true
+					bexp.Left = lbexp
 				}
-			case VariableExpression:
-			case FunctionExpression:
-			case ArrayExpression:
-			case ObjectExpression:
-			default:
-				fmt.Printf("TODO: I don't know about type %T!\n", e)
 			}
 		} else if t.Value == "{" {
 			return parseObjectExpression(tokens)
 		}
 	}
-	return nil, 0, nil
+	return bexp.Left, i, nil
 }
 
-func mergeBinaryExpression(bexp *BinaryExpression, rightBexp BinaryExpression) {
-	if bexp.Operator.Compare(rightBexp.Operator) <= 0 && !rightBexp.Group {
-		reorderBinaryExpression(bexp, rightBexp)
-	} else {
-		bexp.Right = rightBexp
-	}
-	root := bexp
-	tmp := []*BinaryExpression{}
-	for root.Nesting > 1 {
-		if bexp1, ok := root.Left.(BinaryExpression); ok {
-			if bexp2, ok := bexp1.Right.(BinaryExpression); ok {
-				if bexp1.Operator.Compare(bexp2.Operator) <= 0 && !bexp2.Group {
-					reorderBinaryExpression(&bexp1, bexp2)
-				}
-				tmp = append(tmp, &bexp1)
-				root = &bexp1
-			} else {
-				break
-			}
-		} else {
-			break
-		}
-	}
-	if len(tmp) > 0 {
-		for i := len(tmp) - 2; i >= 0; i-- {
-			tmp[i].Left = *tmp[i+1]
-		}
-		bexp.Left = *tmp[0]
-	}
-}
-
-func reorderBinaryExpression(bexp1 *BinaryExpression, bexp2 BinaryExpression) {
-	bexp1.Left = BinaryExpression{
-		Left:     bexp1.Left,
-		Right:    bexp2.Left,
-		Operator: bexp1.Operator,
-		Line:     bexp1.Line,
-		CharAt:   bexp1.CharAt,
-		Nesting:  bexp2.Nesting,
-	}
-	bexp1.Operator = bexp2.Operator
-	bexp1.Right = bexp2.Right
+func swapBinaryExpression(bexp1 *BinaryExpression, bexp2 *BinaryExpression) {
+	bexp1.Left = bexp2.Right
+	bexp1.Nesting--
+	bexp1.CharAt = bexp2.Right.GetCharAt()
+	bexp2.Right = *bexp1
+	bexp2.Nesting = bexp1.Nesting + 1
 }

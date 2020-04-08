@@ -4,6 +4,7 @@ import "gs/operator"
 
 type Expression interface {
 	Evaluate() Expression
+	GetCharAt() int
 }
 
 type VariableExpression struct {
@@ -17,6 +18,10 @@ func (e VariableExpression) Evaluate() Expression {
 	return e
 }
 
+func (e VariableExpression) GetCharAt() int {
+	return e.CharAt
+}
+
 type LiteralExpression struct {
 	Type   string
 	Value  string
@@ -26,6 +31,10 @@ type LiteralExpression struct {
 
 func (e LiteralExpression) Evaluate() Expression {
 	return e
+}
+
+func (e LiteralExpression) GetCharAt() int {
+	return e.CharAt
 }
 
 type (
@@ -50,6 +59,10 @@ func (e ObjectExpression) Evaluate() Expression {
 	return e
 }
 
+func (e ObjectExpression) GetCharAt() int {
+	return e.CharAt
+}
+
 type ArrayExpression struct {
 	Elements []Expression
 	Line     int
@@ -58,6 +71,10 @@ type ArrayExpression struct {
 
 func (e ArrayExpression) Evaluate() Expression {
 	return e
+}
+
+func (e ArrayExpression) GetCharAt() int {
+	return e.CharAt
 }
 
 type BinaryExpression struct {
@@ -75,6 +92,10 @@ func (e BinaryExpression) Evaluate() Expression {
 	return LiteralExpression{Value: "TODO", Type: "string"}
 }
 
+func (e BinaryExpression) GetCharAt() int {
+	return e.CharAt
+}
+
 type FunctionExpression struct {
 	Params []Identifier
 	Body   []Statement
@@ -84,6 +105,10 @@ type FunctionExpression struct {
 
 func (e FunctionExpression) Evaluate() Expression {
 	return e
+}
+
+func (e FunctionExpression) GetCharAt() int {
+	return e.CharAt
 }
 
 type CallExpression struct {
@@ -97,6 +122,10 @@ func (e CallExpression) Evaluate() Expression {
 	return e
 }
 
+func (e CallExpression) GetCharAt() int {
+	return e.CharAt
+}
+
 type MemberExpression struct {
 	Object             Expression
 	PropertyIdentifier Identifier
@@ -108,4 +137,8 @@ type MemberExpression struct {
 
 func (e MemberExpression) Evaluate() Expression {
 	return e
+}
+
+func (e MemberExpression) GetCharAt() int {
+	return e.CharAt
 }
