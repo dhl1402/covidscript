@@ -177,6 +177,7 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 // identifier: variable expression, binary expression, call expression, member access exression
 func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 	var bexp *BinaryExpression
+	bexpsBeforeGroup := []*BinaryExpression{}
 	var i int
 	for i = 0; i < len(tokens); i++ {
 		t := tokens[i]
@@ -192,32 +193,25 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 				Line:   t.Line,
 				CharAt: t.CharAt,
 			}
-			if bexp == nil || bexp.Left == nil {
+			if bexp == nil {
 				if nt == nil || !nt.IsOperatorSymbol() {
 					return tmpExp, 1, nil
 				}
-				if bexp == nil {
-					bexp = &BinaryExpression{
-						Left:    tmpExp,
-						Nesting: 0,
-						Line:    t.Line,
-						CharAt:  t.CharAt,
-					}
-				} else {
-					bexp.Left = tmpExp
+				bexp = &BinaryExpression{
+					Left:   tmpExp,
+					Line:   t.Line,
+					CharAt: t.CharAt,
 				}
 			} else {
 				bexp.Right = tmpExp
 				if lbexp, ok := bexp.Left.(BinaryExpression); ok && lbexp.Operator.Compare(bexp.Operator) > 0 && !lbexp.Group {
 					swapBinaryExpression(bexp, &lbexp)
 					bexp.Left = lbexp
-					bexp.Nesting = lbexp.Nesting + 1
 				} else {
 					bexp = &BinaryExpression{
-						Left:    *bexp,
-						Nesting: bexp.Nesting + 1,
-						Line:    bexp.Line,
-						CharAt:  bexp.CharAt,
+						Left:   *bexp,
+						Line:   bexp.Line,
+						CharAt: bexp.CharAt,
 					}
 				}
 			}
@@ -232,12 +226,22 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 			}
 		} else if t.Value == "(" {
 			// TODO: handle function call
+			if bexp != nil {
+				bexpsBeforeGroup = append(bexpsBeforeGroup, bexp)
+			}
 		} else if t.Value == ")" {
 			// TODO: handle function call
 			if bexp != nil {
 				if lbexp, ok := bexp.Left.(BinaryExpression); ok {
 					lbexp.Group = true
-					bexp.Left = lbexp
+					if len(bexpsBeforeGroup) > 0 {
+						lastBexpBeforeGroup := bexpsBeforeGroup[len(bexpsBeforeGroup)-1]
+						swapBinaryExpression(&lbexp, lastBexpBeforeGroup)
+						bexp.Left = *lastBexpBeforeGroup
+						bexpsBeforeGroup = bexpsBeforeGroup[:len(bexpsBeforeGroup)-1]
+					} else {
+						bexp.Left = lbexp
+					}
 				}
 			}
 		} else if t.Value == "{" {
@@ -249,8 +253,6 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 
 func swapBinaryExpression(bexp1 *BinaryExpression, bexp2 *BinaryExpression) {
 	bexp1.Left = bexp2.Right
-	bexp1.Nesting--
 	bexp1.CharAt = bexp2.Right.GetCharAt()
 	bexp2.Right = *bexp1
-	bexp2.Nesting = bexp1.Nesting + 1
 }

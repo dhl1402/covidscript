@@ -82,7 +82,6 @@ type BinaryExpression struct {
 	Right    Expression
 	Operator operator.Operator
 	Group    bool
-	Nesting  int
 	Line     int
 	CharAt   int
 }
