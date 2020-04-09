@@ -88,7 +88,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 						Line:   1,
 		// 						CharAt: 5,
 		// 					},
-		// 					Init: LiteralExpression{
+		// 					Init:&LiteralExpression{
 		// 						Type:   "number",
 		// 						Value:  "1",
 		// 						Line:   1,
@@ -115,7 +115,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 						Line:   1,
 		// 						CharAt: 5,
 		// 					},
-		// 					Init: LiteralExpression{
+		// 					Init:&LiteralExpression{
 		// 						Type:   "string",
 		// 						Value:  `"xxx"`,
 		// 						Line:   1,
@@ -142,7 +142,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 						Line:   1,
 		// 						CharAt: 5,
 		// 					},
-		// 					Init: LiteralExpression{
+		// 					Init:&LiteralExpression{
 		// 						Type:   "boolean",
 		// 						Value:  "false",
 		// 						Line:   1,
@@ -170,7 +170,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 						Line:   1,
 		// 						CharAt: 5,
 		// 					},
-		// 					Init: LiteralExpression{
+		// 					Init:&LiteralExpression{
 		// 						Type:   "boolean",
 		// 						Value:  "false",
 		// 						Line:   1,
@@ -217,7 +217,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 						Line:   1,
 		// 						CharAt: 5,
 		// 					},
-		// 					Init: LiteralExpression{
+		// 					Init:&LiteralExpression{
 		// 						Type:   "number",
 		// 						Value:  "1",
 		// 						Line:   1,
@@ -232,7 +232,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 						Line:   1,
 		// 						CharAt: 7,
 		// 					},
-		// 					Init: LiteralExpression{
+		// 					Init:&LiteralExpression{
 		// 						Type:   "string",
 		// 						Value:  "'2'",
 		// 						Line:   1,
@@ -260,7 +260,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 						Line:   1,
 		// 						CharAt: 5,
 		// 					},
-		// 					Init: LiteralExpression{
+		// 					Init:&LiteralExpression{
 		// 						Type:   "number",
 		// 						Value:  "1",
 		// 						Line:   1,
@@ -291,7 +291,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 						Line:   2,
 		// 						CharAt: 5,
 		// 					},
-		// 					Init: LiteralExpression{
+		// 					Init:&LiteralExpression{
 		// 						Type:   "number",
 		// 						Value:  "2",
 		// 						Line:   2,
@@ -337,13 +337,13 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 								CharAt: 1,
 		// 							},
 		// 							BinaryExpression{
-		// 								Left: LiteralExpression{
+		// 								Left:&LiteralExpression{
 		// 									Type:   "number",
 		// 									Value:  "1",
 		// 									Line:   4,
 		// 									CharAt: 1,
 		// 								},
-		// 								Right: LiteralExpression{
+		// 								Right:&LiteralExpression{
 		// 									Type:   "number",
 		// 									Value:  "1",
 		// 									Line:   4,
@@ -437,7 +437,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 						Line:   1,
 		// 						CharAt: 1,
 		// 					},
-		// 					Init: LiteralExpression{
+		// 					Init:&LiteralExpression{
 		// 						Type:   "number",
 		// 						Value:  "1",
 		// 						Line:   1,
@@ -452,7 +452,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		// 						Line:   1,
 		// 						CharAt: 3,
 		// 					},
-		// 					Init: LiteralExpression{
+		// 					Init:&LiteralExpression{
 		// 						Type:   "string",
 		// 						Value:  "'2'",
 		// 						Line:   1,
@@ -506,7 +506,7 @@ func TestToAST_ObjectDeclaration(t *testing.T) {
 		// 									Line:   2,
 		// 									CharAt: 1,
 		// 								},
-		// 								Value: LiteralExpression{
+		// 								Value:&LiteralExpression{
 		// 									Type:   "number",
 		// 									Value:  "1",
 		// 									Line:   2,
@@ -520,7 +520,7 @@ func TestToAST_ObjectDeclaration(t *testing.T) {
 		// 									Line:   3,
 		// 									CharAt: 1,
 		// 								},
-		// 								Value: LiteralExpression{
+		// 								Value:&LiteralExpression{
 		// 									Type:   "string",
 		// 									Value:  `"abc"`,
 		// 									Line:   3,
@@ -534,7 +534,7 @@ func TestToAST_ObjectDeclaration(t *testing.T) {
 		// 									Line:   4,
 		// 									CharAt: 1,
 		// 								},
-		// 								Value: LiteralExpression{
+		// 								Value:&LiteralExpression{
 		// 									Type:   "boolean",
 		// 									Value:  "false",
 		// 									Line:   4,
@@ -587,7 +587,7 @@ func TestToAST_ObjectDeclaration(t *testing.T) {
 		// 												Line:   3,
 		// 												CharAt: 1,
 		// 											},
-		// 											Value: LiteralExpression{
+		// 											Value:&LiteralExpression{
 		// 												Type:   "number",
 		// 												Value:  "1",
 		// 												Line:   3,
@@ -733,14 +733,14 @@ func TestToAST_ObjectDeclaration(t *testing.T) {
 		// 					Init: ObjectExpression{
 		// 						Properties: []ObjectProperty{
 		// 							ObjectProperty{
-		// 								KeyExpression: BinaryExpression{
-		// 									Left: LiteralExpression{
+		// 								KeyExpression:&BinaryExpression{
+		// 									Left:&LiteralExpression{
 		// 										Type:   "number",
 		// 										Value:  "1",
 		// 										Line:   2,
 		// 										CharAt: 2,
 		// 									},
-		// 									Right: LiteralExpression{
+		// 									Right:&LiteralExpression{
 		// 										Type:   "number",
 		// 										Value:  "1",
 		// 										Line:   2,
@@ -748,7 +748,7 @@ func TestToAST_ObjectDeclaration(t *testing.T) {
 		// 									},
 		// 									Operator: "+",
 		// 								},
-		// 								Value: LiteralExpression{
+		// 								Value:&LiteralExpression{
 		// 									Type:   "number",
 		// 									Value:  "1",
 		// 									Line:   2,
@@ -787,7 +787,7 @@ func TestParseExpression(t *testing.T) {
 		// {
 		// 	name: "parse number expression",
 		// 	in:   "1",
-		// 	want: LiteralExpression{
+		// 	want:&LiteralExpression{
 		// 		Type:   "number",
 		// 		Value:  "1",
 		// 		Line:   1,
@@ -797,7 +797,7 @@ func TestParseExpression(t *testing.T) {
 		// {
 		// 	name: "parse string expression",
 		// 	in:   `"1"`,
-		// 	want: LiteralExpression{
+		// 	want:&LiteralExpression{
 		// 		Type:   "string",
 		// 		Value:  `"1"`,
 		// 		Line:   1,
@@ -807,7 +807,7 @@ func TestParseExpression(t *testing.T) {
 		// {
 		// 	name: "parse boolean expression",
 		// 	in:   "false",
-		// 	want: LiteralExpression{
+		// 	want:&LiteralExpression{
 		// 		Type:   "boolean",
 		// 		Value:  `false`,
 		// 		Line:   1,
@@ -817,14 +817,14 @@ func TestParseExpression(t *testing.T) {
 		// {
 		// 	name: "parse binary expression",
 		// 	in:   "1+1",
-		// 	want: BinaryExpression{
-		// 		Left: LiteralExpression{
+		// 	want:&BinaryExpression{
+		// 		Left:&LiteralExpression{
 		// 			Type:   "number",
 		// 			Value:  "1",
 		// 			Line:   1,
 		// 			CharAt: 1,
 		// 		},
-		// 		Right: LiteralExpression{
+		// 		Right:&LiteralExpression{
 		// 			Type:   "number",
 		// 			Value:  "1",
 		// 			Line:   1,
@@ -853,7 +853,7 @@ func TestParseExpression(t *testing.T) {
 		// 					Line:   2,
 		// 					CharAt: 1,
 		// 				},
-		// 				Value: LiteralExpression{
+		// 				Value:&LiteralExpression{
 		// 					Type:   "number",
 		// 					Value:  "1",
 		// 					Line:   2,
@@ -867,7 +867,7 @@ func TestParseExpression(t *testing.T) {
 		// 					Line:   3,
 		// 					CharAt: 1,
 		// 				},
-		// 				Value: LiteralExpression{
+		// 				Value:&LiteralExpression{
 		// 					Type:   "number",
 		// 					Value:  "2",
 		// 					Line:   3,
@@ -893,536 +893,577 @@ func TestParseExpression_Precedence(t *testing.T) {
 		in   string
 		want Expression
 	}{
-		// {
-		// 	name: "parse binary expression (1+2)+3",
-		// 	in:   "1+2+3",
-		// 	want: BinaryExpression{
-		// 		Left: BinaryExpression{
-		// 			Left: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "1",
-		// 				Line:   1,
-		// 				CharAt: 1,
-		// 			},
-		// 			Right: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "2",
-		// 				Line:   1,
-		// 				CharAt: 3,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "+",
-		// 				Line:   1,
-		// 				CharAt: 2,
-		// 			},
-		// 			Line:   1,
-		// 			CharAt: 1,
-		// 		},
-		// 		Right: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "3",
-		// 			Line:   1,
-		// 			CharAt: 5,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "+",
-		// 			Line:   1,
-		// 			CharAt: 4,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 1,
-		// 	},
-		// },
-		// {
-		// 	name: "parse binary expression 1+((2*3)/4)",
-		// 	in:   "1+2*3/4",
-		// 	want: BinaryExpression{
-		// 		Left: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "1",
-		// 			Line:   1,
-		// 			CharAt: 1,
-		// 		},
-		// 		Right: BinaryExpression{
-		// 			Left: BinaryExpression{
-		// 				Left: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "2",
-		// 					Line:   1,
-		// 					CharAt: 3,
-		// 				},
-		// 				Right: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "3",
-		// 					Line:   1,
-		// 					CharAt: 5,
-		// 				},
-		// 				Operator: operator.Operator{
-		// 					Symbol: "*",
-		// 					Line:   1,
-		// 					CharAt: 4,
-		// 				},
-		// 				Line:   1,
-		// 				CharAt: 3,
-		// 			},
-		// 			Right: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "4",
-		// 				Line:   1,
-		// 				CharAt: 7,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "/",
-		// 				Line:   1,
-		// 				CharAt: 6,
-		// 			},
-		// 			Line:   1,
-		// 			CharAt: 3,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "+",
-		// 			Line:   1,
-		// 			CharAt: 2,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 1,
-		// 	},
-		// },
-		// {
-		// 	name: "parse binary expression ((1*2)*3)-4",
-		// 	in:   "1*2*3-4",
-		// 	want: BinaryExpression{
-		// 		Left: BinaryExpression{
-		// 			Left: BinaryExpression{
-		// 				Left: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "1",
-		// 					Line:   1,
-		// 					CharAt: 1,
-		// 				},
-		// 				Right: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "2",
-		// 					Line:   1,
-		// 					CharAt: 3,
-		// 				},
-		// 				Operator: operator.Operator{
-		// 					Symbol: "*",
-		// 					Line:   1,
-		// 					CharAt: 2,
-		// 				},
-		// 				Line:   1,
-		// 				CharAt: 1,
-		// 			},
-		// 			Right: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "3",
-		// 				Line:   1,
-		// 				CharAt: 5,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "*",
-		// 				Line:   1,
-		// 				CharAt: 4,
-		// 			},
-		// 			Line:   1,
-		// 			CharAt: 1,
-		// 		},
-		// 		Right: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "4",
-		// 			Line:   1,
-		// 			CharAt: 7,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "-",
-		// 			Line:   1,
-		// 			CharAt: 6,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 1,
-		// 	},
-		// },
-		// {
-		// 	name: "parse binary expression ((((1+2)+3)+4)+5",
-		// 	in:   "1+2+3+4+5",
-		// 	want: BinaryExpression{
-		// 		Left: BinaryExpression{
-		// 			Left: BinaryExpression{
-		// 				Left: BinaryExpression{
-		// 					Left: LiteralExpression{
-		// 						Type:   "number",
-		// 						Value:  "1",
-		// 						Line:   1,
-		// 						CharAt: 1,
-		// 					},
-		// 					Right: LiteralExpression{
-		// 						Type:   "number",
-		// 						Value:  "2",
-		// 						Line:   1,
-		// 						CharAt: 3,
-		// 					},
-		// 					Operator: operator.Operator{
-		// 						Symbol: "+",
-		// 						Line:   1,
-		// 						CharAt: 2,
-		// 					},
-		// 					Line:   1,
-		// 					CharAt: 1,
-		// 				},
-		// 				Right: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "3",
-		// 					Line:   1,
-		// 					CharAt: 5,
-		// 				},
-		// 				Operator: operator.Operator{
-		// 					Symbol: "+",
-		// 					Line:   1,
-		// 					CharAt: 4,
-		// 				},
-		// 				Line:   1,
-		// 				CharAt: 1,
-		// 			},
-		// 			Right: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "4",
-		// 				Line:   1,
-		// 				CharAt: 7,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "+",
-		// 				Line:   1,
-		// 				CharAt: 6,
-		// 			},
-		// 			Line:   1,
-		// 			CharAt: 1,
-		// 		},
-		// 		Right: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "5",
-		// 			Line:   1,
-		// 			CharAt: 9,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "+",
-		// 			Line:   1,
-		// 			CharAt: 8,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 1,
-		// 	},
-		// },
-		// {
-		// 	name: "parse binary expression (2*3)/4",
-		// 	in:   "2*3/4",
-		// 	want: BinaryExpression{
-		// 		Left: BinaryExpression{
-		// 			Left: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "2",
-		// 				Line:   1,
-		// 				CharAt: 1,
-		// 			},
-		// 			Right: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "3",
-		// 				Line:   1,
-		// 				CharAt: 3,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "*",
-		// 				Line:   1,
-		// 				CharAt: 2,
-		// 			},
-		// 			Line:   1,
-		// 			CharAt: 1,
-		// 		},
-		// 		Right: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "4",
-		// 			Line:   1,
-		// 			CharAt: 5,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "/",
-		// 			Line:   1,
-		// 			CharAt: 4,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 1,
-		// 	},
-		// },
-		// {
-		// 	name: "parse binary expression with parantheses (1+2)*3",
-		// 	in:   "(1+2)*3",
-		// 	want: BinaryExpression{
-		// 		Left: BinaryExpression{
-		// 			Left: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "1",
-		// 				Line:   1,
-		// 				CharAt: 2,
-		// 			},
-		// 			Right: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "2",
-		// 				Line:   1,
-		// 				CharAt: 4,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "+",
-		// 				Line:   1,
-		// 				CharAt: 3,
-		// 			},
-		// 			Group:  true,
-		// 			Line:   1,
-		// 			CharAt: 2,
-		// 		},
-		// 		Right: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "3",
-		// 			Line:   1,
-		// 			CharAt: 7,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "*",
-		// 			Line:   1,
-		// 			CharAt: 6,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 2,
-		// 	},
-		// },
-		// {
-		// 	name: "parse binary expression with parantheses ((1+2)+3)*4",
-		// 	in:   "(1+2+3)*4",
-		// 	want: BinaryExpression{
-		// 		Left: BinaryExpression{
-		// 			Left: BinaryExpression{
-		// 				Left: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "1",
-		// 					Line:   1,
-		// 					CharAt: 2,
-		// 				},
-		// 				Right: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "2",
-		// 					Line:   1,
-		// 					CharAt: 4,
-		// 				},
-		// 				Operator: operator.Operator{
-		// 					Symbol: "+",
-		// 					Line:   1,
-		// 					CharAt: 3,
-		// 				},
-		// 				Line:   1,
-		// 				CharAt: 2,
-		// 			},
-		// 			Right: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "3",
-		// 				Line:   1,
-		// 				CharAt: 6,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "+",
-		// 				Line:   1,
-		// 				CharAt: 5,
-		// 			},
-		// 			Group:  true,
-		// 			Line:   1,
-		// 			CharAt: 2,
-		// 		},
-		// 		Right: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "4",
-		// 			Line:   1,
-		// 			CharAt: 9,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "*",
-		// 			Line:   1,
-		// 			CharAt: 8,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 2,
-		// 	},
-		// },
-		// {
-		// 	name: "parse binary expression with parantheses 1+(2+3)",
-		// 	in:   "1+(2+3)",
-		// 	want: BinaryExpression{
-		// 		Left: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "1",
-		// 			Line:   1,
-		// 			CharAt: 1,
-		// 		},
-		// 		Right: BinaryExpression{
-		// 			Left: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "2",
-		// 				Line:   1,
-		// 				CharAt: 4,
-		// 			},
-		// 			Right: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "3",
-		// 				Line:   1,
-		// 				CharAt: 6,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "+",
-		// 				Line:   1,
-		// 				CharAt: 5,
-		// 			},
-		// 			Group:  true,
-		// 			Line:   1,
-		// 			CharAt: 4,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "+",
-		// 			Line:   1,
-		// 			CharAt: 2,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 1,
-		// 	},
-		// },
-		// {
-		// 	name: "parse binary expression with parantheses (1+(2+3))+4",
-		// 	in:   "1+(2+3)+4",
-		// 	want: BinaryExpression{
-		// 		Left: BinaryExpression{
-		// 			Left: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "1",
-		// 				Line:   1,
-		// 				CharAt: 1,
-		// 			},
-		// 			Right: BinaryExpression{
-		// 				Left: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "2",
-		// 					Line:   1,
-		// 					CharAt: 4,
-		// 				},
-		// 				Right: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "3",
-		// 					Line:   1,
-		// 					CharAt: 6,
-		// 				},
-		// 				Operator: operator.Operator{
-		// 					Symbol: "+",
-		// 					Line:   1,
-		// 					CharAt: 5,
-		// 				},
-		// 				Group:  true,
-		// 				Line:   1,
-		// 				CharAt: 4,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "+",
-		// 				Line:   1,
-		// 				CharAt: 2,
-		// 			},
-		// 			Line:   1,
-		// 			CharAt: 1,
-		// 		},
-		// 		Right: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "4",
-		// 			Line:   1,
-		// 			CharAt: 9,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "+",
-		// 			Line:   1,
-		// 			CharAt: 8,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 1,
-		// 	},
-		// },
-		// {
-		// 	name: "parse binary expression with parantheses 1+((2+3))*4)",
-		// 	in:   "1+(2+3)*4",
-		// 	want: BinaryExpression{
-		// 		Left: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "1",
-		// 			Line:   1,
-		// 			CharAt: 1,
-		// 		},
-		// 		Right: BinaryExpression{
-		// 			Left: BinaryExpression{
-		// 				Left: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "2",
-		// 					Line:   1,
-		// 					CharAt: 4,
-		// 				},
-		// 				Right: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "3",
-		// 					Line:   1,
-		// 					CharAt: 6,
-		// 				},
-		// 				Operator: operator.Operator{
-		// 					Symbol: "+",
-		// 					Line:   1,
-		// 					CharAt: 5,
-		// 				},
-		// 				Group:  true,
-		// 				Line:   1,
-		// 				CharAt: 4,
-		// 			},
-		// 			Right: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "4",
-		// 				Line:   1,
-		// 				CharAt: 9,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "*",
-		// 				Line:   1,
-		// 				CharAt: 8,
-		// 			},
-		// 			Line:   1,
-		// 			CharAt: 4,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "+",
-		// 			Line:   1,
-		// 			CharAt: 2,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 1,
-		// 	},
-		// },
 		{
-			name: "parse binary expression with parantheses 1+(((2+3)+4)*5)",
-			in:   "1+(2+3+4)*5",
-			want: BinaryExpression{
-				Left: LiteralExpression{
+			name: "parse binary expression (1+2)+3",
+			in:   "1+2+3",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "2",
+						Line:   1,
+						CharAt: 3,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 2,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "3",
+					Line:   1,
+					CharAt: 5,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+((2*3)/4)",
+			in:   "1+2*3/4",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
 					Type:   "number",
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
 				},
-				Right: BinaryExpression{
-					Left: BinaryExpression{
-						Left: BinaryExpression{
-							Left: LiteralExpression{
+				Right: &BinaryExpression{
+					Left: &BinaryExpression{
+						Left: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 3,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   1,
+							CharAt: 5,
+						},
+						Operator: operator.Operator{
+							Symbol: "*",
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 3,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "4",
+						Line:   1,
+						CharAt: 7,
+					},
+					Operator: operator.Operator{
+						Symbol: "/",
+						Line:   1,
+						CharAt: 6,
+					},
+					Line:   1,
+					CharAt: 3,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression ((1*2)*3)-4",
+			in:   "1*2*3-4",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &BinaryExpression{
+						Left: &LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 1,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 3,
+						},
+						Operator: operator.Operator{
+							Symbol: "*",
+							Line:   1,
+							CharAt: 2,
+						},
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "3",
+						Line:   1,
+						CharAt: 5,
+					},
+					Operator: operator.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 4,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "4",
+					Line:   1,
+					CharAt: 7,
+				},
+				Operator: operator.Operator{
+					Symbol: "-",
+					Line:   1,
+					CharAt: 6,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression ((((1+2)+3)+4)+5",
+			in:   "1+2+3+4+5",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &BinaryExpression{
+						Left: &BinaryExpression{
+							Left: &LiteralExpression{
+								Type:   "number",
+								Value:  "1",
+								Line:   1,
+								CharAt: 1,
+							},
+							Right: &LiteralExpression{
+								Type:   "number",
+								Value:  "2",
+								Line:   1,
+								CharAt: 3,
+							},
+							Operator: operator.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 2,
+							},
+							Line:   1,
+							CharAt: 1,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   1,
+							CharAt: 5,
+						},
+						Operator: operator.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "4",
+						Line:   1,
+						CharAt: 7,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 6,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "5",
+					Line:   1,
+					CharAt: 9,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 8,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression (2*3)/4",
+			in:   "2*3/4",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "2",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "3",
+						Line:   1,
+						CharAt: 3,
+					},
+					Operator: operator.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 2,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "4",
+					Line:   1,
+					CharAt: 5,
+				},
+				Operator: operator.Operator{
+					Symbol: "/",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression with parantheses (1+2)*3",
+			in:   "(1+2)*3",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 2,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "2",
+						Line:   1,
+						CharAt: 4,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 3,
+					},
+					Group:  true,
+					Line:   1,
+					CharAt: 2,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "3",
+					Line:   1,
+					CharAt: 7,
+				},
+				Operator: operator.Operator{
+					Symbol: "*",
+					Line:   1,
+					CharAt: 6,
+				},
+				Line:   1,
+				CharAt: 2,
+			},
+		},
+		{
+			name: "parse binary expression with parantheses ((1+2)+3)*4",
+			in:   "(1+2+3)*4",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &BinaryExpression{
+						Left: &LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 2,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 4,
+						},
+						Operator: operator.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 3,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "3",
+						Line:   1,
+						CharAt: 6,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 5,
+					},
+					Group:  true,
+					Line:   1,
+					CharAt: 2,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "4",
+					Line:   1,
+					CharAt: 9,
+				},
+				Operator: operator.Operator{
+					Symbol: "*",
+					Line:   1,
+					CharAt: 8,
+				},
+				Line:   1,
+				CharAt: 2,
+			},
+		},
+		{
+			name: "parse binary expression with parantheses 1+(2+3)",
+			in:   "1+(2+3)",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "2",
+						Line:   1,
+						CharAt: 4,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "3",
+						Line:   1,
+						CharAt: 6,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 5,
+					},
+					Group:  true,
+					Line:   1,
+					CharAt: 4,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression with parantheses 1+(2*3)",
+			in:   "1+(2*3)",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "2",
+						Line:   1,
+						CharAt: 4,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "3",
+						Line:   1,
+						CharAt: 6,
+					},
+					Operator: operator.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 5,
+					},
+					Group:  true,
+					Line:   1,
+					CharAt: 4,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression with parantheses (1+(2+3))+4",
+			in:   "1+(2+3)+4",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &BinaryExpression{
+						Left: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 4,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   1,
+							CharAt: 6,
+						},
+						Operator: operator.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 5,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 4,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 2,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "4",
+					Line:   1,
+					CharAt: 9,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 8,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression with parantheses 1+((2+3))*4)",
+			in:   "1+(2+3)*4",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &BinaryExpression{
+					Left: &BinaryExpression{
+						Left: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 4,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   1,
+							CharAt: 6,
+						},
+						Operator: operator.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 5,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 4,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "4",
+						Line:   1,
+						CharAt: 9,
+					},
+					Operator: operator.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 8,
+					},
+					Line:   1,
+					CharAt: 4,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression with parantheses 1+(((2+3)+4)*5)",
+			in:   "1+(2+3+4)*5",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &BinaryExpression{
+					Left: &BinaryExpression{
+						Left: &BinaryExpression{
+							Left: &LiteralExpression{
 								Type:   "number",
 								Value:  "2",
 								Line:   1,
 								CharAt: 4,
 							},
-							Right: LiteralExpression{
+							Right: &LiteralExpression{
 								Type:   "number",
 								Value:  "3",
 								Line:   1,
@@ -1436,7 +1477,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 4,
 						},
-						Right: LiteralExpression{
+						Right: &LiteralExpression{
 							Type:   "number",
 							Value:  "4",
 							Line:   1,
@@ -1451,7 +1492,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 4,
 					},
-					Right: LiteralExpression{
+					Right: &LiteralExpression{
 						Type:   "number",
 						Value:  "5",
 						Line:   1,
@@ -1474,93 +1515,324 @@ func TestParseExpression_Precedence(t *testing.T) {
 				CharAt: 1,
 			},
 		},
-		// {
-		// 	name: "parse binary expression with parantheses (1*((2+(3/4))+5))+6",
-		// 	in:   "1*(2+(3/4)+5)+6",
-		// 	want: BinaryExpression{
-		// 		Left: BinaryExpression{
-		// 			Left: LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "1",
-		// 				Line:   1,
-		// 				CharAt: 1,
-		// 			},
-		// 			Right: BinaryExpression{
-		// 				Left: BinaryExpression{
-		// 					Left: LiteralExpression{
-		// 						Type:   "number",
-		// 						Value:  "2",
-		// 						Line:   1,
-		// 						CharAt: 4,
-		// 					},
-		// 					Right: BinaryExpression{
-		// 						Left: LiteralExpression{
-		// 							Type:   "number",
-		// 							Value:  "3",
-		// 							Line:   1,
-		// 							CharAt: 7,
-		// 						},
-		// 						Right: LiteralExpression{
-		// 							Type:   "number",
-		// 							Value:  "4",
-		// 							Line:   1,
-		// 							CharAt: 9,
-		// 						},
-		// 						Operator: operator.Operator{
-		// 							Symbol: "/",
-		// 							Line:   1,
-		// 							CharAt: 8,
-		// 						},
-		// 						Line:   1,
-		// 						CharAt: 7,
-		// 					},
-		// 					Operator: operator.Operator{
-		// 						Symbol: "+",
-		// 						Line:   1,
-		// 						CharAt: 5,
-		// 					},
-		// 					Group:  true,
-		// 					Line:   1,
-		// 					CharAt: 4,
-		// 				},
-		// 				Right: LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "5",
-		// 					Line:   1,
-		// 					CharAt: 12,
-		// 				},
-		// 				Operator: operator.Operator{
-		// 					Symbol: "+",
-		// 					Line:   1,
-		// 					CharAt: 11,
-		// 				},
-		// 				Group:  true,
-		// 				Line:   1,
-		// 				CharAt: 4,
-		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "*",
-		// 				Line:   1,
-		// 				CharAt: 2,
-		// 			},
-		// 			Line:   1,
-		// 			CharAt: 1,
-		// 		},
-		// 		Right: LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "6",
-		// 			Line:   1,
-		// 			CharAt: 15,
-		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "+",
-		// 			Line:   1,
-		// 			CharAt: 14,
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 1,
-		// 	},
-		// },
+		{
+			name: "parse binary expression with parantheses (1+((2+3)*4))-5",
+			in:   "1+((2+3)*4)-5",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &BinaryExpression{
+						Left: &BinaryExpression{
+							Left: &LiteralExpression{
+								Type:   "number",
+								Value:  "2",
+								Line:   1,
+								CharAt: 5,
+							},
+							Right: &LiteralExpression{
+								Type:   "number",
+								Value:  "3",
+								Line:   1,
+								CharAt: 7,
+							},
+							Operator: operator.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 6,
+							},
+							Group:  true,
+							Line:   1,
+							CharAt: 5,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "4",
+							Line:   1,
+							CharAt: 10,
+						},
+						Operator: operator.Operator{
+							Symbol: "*",
+							Line:   1,
+							CharAt: 9,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 5,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 2,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "5",
+					Line:   1,
+					CharAt: 13,
+				},
+				Operator: operator.Operator{
+					Symbol: "-",
+					Line:   1,
+					CharAt: 12,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression with parantheses (1+((2+3)+4))-5",
+			in:   "1+((2+3)+4)-5",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &BinaryExpression{
+						Left: &BinaryExpression{
+							Left: &LiteralExpression{
+								Type:   "number",
+								Value:  "2",
+								Line:   1,
+								CharAt: 5,
+							},
+							Right: &LiteralExpression{
+								Type:   "number",
+								Value:  "3",
+								Line:   1,
+								CharAt: 7,
+							},
+							Operator: operator.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 6,
+							},
+							Group:  true,
+							Line:   1,
+							CharAt: 5,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "4",
+							Line:   1,
+							CharAt: 10,
+						},
+						Operator: operator.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 9,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 5,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 2,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "5",
+					Line:   1,
+					CharAt: 13,
+				},
+				Operator: operator.Operator{
+					Symbol: "-",
+					Line:   1,
+					CharAt: 12,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression with parantheses (1*((2+(3/4))+5))+6",
+			in:   "1*(2+(3/4)+5)+6",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &BinaryExpression{
+						Left: &BinaryExpression{
+							Left: &LiteralExpression{
+								Type:   "number",
+								Value:  "2",
+								Line:   1,
+								CharAt: 4,
+							},
+							Right: &BinaryExpression{
+								Left: &LiteralExpression{
+									Type:   "number",
+									Value:  "3",
+									Line:   1,
+									CharAt: 7,
+								},
+								Right: &LiteralExpression{
+									Type:   "number",
+									Value:  "4",
+									Line:   1,
+									CharAt: 9,
+								},
+								Operator: operator.Operator{
+									Symbol: "/",
+									Line:   1,
+									CharAt: 8,
+								},
+								Group:  true,
+								Line:   1,
+								CharAt: 7,
+							},
+							Operator: operator.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 5,
+							},
+							Line:   1,
+							CharAt: 4,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "5",
+							Line:   1,
+							CharAt: 12,
+						},
+						Operator: operator.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 11,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 4,
+					},
+					Operator: operator.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 2,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "6",
+					Line:   1,
+					CharAt: 15,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 14,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression with parantheses 1+(((2+(3/4))+5)*6)",
+			in:   "1+(2+(3/4)+5)*6",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &BinaryExpression{
+					Left: &BinaryExpression{
+						Left: &BinaryExpression{
+							Left: &LiteralExpression{
+								Type:   "number",
+								Value:  "2",
+								Line:   1,
+								CharAt: 4,
+							},
+							Right: &BinaryExpression{
+								Left: &LiteralExpression{
+									Type:   "number",
+									Value:  "3",
+									Line:   1,
+									CharAt: 7,
+								},
+								Right: &LiteralExpression{
+									Type:   "number",
+									Value:  "4",
+									Line:   1,
+									CharAt: 9,
+								},
+								Operator: operator.Operator{
+									Symbol: "/",
+									Line:   1,
+									CharAt: 8,
+								},
+								Group:  true,
+								Line:   1,
+								CharAt: 7,
+							},
+							Operator: operator.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 5,
+							},
+							Line:   1,
+							CharAt: 4,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "5",
+							Line:   1,
+							CharAt: 12,
+						},
+						Operator: operator.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 11,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 4,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "6",
+						Line:   1,
+						CharAt: 15,
+					},
+					Operator: operator.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 14,
+					},
+					Line:   1,
+					CharAt: 4,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
 		// {
 		// 	name: "parse variable expression",
 		// 	in:   "a",
@@ -1573,7 +1845,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// {
 		// 	name: "parse binary expression, operand is variable expression a+b",
 		// 	in:   "a+b",
-		// 	want: BinaryExpression{
+		// 	want:&BinaryExpression{
 		// 		Left: VariableExpression{
 		// 			Name:   "a",
 		// 			Line:   1,
@@ -1596,13 +1868,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// {
 		// 	name: "parse binary expression, operand is variable expression a+1",
 		// 	in:   "a+1",
-		// 	want: BinaryExpression{
+		// 	want:&BinaryExpression{
 		// 		Left: VariableExpression{
 		// 			Name:   "a",
 		// 			Line:   1,
 		// 			CharAt: 1,
 		// 		},
-		// 		Right: LiteralExpression{
+		// 		Right:&LiteralExpression{
 		// 			Type:   "number",
 		// 			Value:  "1",
 		// 			Line:   1,
@@ -1638,7 +1910,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// {
 		// 	name: "parse binary expression, operand is member access expression (a.b)*1",
 		// 	in:   "a.b*1",
-		// 	want: BinaryExpression{
+		// 	want:&BinaryExpression{
 		// 		Left: MemberExpression{
 		// 			Object: VariableExpression{
 		// 				Name:   "a",
@@ -1653,7 +1925,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// 			Line:   1,
 		// 			CharAt: 1,
 		// 		},
-		// 		Right: LiteralExpression{
+		// 		Right:&LiteralExpression{
 		// 			Type:   "number",
 		// 			Value:  "1",
 		// 			Line:   1,
@@ -1698,9 +1970,9 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// {
 		// 	name: "parse binary expression, operand is variable expression (1+abc)+1",
 		// 	in:   "1+abc+1",
-		// 	want: BinaryExpression{
-		// 		Left: BinaryExpression{
-		// 			Left: LiteralExpression{
+		// 	want:&BinaryExpression{
+		// 		Left:&BinaryExpression{
+		// 			Left:&LiteralExpression{
 		// 				Type:   "number",
 		// 				Value:  "1",
 		// 				Line:   1,
@@ -1719,7 +1991,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// 			Line:   1,
 		// 			CharAt: 1,
 		// 		},
-		// 		Right: LiteralExpression{
+		// 		Right:&LiteralExpression{
 		// 			Type:   "number",
 		// 			Value:  "1",
 		// 			Line:   1,

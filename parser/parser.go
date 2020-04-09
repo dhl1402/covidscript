@@ -177,17 +177,22 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 // identifier: variable expression, binary expression, call expression, member access exression
 func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 	var bexp *BinaryExpression
-	bexpsBeforeGroup := []*BinaryExpression{}
+	bexpsAfterGroup := []*BinaryExpression{}
+	openParen := 0
 	var i int
 	for i = 0; i < len(tokens); i++ {
 		t := tokens[i]
 		var nt *lexer.Token
+		// var pt *lexer.Token
+		// if i > 0 {
+		// 	pt = &tokens[i-1]
+		// }
 		if i+1 < len(tokens) {
 			nt = &tokens[i+1]
 		}
 		if ptype, ok := t.ParsePrimitiveType(); ok {
 			var tmpExp Expression
-			tmpExp = LiteralExpression{
+			tmpExp = &LiteralExpression{
 				Type:   ptype,
 				Value:  t.Value,
 				Line:   t.Line,
@@ -204,16 +209,30 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 				}
 			} else {
 				bexp.Right = tmpExp
-				if lbexp, ok := bexp.Left.(BinaryExpression); ok && lbexp.Operator.Compare(bexp.Operator) > 0 && !lbexp.Group {
-					swapBinaryExpression(bexp, &lbexp)
-					bexp.Left = lbexp
+				if nt != nil && nt.Value == ")" {
+					bexp.Group = true
+				}
+				lastBexpAfterGroup, _ := getLastBexpAfterGroup(bexpsAfterGroup, false)
+				if lbexp, ok := bexp.Left.(*BinaryExpression); ok && lbexp.Operator.Compare(bexp.Operator) > 0 && !lbexp.Group && (lastBexpAfterGroup == nil || lbexp != lastBexpAfterGroup.Left) {
+					bexp.Left = lbexp.Right
+					bexp.CharAt = lbexp.Right.GetCharAt()
+					lbexp.Right = bexp
+					bexp = &BinaryExpression{
+						Left:   lbexp,
+						Line:   lbexp.Line,
+						CharAt: lbexp.CharAt,
+					}
 				} else {
 					bexp = &BinaryExpression{
-						Left:   *bexp,
+						Left:   bexp,
 						Line:   bexp.Line,
 						CharAt: bexp.CharAt,
 					}
 				}
+			}
+			if openParen > 0 {
+				bexpsAfterGroup = append(bexpsAfterGroup, bexp)
+				openParen--
 			}
 		} else if t.IsOperatorSymbol() {
 			if bexp == nil {
@@ -226,21 +245,27 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 			}
 		} else if t.Value == "(" {
 			// TODO: handle function call
-			if bexp != nil {
-				bexpsBeforeGroup = append(bexpsBeforeGroup, bexp)
-			}
+			openParen++
 		} else if t.Value == ")" {
 			// TODO: handle function call
 			if bexp != nil {
-				if lbexp, ok := bexp.Left.(BinaryExpression); ok {
-					lbexp.Group = true
-					if len(bexpsBeforeGroup) > 0 {
-						lastBexpBeforeGroup := bexpsBeforeGroup[len(bexpsBeforeGroup)-1]
-						swapBinaryExpression(&lbexp, lastBexpBeforeGroup)
-						bexp.Left = *lastBexpBeforeGroup
-						bexpsBeforeGroup = bexpsBeforeGroup[:len(bexpsBeforeGroup)-1]
-					} else {
-						bexp.Left = lbexp
+				if lbexp, ok := bexp.Left.(*BinaryExpression); ok {
+					if len(bexpsAfterGroup) > 0 {
+						lastBexpAfterGroup, i := getLastBexpAfterGroup(bexpsAfterGroup, true)
+						if bexpBeforeGroup, ok := lastBexpAfterGroup.Left.(*BinaryExpression); ok {
+							lastBexpAfterGroup.Left = bexpBeforeGroup.Right
+							lastBexpAfterGroup.CharAt = bexpBeforeGroup.Right.GetCharAt()
+							bexpBeforeGroup.Right = lbexp
+							bexp.Left = bexpBeforeGroup
+
+							// loop from lbexp to lastBexpAfterGroup and update exp CharAt
+							lbexp.CharAt = lastBexpAfterGroup.CharAt
+							for tmpBexp, _ := lbexp.Left.(*BinaryExpression); tmpBexp != nil; {
+								tmpBexp.CharAt = lastBexpAfterGroup.CharAt
+								tmpBexp, _ = tmpBexp.Left.(*BinaryExpression)
+							}
+						}
+						bexpsAfterGroup = append(bexpsAfterGroup[i+1:], bexpsAfterGroup[:i]...)
 					}
 				}
 			}
@@ -251,8 +276,15 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 	return bexp.Left, i, nil
 }
 
-func swapBinaryExpression(bexp1 *BinaryExpression, bexp2 *BinaryExpression) {
-	bexp1.Left = bexp2.Right
-	bexp1.CharAt = bexp2.Right.GetCharAt()
-	bexp2.Right = *bexp1
+func getLastBexpAfterGroup(bexps []*BinaryExpression, rightShouldNotNil bool) (*BinaryExpression, int) {
+	for i := len(bexps) - 1; i >= 0; i-- {
+		bexp := bexps[i]
+		if !rightShouldNotNil {
+			return bexp, i
+		}
+		if bexp.Right != nil {
+			return bexp, i
+		}
+	}
+	return nil, -1
 }
