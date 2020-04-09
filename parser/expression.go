@@ -125,7 +125,7 @@ func (e CallExpression) GetCharAt() int {
 	return e.CharAt
 }
 
-type MemberExpression struct {
+type MemberAccessExpression struct {
 	Object             Expression
 	PropertyIdentifier Identifier
 	PropertyExpression Expression
@@ -134,10 +134,10 @@ type MemberExpression struct {
 	CharAt             int
 }
 
-func (e MemberExpression) Evaluate() Expression {
+func (e MemberAccessExpression) Evaluate() Expression {
 	return e
 }
 
-func (e MemberExpression) GetCharAt() int {
+func (e MemberAccessExpression) GetCharAt() int {
 	return e.CharAt
 }

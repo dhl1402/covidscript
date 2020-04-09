@@ -894,6 +894,51 @@ func TestParseExpression_Precedence(t *testing.T) {
 		want Expression
 	}{
 		{
+			name: "parse literal expression (1)",
+			in:   "(1)",
+			want: &LiteralExpression{
+				Type:   "number",
+				Value:  "1",
+				Line:   1,
+				CharAt: 2,
+			},
+		},
+		{
+			name: "parse literal expression (((1)))",
+			in:   "(((1)))",
+			want: &LiteralExpression{
+				Type:   "number",
+				Value:  "1",
+				Line:   1,
+				CharAt: 4,
+			},
+		},
+		{
+			name: "parse binary expression (1)+2",
+			in:   "(1)+2",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 2,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "2",
+					Line:   1,
+					CharAt: 5,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 2,
+			},
+		},
+		{
 			name: "parse binary expression (1+2)+3",
 			in:   "1+2+3",
 			want: &BinaryExpression{
@@ -1836,7 +1881,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// {
 		// 	name: "parse variable expression",
 		// 	in:   "a",
-		// 	want: VariableExpression{
+		// 	want: &VariableExpression{
 		// 		Name:   "a",
 		// 		Line:   1,
 		// 		CharAt: 1,
@@ -1845,13 +1890,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// {
 		// 	name: "parse binary expression, operand is variable expression a+b",
 		// 	in:   "a+b",
-		// 	want:&BinaryExpression{
-		// 		Left: VariableExpression{
+		// 	want: &BinaryExpression{
+		// 		Left: &VariableExpression{
 		// 			Name:   "a",
 		// 			Line:   1,
 		// 			CharAt: 1,
 		// 		},
-		// 		Right: VariableExpression{
+		// 		Right: &VariableExpression{
 		// 			Name:   "b",
 		// 			Line:   1,
 		// 			CharAt: 3,
@@ -1868,13 +1913,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// {
 		// 	name: "parse binary expression, operand is variable expression a+1",
 		// 	in:   "a+1",
-		// 	want:&BinaryExpression{
-		// 		Left: VariableExpression{
+		// 	want: &BinaryExpression{
+		// 		Left: &VariableExpression{
 		// 			Name:   "a",
 		// 			Line:   1,
 		// 			CharAt: 1,
 		// 		},
-		// 		Right:&LiteralExpression{
+		// 		Right: &LiteralExpression{
 		// 			Type:   "number",
 		// 			Value:  "1",
 		// 			Line:   1,
@@ -1892,8 +1937,8 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// {
 		// 	name: "parse member access expression a.b",
 		// 	in:   "a.b",
-		// 	want: MemberExpression{
-		// 		Object: VariableExpression{
+		// 	want: &MemberAccessExpression{
+		// 		Object: &VariableExpression{
 		// 			Name:   "a",
 		// 			Line:   1,
 		// 			CharAt: 1,
@@ -1910,9 +1955,9 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// {
 		// 	name: "parse binary expression, operand is member access expression (a.b)*1",
 		// 	in:   "a.b*1",
-		// 	want:&BinaryExpression{
-		// 		Left: MemberExpression{
-		// 			Object: VariableExpression{
+		// 	want: &BinaryExpression{
+		// 		Left: &MemberAccessExpression{
+		// 			Object: &VariableExpression{
 		// 				Name:   "a",
 		// 				Line:   1,
 		// 				CharAt: 1,
@@ -1925,7 +1970,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// 			Line:   1,
 		// 			CharAt: 1,
 		// 		},
-		// 		Right:&LiteralExpression{
+		// 		Right: &LiteralExpression{
 		// 			Type:   "number",
 		// 			Value:  "1",
 		// 			Line:   1,
@@ -1941,10 +1986,49 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// 	},
 		// },
 		// {
+		// 	name: "parse binary expression, operand is variable expression (1+abc)+1",
+		// 	in:   "1+abc+1",
+		// 	want: &BinaryExpression{
+		// 		Left: &BinaryExpression{
+		// 			Left: &LiteralExpression{
+		// 				Type:   "number",
+		// 				Value:  "1",
+		// 				Line:   1,
+		// 				CharAt: 1,
+		// 			},
+		// 			Right: &VariableExpression{
+		// 				Name:   "abc",
+		// 				Line:   1,
+		// 				CharAt: 3,
+		// 			},
+		// 			Operator: operator.Operator{
+		// 				Symbol: "+",
+		// 				Line:   1,
+		// 				CharAt: 2,
+		// 			},
+		// 			Line:   1,
+		// 			CharAt: 1,
+		// 		},
+		// 		Right: &LiteralExpression{
+		// 			Type:   "number",
+		// 			Value:  "1",
+		// 			Line:   1,
+		// 			CharAt: 7,
+		// 		},
+		// 		Operator: operator.Operator{
+		// 			Symbol: "+",
+		// 			Line:   1,
+		// 			CharAt: 6,
+		// 		},
+		// 		Line:   1,
+		// 		CharAt: 1,
+		// 	},
+		// },
+		// {
 		// 	name: "parse member access expression (a.b).c",
 		// 	in:   "a.b.c",
-		// 	want: MemberExpression{
-		// 		Object: MemberExpression{
+		// 	want: &MemberAccessExpression{
+		// 		Object: &MemberAccessExpression{
 		// 			Object: VariableExpression{
 		// 				Name:   "a",
 		// 				Line:   1,
@@ -1968,42 +2052,30 @@ func TestParseExpression_Precedence(t *testing.T) {
 		// 	},
 		// },
 		// {
-		// 	name: "parse binary expression, operand is variable expression (1+abc)+1",
-		// 	in:   "1+abc+1",
-		// 	want:&BinaryExpression{
-		// 		Left:&BinaryExpression{
-		// 			Left:&LiteralExpression{
-		// 				Type:   "number",
-		// 				Value:  "1",
-		// 				Line:   1,
-		// 				CharAt: 1,
-		// 			},
-		// 			Right: VariableExpression{
-		// 				Name:   "abc",
+		// 	name: "parse member access expression (a.b).c",
+		// 	in:   "((a.b)).c",
+		// 	want: &MemberAccessExpression{
+		// 		Object: &MemberAccessExpression{
+		// 			Object: VariableExpression{
+		// 				Name:   "a",
 		// 				Line:   1,
 		// 				CharAt: 3,
 		// 			},
-		// 			Operator: operator.Operator{
-		// 				Symbol: "+",
+		// 			PropertyIdentifier: Identifier{
+		// 				Name:   "b",
 		// 				Line:   1,
-		// 				CharAt: 2,
+		// 				CharAt: 5,
 		// 			},
 		// 			Line:   1,
 		// 			CharAt: 1,
 		// 		},
-		// 		Right:&LiteralExpression{
-		// 			Type:   "number",
-		// 			Value:  "1",
+		// 		PropertyIdentifier: Identifier{
+		// 			Name:   "c",
 		// 			Line:   1,
-		// 			CharAt: 7,
+		// 			CharAt: 9,
 		// 		},
-		// 		Operator: operator.Operator{
-		// 			Symbol: "+",
-		// 			Line:   1,
-		// 			CharAt: 6,
-		// 		},
-		// 		Line:    1,
-		// 		CharAt:  1,
+		// 		Line:   1,
+		// 		CharAt: 3,
 		// 	},
 		// },
 	}

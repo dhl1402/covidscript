@@ -174,74 +174,94 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 }
 
 // primitive, object, array, function, function call, binary expression, object property, array element, identifier
-// identifier: variable expression, binary expression, call expression, member access exression
+// identifier: variable expression, binary expression, call expression, member access exression(array, object)
 func parseExpression(tokens []lexer.Token) (Expression, int, error) {
+	var tmpExp Expression
 	var bexp *BinaryExpression
+	var maexp *MemberAccessExpression
 	bexpsAfterGroup := []*BinaryExpression{}
 	openParen := 0
 	var i int
 	for i = 0; i < len(tokens); i++ {
 		t := tokens[i]
 		var nt *lexer.Token
-		// var pt *lexer.Token
-		// if i > 0 {
-		// 	pt = &tokens[i-1]
-		// }
 		if i+1 < len(tokens) {
 			nt = &tokens[i+1]
 		}
 		if ptype, ok := t.ParsePrimitiveType(); ok {
-			var tmpExp Expression
 			tmpExp = &LiteralExpression{
 				Type:   ptype,
 				Value:  t.Value,
 				Line:   t.Line,
 				CharAt: t.CharAt,
 			}
-			if bexp == nil {
-				if nt == nil || !nt.IsOperatorSymbol() {
-					return tmpExp, 1, nil
-				}
-				bexp = &BinaryExpression{
-					Left:   tmpExp,
-					Line:   t.Line,
-					CharAt: t.CharAt,
-				}
-			} else {
+			if bexp != nil {
 				bexp.Right = tmpExp
 				if nt != nil && nt.Value == ")" {
 					bexp.Group = true
 				}
 				lastBexpAfterGroup, _ := getLastBexpAfterGroup(bexpsAfterGroup, false)
-				if lbexp, ok := bexp.Left.(*BinaryExpression); ok && lbexp.Operator.Compare(bexp.Operator) > 0 && !lbexp.Group && (lastBexpAfterGroup == nil || lbexp != lastBexpAfterGroup.Left) {
+				if lbexp, ok := bexp.Left.(*BinaryExpression); ok && lbexp.Operator.Compare(bexp.Operator) > 0 && !lbexp.Group && (lastBexpAfterGroup == nil || bexp != lastBexpAfterGroup) {
 					bexp.Left = lbexp.Right
 					bexp.CharAt = lbexp.Right.GetCharAt()
 					lbexp.Right = bexp
-					bexp = &BinaryExpression{
-						Left:   lbexp,
-						Line:   lbexp.Line,
-						CharAt: lbexp.CharAt,
-					}
-				} else {
-					bexp = &BinaryExpression{
-						Left:   bexp,
-						Line:   bexp.Line,
-						CharAt: bexp.CharAt,
-					}
+					bexp = lbexp
 				}
 			}
-			if openParen > 0 {
-				bexpsAfterGroup = append(bexpsAfterGroup, bexp)
-				openParen--
+		} else if t.IsIdentifier() {
+			tmpExp = &VariableExpression{
+				Name:   t.Value,
+				Line:   t.Line,
+				CharAt: t.CharAt,
+			}
+		} else if t.Value == "." {
+			if maexp == nil {
+				if tmpExp == nil {
+					return nil, 0, fmt.Errorf("TODO")
+				}
+				maexp = &MemberAccessExpression{
+					Object: tmpExp,
+					Line:   t.Line, // TODO: tmpExp.GetLine()
+					CharAt: tmpExp.GetCharAt(),
+				}
+			} else if maexp.PropertyIdentifier.Name == "" && maexp.PropertyExpression == nil {
+				return nil, 0, fmt.Errorf("TODO")
+			} else {
+				maexp = &MemberAccessExpression{
+					Object: maexp,
+					Line:   maexp.Line,
+					CharAt: maexp.CharAt,
+				}
 			}
 		} else if t.IsOperatorSymbol() {
-			if bexp == nil {
-				return nil, 0, fmt.Errorf("TODO")
-			}
-			bexp.Operator = operator.Operator{
+			op := operator.Operator{
 				Symbol: t.Value,
 				Line:   t.Line,
 				CharAt: t.CharAt,
+			}
+			if bexp == nil {
+				if tmpExp == nil {
+					return nil, 0, fmt.Errorf("TODO")
+				}
+				bexp = &BinaryExpression{
+					Left:     tmpExp,
+					Line:     t.Line, // tmpExp.getCharAt()
+					CharAt:   tmpExp.GetCharAt(),
+					Operator: op,
+				}
+			} else if bexp.Right != nil {
+				bexp = &BinaryExpression{
+					Left:     bexp,
+					Line:     bexp.Line,
+					CharAt:   bexp.CharAt,
+					Operator: op,
+				}
+			} else {
+				return nil, 0, fmt.Errorf("TODO")
+			}
+			if bexp != nil && openParen > 0 {
+				bexpsAfterGroup = append(bexpsAfterGroup, bexp)
+				openParen--
 			}
 		} else if t.Value == "(" {
 			// TODO: handle function call
@@ -249,31 +269,36 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 		} else if t.Value == ")" {
 			// TODO: handle function call
 			if bexp != nil {
-				if lbexp, ok := bexp.Left.(*BinaryExpression); ok {
-					if len(bexpsAfterGroup) > 0 {
-						lastBexpAfterGroup, i := getLastBexpAfterGroup(bexpsAfterGroup, true)
-						if bexpBeforeGroup, ok := lastBexpAfterGroup.Left.(*BinaryExpression); ok {
-							lastBexpAfterGroup.Left = bexpBeforeGroup.Right
-							lastBexpAfterGroup.CharAt = bexpBeforeGroup.Right.GetCharAt()
-							bexpBeforeGroup.Right = lbexp
-							bexp.Left = bexpBeforeGroup
+				if len(bexpsAfterGroup) > 0 {
+					lastBexpAfterGroup, i := getLastBexpAfterGroup(bexpsAfterGroup, true)
+					if bexpBeforeGroup, ok := lastBexpAfterGroup.Left.(*BinaryExpression); ok {
+						lastBexpAfterGroup.Left = bexpBeforeGroup.Right
+						lastBexpAfterGroup.CharAt = bexpBeforeGroup.Right.GetCharAt()
+						bexpBeforeGroup.Right = bexp
+						groupedBexp := bexp
+						bexp = bexpBeforeGroup
 
-							// loop from lbexp to lastBexpAfterGroup and update exp CharAt
-							lbexp.CharAt = lastBexpAfterGroup.CharAt
-							for tmpBexp, _ := lbexp.Left.(*BinaryExpression); tmpBexp != nil; {
-								tmpBexp.CharAt = lastBexpAfterGroup.CharAt
-								tmpBexp, _ = tmpBexp.Left.(*BinaryExpression)
-							}
+						// loop from groupedBexp to lastBexpAfterGroup and update exp CharAt
+						groupedBexp.CharAt = lastBexpAfterGroup.CharAt
+						for tmpBexp, _ := groupedBexp.Left.(*BinaryExpression); tmpBexp != nil; {
+							tmpBexp.CharAt = lastBexpAfterGroup.CharAt
+							tmpBexp, _ = tmpBexp.Left.(*BinaryExpression)
 						}
-						bexpsAfterGroup = append(bexpsAfterGroup[i+1:], bexpsAfterGroup[:i]...)
 					}
+					bexpsAfterGroup = append(bexpsAfterGroup[i+1:], bexpsAfterGroup[:i]...)
 				}
 			}
 		} else if t.Value == "{" {
 			return parseObjectExpression(tokens)
 		}
 	}
-	return bexp.Left, i, nil
+	if bexp != nil {
+		return bexp, i, nil
+	}
+	if maexp != nil {
+		return maexp, i, nil
+	}
+	return tmpExp, i, nil
 }
 
 func getLastBexpAfterGroup(bexps []*BinaryExpression, rightShouldNotNil bool) (*BinaryExpression, int) {
