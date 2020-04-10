@@ -178,6 +178,7 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 	var tmpExp Expression
 	var bexp *BinaryExpression
+	var lastBexp *BinaryExpression
 	var maexp *MemberAccessExpression
 	bexpsAfterGroup := []*BinaryExpression{}
 	openParen := 0
@@ -188,18 +189,31 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 		if i+1 < len(tokens) {
 			nt = &tokens[i+1]
 		}
-		if ptype, ok := t.ParsePrimitiveType(); ok {
-			tmpExp = &LiteralExpression{
-				Type:   ptype,
-				Value:  t.Value,
-				Line:   t.Line,
-				CharAt: t.CharAt,
-			}
-			if bexp != nil {
-				bexp.Right = tmpExp
-				if nt != nil && nt.Value == ")" {
-					bexp.Group = true
+		if ptype, ok := t.ParsePrimitiveType(); ok || t.IsIdentifier() {
+			if ok {
+				tmpExp = &LiteralExpression{
+					Type:   ptype,
+					Value:  t.Value,
+					Line:   t.Line,
+					CharAt: t.CharAt,
 				}
+			} else {
+				tmpExp = &VariableExpression{
+					Name:   t.Value,
+					Line:   t.Line,
+					CharAt: t.CharAt,
+				}
+			}
+			if maexp != nil && maexp.Property == nil {
+				maexp.Property = tmpExp
+				tmpExp = maexp
+			}
+			if bexp != nil && nt != nil && nt.Value == ")" && openParen <= len(bexpsAfterGroup) {
+				bexp.Group = true
+			}
+			if bexp != nil && bexp.Right == nil {
+				bexp.Right = tmpExp
+				lastBexp = bexp
 				lastBexpAfterGroup, _ := getLastBexpAfterGroup(bexpsAfterGroup, false)
 				if lbexp, ok := bexp.Left.(*BinaryExpression); ok && lbexp.Operator.Compare(bexp.Operator) > 0 && !lbexp.Group && (lastBexpAfterGroup == nil || bexp != lastBexpAfterGroup) {
 					bexp.Left = lbexp.Right
@@ -208,14 +222,16 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 					bexp = lbexp
 				}
 			}
-		} else if t.IsIdentifier() {
-			tmpExp = &VariableExpression{
-				Name:   t.Value,
-				Line:   t.Line,
-				CharAt: t.CharAt,
-			}
 		} else if t.Value == "." {
-			if maexp == nil {
+			if lastBexp != nil {
+				maexp = &MemberAccessExpression{
+					Object: lastBexp.Right,
+					Line:   t.Line, // TODO: tmpExp.GetLine()
+					CharAt: lastBexp.Right.GetCharAt(),
+				}
+				lastBexp.Right = maexp
+				lastBexp.Group = false
+			} else if maexp == nil {
 				if tmpExp == nil {
 					return nil, 0, fmt.Errorf("TODO")
 				}
@@ -224,14 +240,14 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 					Line:   t.Line, // TODO: tmpExp.GetLine()
 					CharAt: tmpExp.GetCharAt(),
 				}
-			} else if maexp.PropertyIdentifier.Name == "" && maexp.PropertyExpression == nil {
-				return nil, 0, fmt.Errorf("TODO")
-			} else {
+			} else if maexp.Property != nil {
 				maexp = &MemberAccessExpression{
 					Object: maexp,
 					Line:   maexp.Line,
 					CharAt: maexp.CharAt,
 				}
+			} else {
+				return nil, 0, fmt.Errorf("TODO")
 			}
 		} else if t.IsOperatorSymbol() {
 			op := operator.Operator{
@@ -242,6 +258,9 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 			if bexp == nil {
 				if tmpExp == nil {
 					return nil, 0, fmt.Errorf("TODO")
+				}
+				if tmpExp == maexp {
+					maexp = nil
 				}
 				bexp = &BinaryExpression{
 					Left:     tmpExp,
@@ -268,7 +287,11 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 			openParen++
 		} else if t.Value == ")" {
 			// TODO: handle function call
-			if bexp != nil {
+			if openParen >= len(bexpsAfterGroup) {
+				// if openParen is increased by some exp like (a)
+				// TODO: check if not function call
+				openParen--
+			} else if bexp != nil {
 				if len(bexpsAfterGroup) > 0 {
 					lastBexpAfterGroup, i := getLastBexpAfterGroup(bexpsAfterGroup, true)
 					if bexpBeforeGroup, ok := lastBexpAfterGroup.Left.(*BinaryExpression); ok {

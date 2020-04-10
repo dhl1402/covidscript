@@ -126,12 +126,11 @@ func (e CallExpression) GetCharAt() int {
 }
 
 type MemberAccessExpression struct {
-	Object             Expression
-	PropertyIdentifier Identifier
-	PropertyExpression Expression
-	Computed           bool
-	Line               int
-	CharAt             int
+	Object   Expression
+	Property Expression
+	Computed bool
+	Line     int
+	CharAt   int
 }
 
 func (e MemberAccessExpression) Evaluate() Expression {
