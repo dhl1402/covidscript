@@ -129,8 +129,12 @@ func parseVariableInitialization(tokens []lexer.Token) ([]Expression, int, error
 	return exps, i, nil
 }
 
+// TODO: function, method, shorthand, compute
 func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
-	obj := ObjectExpression{
+	if len(tokens) == 0 || tokens[0].Value != "{" {
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	obj := &ObjectExpression{
 		Line:   tokens[0].Line,
 		CharAt: tokens[0].CharAt,
 	}
@@ -139,7 +143,18 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 	for i = 1; i < len(tokens); i++ { // skip first '{'
 		t := tokens[i]
 		pt := tokens[i-1]
-		if t.Value == ":" || t.Value == "," {
+		var nt *lexer.Token
+		if i+1 < len(tokens) {
+			nt = &tokens[i+1]
+		}
+		if t.Value == "," {
+			if prop != nil || !nt.IsIdentifier() { // TODO: or !compute prop key
+				return nil, 0, fmt.Errorf("TODO")
+			}
+			if nt.Value == "}" {
+				i++
+				break
+			}
 			continue
 		}
 		if prop == nil && pt.Value == "{" || pt.Value == "," {
@@ -150,32 +165,38 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 						Line:   t.Line,
 						CharAt: t.CharAt,
 					},
+					Line:   t.Line,
+					CharAt: t.CharAt,
 				}
 			} else if t.Value == "[" {
-
+				// TODO: handle compute property key
 			} else {
 				return nil, 0, fmt.Errorf("TODO")
 			}
-		} else if prop != nil && pt.Value == ":" {
-			exp, processed, err := parseExpression(tokens[i:])
+		} else if prop != nil && t.Value == ":" {
+			exp, processed, err := parseExpression(tokens[i+1:])
 			if err != nil {
 				return nil, 0, err
 			}
-			i = i + processed - 1
+			i = i + processed
 			prop.Value = exp
 			obj.Properties = append(obj.Properties, *prop)
 			prop = nil
-		} else {
-			i--
+		} else if t.Value == "}" {
 			break
+		} else {
+			return nil, 0, fmt.Errorf("TODO")
 		}
 	}
-	return obj, i, nil
+	return obj, i + 1, nil
 }
 
 // primitive, object, array, function, function call, binary expression, object property, array element, identifier
 // identifier: variable expression, binary expression, call expression, member access exression(array, object)
 func parseExpression(tokens []lexer.Token) (Expression, int, error) {
+	if len(tokens) == 0 {
+		return nil, 0, fmt.Errorf("TODO")
+	}
 	var tmpExp Expression
 	var bexp *BinaryExpression
 	var lastBexp *BinaryExpression
@@ -313,6 +334,8 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 			}
 		} else if t.Value == "{" {
 			return parseObjectExpression(tokens)
+		} else {
+			break
 		}
 	}
 	if bexp != nil {

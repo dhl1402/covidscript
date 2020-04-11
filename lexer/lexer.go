@@ -5,7 +5,6 @@ import (
 )
 
 // todo: lex float, :=
-
 // Lex source code into tokens
 func Lex(sc string) (tokens []Token) {
 	tmp := ""

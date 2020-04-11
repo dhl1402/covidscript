@@ -12,7 +12,7 @@ func IsReservedKeyword(s string) bool {
 }
 
 func IsSpecialChars(s string) bool {
-	ss := []string{"=", ":", ",", ".", "(", ")", "{", "}", "[", "]", "\"", "'", "`", "+", "-", "*", "/", "%"}
+	ss := []string{"=", ":", ",", ".", "(", ")", "{", "}", "[", "]", "\"", "'", "`", "+", "-", "*", "/", "%", ";"}
 	return utils.IncludeStr(ss, s)
 }
 

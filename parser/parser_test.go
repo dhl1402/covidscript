@@ -3242,3 +3242,332 @@ func TestParseExpression_Precedence(t *testing.T) {
 		})
 	}
 }
+
+func TestParseExpression_Object(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want Expression
+	}{
+		{
+			name: "parse object expression {a:1,b:2}",
+			in:   "{a:1,b:2}",
+			want: &ObjectExpression{
+				Properties: []ObjectProperty{
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "a",
+							Line:   1,
+							CharAt: 2,
+						},
+						Value: &LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 6,
+						},
+						Value: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 8,
+						},
+						Line:   1,
+						CharAt: 6,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression {a:{c:1},b:2}",
+			in:   "{a:{c:1},b:2}",
+			want: &ObjectExpression{
+				Properties: []ObjectProperty{
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "a",
+							Line:   1,
+							CharAt: 2,
+						},
+						Value: &ObjectExpression{
+							Properties: []ObjectProperty{
+								ObjectProperty{
+									KeyIdentifier: Identifier{
+										Name:   "c",
+										Line:   1,
+										CharAt: 5,
+									},
+									Value: &LiteralExpression{
+										Type:   "number",
+										Value:  "1",
+										Line:   1,
+										CharAt: 7,
+									},
+									Line:   1,
+									CharAt: 5,
+								},
+							},
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 10,
+						},
+						Value: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 12,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression {a:{c:1},b:{d:2}}",
+			in:   "{a:{c:1},b:{d:2}}",
+			want: &ObjectExpression{
+				Properties: []ObjectProperty{
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "a",
+							Line:   1,
+							CharAt: 2,
+						},
+						Value: &ObjectExpression{
+							Properties: []ObjectProperty{
+								ObjectProperty{
+									KeyIdentifier: Identifier{
+										Name:   "c",
+										Line:   1,
+										CharAt: 5,
+									},
+									Value: &LiteralExpression{
+										Type:   "number",
+										Value:  "1",
+										Line:   1,
+										CharAt: 7,
+									},
+									Line:   1,
+									CharAt: 5,
+								},
+							},
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 10,
+						},
+						Value: &ObjectExpression{
+							Properties: []ObjectProperty{
+								ObjectProperty{
+									KeyIdentifier: Identifier{
+										Name:   "d",
+										Line:   1,
+										CharAt: 13,
+									},
+									Value: &LiteralExpression{
+										Type:   "number",
+										Value:  "2",
+										Line:   1,
+										CharAt: 15,
+									},
+									Line:   1,
+									CharAt: 13,
+								},
+							},
+							Line:   1,
+							CharAt: 12,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression {a:{c:1},b:{d:2}}",
+			in: `{
+				   a:{c:1+a.b*2+c.d+3},
+				   b:{d:2}
+				 }`,
+			want: &ObjectExpression{
+				Properties: []ObjectProperty{
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "a",
+							Line:   2,
+							CharAt: 1,
+						},
+						Value: &ObjectExpression{
+							Properties: []ObjectProperty{
+								ObjectProperty{
+									KeyIdentifier: Identifier{
+										Name:   "c",
+										Line:   2,
+										CharAt: 4,
+									},
+									Value: &BinaryExpression{
+										Left: &BinaryExpression{
+											Left: &BinaryExpression{
+												Left: &LiteralExpression{
+													Type:   "number",
+													Value:  "1",
+													Line:   2,
+													CharAt: 6,
+												},
+												Right: &BinaryExpression{
+													Left: &MemberAccessExpression{
+														Object: &VariableExpression{
+															Name:   "a",
+															Line:   2,
+															CharAt: 8,
+														},
+														Property: &VariableExpression{
+															Name:   "b",
+															Line:   2,
+															CharAt: 10,
+														},
+														Line:   2,
+														CharAt: 8,
+													},
+													Right: &LiteralExpression{
+														Type:   "number",
+														Value:  "2",
+														Line:   2,
+														CharAt: 12,
+													},
+													Operator: operator.Operator{
+														Symbol: "*",
+														Line:   2,
+														CharAt: 11,
+													},
+													Line:   2,
+													CharAt: 8,
+												},
+												Operator: operator.Operator{
+													Symbol: "+",
+													Line:   2,
+													CharAt: 7,
+												},
+												Line:   2,
+												CharAt: 6,
+											},
+											Right: &MemberAccessExpression{
+												Object: &VariableExpression{
+													Name:   "c",
+													Line:   2,
+													CharAt: 14,
+												},
+												Property: &VariableExpression{
+													Name:   "d",
+													Line:   2,
+													CharAt: 16,
+												},
+												Line:   2,
+												CharAt: 14,
+											},
+											Operator: operator.Operator{
+												Symbol: "+",
+												Line:   2,
+												CharAt: 13,
+											},
+											Line:   2,
+											CharAt: 6,
+										},
+										Right: &LiteralExpression{
+											Type:   "number",
+											Value:  "3",
+											Line:   2,
+											CharAt: 18,
+										},
+										Operator: operator.Operator{
+											Symbol: "+",
+											Line:   2,
+											CharAt: 17,
+										},
+										Line:   2,
+										CharAt: 6,
+									},
+									Line:   2,
+									CharAt: 4,
+								},
+							},
+							Line:   2,
+							CharAt: 3,
+						},
+						Line:   2,
+						CharAt: 1,
+					},
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "b",
+							Line:   3,
+							CharAt: 1,
+						},
+						Value: &ObjectExpression{
+							Properties: []ObjectProperty{
+								ObjectProperty{
+									KeyIdentifier: Identifier{
+										Name:   "d",
+										Line:   3,
+										CharAt: 4,
+									},
+									Value: &LiteralExpression{
+										Type:   "number",
+										Value:  "2",
+										Line:   3,
+										CharAt: 6,
+									},
+									Line:   3,
+									CharAt: 4,
+								},
+							},
+							Line:   3,
+							CharAt: 3,
+						},
+						Line:   3,
+						CharAt: 1,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, exp)
+		})
+	}
+}
