@@ -135,8 +135,9 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 		return nil, 0, fmt.Errorf("TODO")
 	}
 	obj := &ObjectExpression{
-		Line:   tokens[0].Line,
-		CharAt: tokens[0].CharAt,
+		Properties: []ObjectProperty{},
+		Line:       tokens[0].Line,
+		CharAt:     tokens[0].CharAt,
 	}
 	var prop *ObjectProperty
 	var i int
@@ -146,6 +147,9 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 		var nt *lexer.Token
 		if i+1 < len(tokens) {
 			nt = &tokens[i+1]
+		}
+		if t.Value == "}" {
+			break
 		}
 		if t.Value == "," {
 			if prop != nil || !nt.IsIdentifier() { // TODO: or !compute prop key
@@ -182,13 +186,52 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 			prop.Value = exp
 			obj.Properties = append(obj.Properties, *prop)
 			prop = nil
-		} else if t.Value == "}" {
-			break
 		} else {
 			return nil, 0, fmt.Errorf("TODO")
 		}
 	}
 	return obj, i + 1, nil
+}
+
+func parseArrayExpression(tokens []lexer.Token) (Expression, int, error) {
+	if len(tokens) == 0 || tokens[0].Value != "[" {
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	arr := &ArrayExpression{
+		Elements: []Expression{},
+		Line:     tokens[0].Line,
+		CharAt:   tokens[0].CharAt,
+	}
+	var i int
+	for i = 1; i < len(tokens); i++ { // skip first '['
+		t := tokens[i]
+		pt := tokens[i-1]
+		var nt *lexer.Token
+		if i+1 < len(tokens) {
+			nt = &tokens[i+1]
+		}
+		if t.Value == "]" {
+			break
+		}
+		if t.Value == "," {
+			if nt.Value == "]" {
+				i++
+				break
+			}
+			continue
+		}
+		if pt.Value == "[" || pt.Value == "," {
+			exp, processed, err := parseExpression(tokens[i:])
+			if err != nil {
+				return nil, 0, err
+			}
+			arr.Elements = append(arr.Elements, exp)
+			i = i + processed - 1
+		} else {
+			return nil, 0, fmt.Errorf("TODO")
+		}
+	}
+	return arr, i + 1, nil
 }
 
 // primitive, object, array, function, function call, binary expression, object property, array element, identifier
@@ -334,6 +377,8 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 			}
 		} else if t.Value == "{" {
 			return parseObjectExpression(tokens)
+		} else if t.Value == "[" {
+			return parseArrayExpression(tokens)
 		} else {
 			break
 		}

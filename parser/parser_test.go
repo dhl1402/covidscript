@@ -3250,6 +3250,15 @@ func TestParseExpression_Object(t *testing.T) {
 		want Expression
 	}{
 		{
+			name: "parse object expression {}",
+			in:   "{}",
+			want: &ObjectExpression{
+				Properties: []ObjectProperty{},
+				Line:       1,
+				CharAt:     1,
+			},
+		},
+		{
 			name: "parse object expression {a:1,b:2}",
 			in:   "{a:1,b:2}",
 			want: &ObjectExpression{
@@ -3557,6 +3566,311 @@ func TestParseExpression_Object(t *testing.T) {
 						},
 						Line:   3,
 						CharAt: 1,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression {a:{c:1},b:[2,3]}",
+			in:   "{a:{c:1},b:[2,3]}",
+			want: &ObjectExpression{
+				Properties: []ObjectProperty{
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "a",
+							Line:   1,
+							CharAt: 2,
+						},
+						Value: &ObjectExpression{
+							Properties: []ObjectProperty{
+								ObjectProperty{
+									KeyIdentifier: Identifier{
+										Name:   "c",
+										Line:   1,
+										CharAt: 5,
+									},
+									Value: &LiteralExpression{
+										Type:   "number",
+										Value:  "1",
+										Line:   1,
+										CharAt: 7,
+									},
+									Line:   1,
+									CharAt: 5,
+								},
+							},
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 10,
+						},
+						Value: &ArrayExpression{
+							Elements: []Expression{
+								&LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   1,
+									CharAt: 13,
+								},
+								&LiteralExpression{
+									Type:   "number",
+									Value:  "3",
+									Line:   1,
+									CharAt: 15,
+								},
+							},
+							Line:   1,
+							CharAt: 12,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, exp)
+		})
+	}
+}
+
+func TestParseExpression_Array(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want Expression
+	}{
+		{
+			name: "parse object expression []",
+			in:   "[]",
+			want: &ArrayExpression{
+				Elements: []Expression{},
+				Line:     1,
+				CharAt:   1,
+			},
+		},
+		{
+			name: "parse object expression [1,a]",
+			in:   "[1,a]",
+			want: &ArrayExpression{
+				Elements: []Expression{
+					&LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 2,
+					},
+					&VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 4,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression [1,[a,b]]",
+			in:   "[1,[a,b]]",
+			want: &ArrayExpression{
+				Elements: []Expression{
+					&LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 2,
+					},
+					&ArrayExpression{
+						Elements: []Expression{
+							&VariableExpression{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							&VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 7,
+							},
+						},
+						Line:   1,
+						CharAt: 4,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression [1,[a,b]]",
+			in:   "[1,{a:1,b:2}]",
+			want: &ArrayExpression{
+				Elements: []Expression{
+					&LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 2,
+					},
+					&ObjectExpression{
+						Properties: []ObjectProperty{
+							ObjectProperty{
+								KeyIdentifier: Identifier{
+									Name:   "a",
+									Line:   1,
+									CharAt: 5,
+								},
+								Value: &LiteralExpression{
+									Type:   "number",
+									Value:  "1",
+									Line:   1,
+									CharAt: 7,
+								},
+								Line:   1,
+								CharAt: 5,
+							},
+							ObjectProperty{
+								KeyIdentifier: Identifier{
+									Name:   "b",
+									Line:   1,
+									CharAt: 9,
+								},
+								Value: &LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   1,
+									CharAt: 11,
+								},
+								Line:   1,
+								CharAt: 9,
+							},
+						},
+						Line:   1,
+						CharAt: 4,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression [1,[a,1+a.b*2+c.d+3]]",
+			in:   "[1,[a,1+a.b*2+c.d+3]]",
+			want: &ArrayExpression{
+				Elements: []Expression{
+					&LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 2,
+					},
+					&ArrayExpression{
+						Elements: []Expression{
+							&VariableExpression{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							&BinaryExpression{
+								Left: &BinaryExpression{
+									Left: &BinaryExpression{
+										Left: &LiteralExpression{
+											Type:   "number",
+											Value:  "1",
+											Line:   1,
+											CharAt: 7,
+										},
+										Right: &BinaryExpression{
+											Left: &MemberAccessExpression{
+												Object: &VariableExpression{
+													Name:   "a",
+													Line:   1,
+													CharAt: 9,
+												},
+												Property: &VariableExpression{
+													Name:   "b",
+													Line:   1,
+													CharAt: 11,
+												},
+												Line:   1,
+												CharAt: 9,
+											},
+											Right: &LiteralExpression{
+												Type:   "number",
+												Value:  "2",
+												Line:   1,
+												CharAt: 13,
+											},
+											Operator: operator.Operator{
+												Symbol: "*",
+												Line:   1,
+												CharAt: 12,
+											},
+											Line:   1,
+											CharAt: 9,
+										},
+										Operator: operator.Operator{
+											Symbol: "+",
+											Line:   1,
+											CharAt: 8,
+										},
+										Line:   1,
+										CharAt: 7,
+									},
+									Right: &MemberAccessExpression{
+										Object: &VariableExpression{
+											Name:   "c",
+											Line:   1,
+											CharAt: 15,
+										},
+										Property: &VariableExpression{
+											Name:   "d",
+											Line:   1,
+											CharAt: 17,
+										},
+										Line:   1,
+										CharAt: 15,
+									},
+									Operator: operator.Operator{
+										Symbol: "+",
+										Line:   1,
+										CharAt: 14,
+									},
+									Line:   1,
+									CharAt: 7,
+								},
+								Right: &LiteralExpression{
+									Type:   "number",
+									Value:  "3",
+									Line:   1,
+									CharAt: 19,
+								},
+								Operator: operator.Operator{
+									Symbol: "+",
+									Line:   1,
+									CharAt: 18,
+								},
+								Line:   1,
+								CharAt: 7,
+							},
+						},
+						Line:   1,
+						CharAt: 4,
 					},
 				},
 				Line:   1,
