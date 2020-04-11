@@ -3299,6 +3299,61 @@ func TestParseExpression_Object(t *testing.T) {
 			},
 		},
 		{
+			name: "parse object expression {[a+b]:1,c:2}",
+			in:   "{[a+b]:1,c:2}",
+			want: &ObjectExpression{
+				Properties: []ObjectProperty{
+					ObjectProperty{
+						KeyExpression: &BinaryExpression{
+							Left: &VariableExpression{
+								Name:   "a",
+								Line:   1,
+								CharAt: 3,
+							},
+							Right: &VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 5,
+							},
+							Operator: operator.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 4,
+							},
+							Line:   1,
+							CharAt: 3,
+						},
+						Value: &LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 8,
+						},
+						Computed: true,
+						Line:     1,
+						CharAt:   2,
+					},
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "c",
+							Line:   1,
+							CharAt: 10,
+						},
+						Value: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 12,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
 			name: "parse object expression {a:{c:1},b:2}",
 			in:   "{a:{c:1},b:2}",
 			want: &ObjectExpression{

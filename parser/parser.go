@@ -162,18 +162,29 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 			continue
 		}
 		if prop == nil && pt.Value == "{" || pt.Value == "," {
+			prop = &ObjectProperty{
+				Line:   t.Line,
+				CharAt: t.CharAt,
+			}
 			if t.IsIdentifier() {
-				prop = &ObjectProperty{
-					KeyIdentifier: Identifier{
-						Name:   t.Value,
-						Line:   t.Line,
-						CharAt: t.CharAt,
-					},
+				prop.KeyIdentifier = Identifier{
+					Name:   t.Value,
 					Line:   t.Line,
 					CharAt: t.CharAt,
 				}
 			} else if t.Value == "[" {
 				// TODO: handle compute property key
+				exp, processed, err := parseArrayExpression(tokens[i:])
+				if err != nil {
+					return nil, 0, err
+				}
+				aexp, _ := exp.(*ArrayExpression)
+				if aexp == nil || len(aexp.Elements) != 1 {
+					return nil, 0, fmt.Errorf("TODO")
+				}
+				prop.KeyExpression = aexp.Elements[0]
+				prop.Computed = true
+				i = i + processed - 1
 			} else {
 				return nil, 0, fmt.Errorf("TODO")
 			}
