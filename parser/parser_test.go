@@ -13,72 +13,15 @@ func Test(t *testing.T) {
 	cases := []struct {
 		name string
 		in   string
-		want []Statement
-	}{
-		{
-			name: "parse object declaration statement",
-			in:   `var c={a:1,b:2}`,
-			want: []Statement{
-				VariableDeclaration{
-					Declarations: []VariableDeclarator{
-						VariableDeclarator{
-							ID: Identifier{
-								Name:   "c",
-								Line:   1,
-								CharAt: 5,
-							},
-							Init: &ObjectExpression{
-								Properties: []ObjectProperty{
-									ObjectProperty{
-										KeyIdentifier: Identifier{
-											Name:   "a",
-											Line:   1,
-											CharAt: 8,
-										},
-										Value: &LiteralExpression{
-											Type:   "number",
-											Value:  "1",
-											Line:   1,
-											CharAt: 10,
-										},
-										Line:   1,
-										CharAt: 8,
-									},
-									ObjectProperty{
-										KeyIdentifier: Identifier{
-											Name:   "b",
-											Line:   1,
-											CharAt: 12,
-										},
-										Value: &LiteralExpression{
-											Type:   "number",
-											Value:  "2",
-											Line:   1,
-											CharAt: 14,
-										},
-										Line:   1,
-										CharAt: 12,
-									},
-								},
-								Line:   1,
-								CharAt: 7,
-							},
-							Line:   1,
-							CharAt: 5,
-						},
-					},
-					Line:   1,
-					CharAt: 1,
-				},
-			},
-		},
-	}
+		want Expression
+		// want []Statement
+	}{}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			// exp, _, _ := parseExpression(lexer.Lex(tt.in))
-			// require.Equal(t, tt.want, exp)
-			ast, _ := ToAST(lexer.Lex(tt.in))
-			require.Equal(t, tt.want, ast)
+			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, exp)
+			// ast, _ := ToAST(lexer.Lex(tt.in))
+			// require.Equal(t, tt.want, ast)
 		})
 	}
 }
@@ -154,45 +97,6 @@ func TestParseExpression(t *testing.T) {
 				CharAt: 1,
 			},
 		},
-		// {
-		// 	name: "parse object expression",
-		// 	in: `{
-		// 			a: 1,
-		// 			b: 2,
-		// 		 }`,
-		// 	want: ObjectExpression{
-		// 		Properties: []ObjectProperty{
-		// 			ObjectProperty{
-		// 				KeyIdentifier: Identifier{
-		// 					Name:   "a",
-		// 					Line:   2,
-		// 					CharAt: 1,
-		// 				},
-		// 				Value: &LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "1",
-		// 					Line:   2,
-		// 					CharAt: 4,
-		// 				},
-		// 				Computed: false,
-		// 			},
-		// 			ObjectProperty{
-		// 				KeyIdentifier: Identifier{
-		// 					Name:   "b",
-		// 					Line:   3,
-		// 					CharAt: 1,
-		// 				},
-		// 				Value: &LiteralExpression{
-		// 					Type:   "number",
-		// 					Value:  "2",
-		// 					Line:   3,
-		// 					CharAt: 4,
-		// 				},
-		// 				Computed: false,
-		// 			},
-		// 		},
-		// 	},
-		// },
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {

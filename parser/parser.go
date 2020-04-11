@@ -134,12 +134,12 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 			break
 		}
 		if t.Value == "," {
-			if prop != nil || !nt.IsIdentifier() { // TODO: or !compute prop key
-				return nil, 0, fmt.Errorf("TODO")
-			}
 			if nt.Value == "}" {
 				i++
 				break
+			}
+			if prop != nil || !nt.IsIdentifier() { // TODO: or !compute prop key
+				return nil, 0, fmt.Errorf("TODO")
 			}
 			continue
 		}
