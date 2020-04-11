@@ -128,7 +128,6 @@ func (e CallExpression) GetCharAt() int {
 type MemberAccessExpression struct {
 	Object   Expression
 	Property Expression
-	Computed bool
 	Line     int
 	CharAt   int
 }

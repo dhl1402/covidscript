@@ -2024,7 +2024,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			},
 		},
 		{
-			name: "parse member access expression (a.b).c",
+			name: "parse member access expression a.b.c",
 			in:   "a.b.c",
 			want: &MemberAccessExpression{
 				Object: &MemberAccessExpression{
@@ -2051,7 +2051,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			},
 		},
 		{
-			name: "parse member access expression (a.b).c",
+			name: "parse member access expression ((a.b)).c",
 			in:   "((a.b)).c",
 			want: &MemberAccessExpression{
 				Object: &MemberAccessExpression{
@@ -3694,6 +3694,61 @@ func TestParseExpression_Object(t *testing.T) {
 				CharAt: 1,
 			},
 		},
+		{
+			name: "parse binary expression 1+({a:1,b:2})",
+			in:   "1+({a:1,b:2})",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &ObjectExpression{
+					Properties: []ObjectProperty{
+						ObjectProperty{
+							KeyIdentifier: Identifier{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							Value: &LiteralExpression{
+								Type:   "number",
+								Value:  "1",
+								Line:   1,
+								CharAt: 7,
+							},
+							Line:   1,
+							CharAt: 5,
+						},
+						ObjectProperty{
+							KeyIdentifier: Identifier{
+								Name:   "b",
+								Line:   1,
+								CharAt: 9,
+							},
+							Value: &LiteralExpression{
+								Type:   "number",
+								Value:  "2",
+								Line:   1,
+								CharAt: 11,
+							},
+							Line:   1,
+							CharAt: 9,
+						},
+					},
+					Line:   1,
+					CharAt: 4,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
@@ -3927,6 +3982,517 @@ func TestParseExpression_Array(t *testing.T) {
 						Line:   1,
 						CharAt: 4,
 					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression a+([b])",
+			in:   "a+([b])",
+			want: &BinaryExpression{
+				Left: &VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &ArrayExpression{
+					Elements: []Expression{
+						&VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 5,
+						},
+					},
+					Line:   1,
+					CharAt: 4,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse member access expression a[b]",
+			in:   "a[b]",
+			want: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				Property: &VariableExpression{
+					Name:   "b",
+					Line:   1,
+					CharAt: 3,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse member access expression a[b][c]",
+			in:   "a[b][c]",
+			want: &MemberAccessExpression{
+				Object: &MemberAccessExpression{
+					Object: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					Property: &VariableExpression{
+						Name:   "b",
+						Line:   1,
+						CharAt: 3,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Property: &VariableExpression{
+					Name:   "c",
+					Line:   1,
+					CharAt: 6,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse member access expression ((a[b]))[c]",
+			in:   "((a[b]))[c]",
+			want: &MemberAccessExpression{
+				Object: &MemberAccessExpression{
+					Object: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 3,
+					},
+					Property: &VariableExpression{
+						Name:   "b",
+						Line:   1,
+						CharAt: 5,
+					},
+					Line:   1,
+					CharAt: 3,
+				},
+				Property: &VariableExpression{
+					Name:   "c",
+					Line:   1,
+					CharAt: 10,
+				},
+				Line:   1,
+				CharAt: 3,
+			},
+		},
+		{
+			name: "parse member access expression a.b[c]",
+			in:   "a.b[c]",
+			want: &MemberAccessExpression{
+				Object: &MemberAccessExpression{
+					Object: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					Property: &VariableExpression{
+						Name:   "b",
+						Line:   1,
+						CharAt: 3,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Property: &VariableExpression{
+					Name:   "c",
+					Line:   1,
+					CharAt: 5,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse member access expression (a.b)[c]",
+			in:   "(a.b)[c]",
+			want: &MemberAccessExpression{
+				Object: &MemberAccessExpression{
+					Object: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 2,
+					},
+					Property: &VariableExpression{
+						Name:   "b",
+						Line:   1,
+						CharAt: 4,
+					},
+					Line:   1,
+					CharAt: 2,
+				},
+				Property: &VariableExpression{
+					Name:   "c",
+					Line:   1,
+					CharAt: 7,
+				},
+				Line:   1,
+				CharAt: 2,
+			},
+		},
+		{
+			name: "parse member access expression a[b[c]]",
+			in:   "a[b[c]]",
+			want: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				Property: &MemberAccessExpression{
+					Object: &VariableExpression{
+						Name:   "b",
+						Line:   1,
+						CharAt: 3,
+					},
+					Property: &VariableExpression{
+						Name:   "c",
+						Line:   1,
+						CharAt: 5,
+					},
+					Line:   1,
+					CharAt: 3,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression a[b[c]]+1",
+			in:   "a[b[c]]+1",
+			want: &BinaryExpression{
+				Left: &MemberAccessExpression{
+					Object: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					Property: &MemberAccessExpression{
+						Object: &VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 3,
+						},
+						Property: &VariableExpression{
+							Name:   "c",
+							Line:   1,
+							CharAt: 5,
+						},
+						Line:   1,
+						CharAt: 3,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 9,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 8,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+a[b[c]]",
+			in:   "1+a[b[c]]",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &MemberAccessExpression{
+					Object: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 3,
+					},
+					Property: &MemberAccessExpression{
+						Object: &VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 5,
+						},
+						Property: &VariableExpression{
+							Name:   "c",
+							Line:   1,
+							CharAt: 7,
+						},
+						Line:   1,
+						CharAt: 5,
+					},
+					Line:   1,
+					CharAt: 3,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+a[b[c]]+2",
+			in:   "1+a[b[c]]+2",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &MemberAccessExpression{
+						Object: &VariableExpression{
+							Name:   "a",
+							Line:   1,
+							CharAt: 3,
+						},
+						Property: &MemberAccessExpression{
+							Object: &VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 5,
+							},
+							Property: &VariableExpression{
+								Name:   "c",
+								Line:   1,
+								CharAt: 7,
+							},
+							Line:   1,
+							CharAt: 5,
+						},
+						Line:   1,
+						CharAt: 3,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 2,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "2",
+					Line:   1,
+					CharAt: 11,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 10,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+a[b[c]]*2",
+			in:   "1+a[b[c]]*2",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &BinaryExpression{
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "2",
+						Line:   1,
+						CharAt: 11,
+					},
+					Left: &MemberAccessExpression{
+						Object: &VariableExpression{
+							Name:   "a",
+							Line:   1,
+							CharAt: 3,
+						},
+						Property: &MemberAccessExpression{
+							Object: &VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 5,
+							},
+							Property: &VariableExpression{
+								Name:   "c",
+								Line:   1,
+								CharAt: 7,
+							},
+							Line:   1,
+							CharAt: 5,
+						},
+						Line:   1,
+						CharAt: 3,
+					},
+					Operator: operator.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 10,
+					},
+					Line:   1,
+					CharAt: 3,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+((a[b[c]])+2)",
+			in:   "1+((a[b[c]])+2)",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &BinaryExpression{
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "2",
+						Line:   1,
+						CharAt: 14,
+					},
+					Left: &MemberAccessExpression{
+						Object: &VariableExpression{
+							Name:   "a",
+							Line:   1,
+							CharAt: 5,
+						},
+						Property: &MemberAccessExpression{
+							Object: &VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 7,
+							},
+							Property: &VariableExpression{
+								Name:   "c",
+								Line:   1,
+								CharAt: 9,
+							},
+							Line:   1,
+							CharAt: 7,
+						},
+						Line:   1,
+						CharAt: 5,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 13,
+					},
+					Group:  true,
+					Line:   1,
+					CharAt: 5,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+((a[b[c]])+2)*3",
+			in:   "1+((a[b[c]])+2)*3",
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &BinaryExpression{
+					Left: &BinaryExpression{
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 14,
+						},
+						Left: &MemberAccessExpression{
+							Object: &VariableExpression{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							Property: &MemberAccessExpression{
+								Object: &VariableExpression{
+									Name:   "b",
+									Line:   1,
+									CharAt: 7,
+								},
+								Property: &VariableExpression{
+									Name:   "c",
+									Line:   1,
+									CharAt: 9,
+								},
+								Line:   1,
+								CharAt: 7,
+							},
+							Line:   1,
+							CharAt: 5,
+						},
+						Operator: operator.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 13,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 5,
+					},
+					Right: &LiteralExpression{
+						Type:   "number",
+						Value:  "3",
+						Line:   1,
+						CharAt: 17,
+					},
+					Operator: operator.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 16,
+					},
+					Line:   1,
+					CharAt: 5,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
 				},
 				Line:   1,
 				CharAt: 1,
