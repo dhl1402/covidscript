@@ -13,44 +13,117 @@ func Test(t *testing.T) {
 	cases := []struct {
 		name string
 		in   string
-		// want Expression
-		want []Statement
+		want Expression
+		// want []Statement
 	}{
 		{
-			name: "",
-			in:   `func a(b,c){}`,
-			want: []Statement{
-				FunctionDeclaration{
-					ID: Identifier{
-						Name:   "a",
+			name: "parse function #4",
+			in: `func (b,c){
+					var a,b=1
+					var c=2
+					return a+b
+				 }`,
+			want: &FunctionExpression{
+				Params: []Identifier{
+					Identifier{
+						Name:   "b",
 						Line:   1,
-						CharAt: 6,
+						CharAt: 8,
 					},
-					Params: []Identifier{
-						Identifier{
-							Name:   "b",
-							Line:   1,
+					Identifier{
+						Name:   "c",
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Body: []Statement{
+					VariableDeclaration{
+						Declarations: []VariableDeclarator{
+							VariableDeclarator{
+								ID: Identifier{
+									Name:   "a",
+									Line:   2,
+									CharAt: 5,
+								},
+								Init: &LiteralExpression{
+									Type:   "number",
+									Value:  "1",
+									Line:   2,
+									CharAt: 9,
+								},
+								Line:   2,
+								CharAt: 5,
+							},
+							VariableDeclarator{
+								ID: Identifier{
+									Name:   "b",
+									Line:   2,
+									CharAt: 7,
+								},
+								Init:   nil,
+								Line:   2,
+								CharAt: 7,
+							},
+						},
+						Line:   2,
+						CharAt: 1,
+					},
+					VariableDeclaration{
+						Declarations: []VariableDeclarator{
+							VariableDeclarator{
+								ID: Identifier{
+									Name:   "c",
+									Line:   3,
+									CharAt: 5,
+								},
+								Init: &LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   3,
+									CharAt: 7,
+								},
+								Line:   3,
+								CharAt: 5,
+							},
+						},
+						Line:   3,
+						CharAt: 1,
+					},
+					ReturnStatement{
+						Argument: &BinaryExpression{
+							Left: &VariableExpression{
+								Name:   "a",
+								Line:   4,
+								CharAt: 8,
+							},
+							Right: &VariableExpression{
+								Name:   "b",
+								Line:   4,
+								CharAt: 10,
+							},
+							Operator: operator.Operator{
+								Symbol: "+",
+								Line:   4,
+								CharAt: 9,
+							},
+							Line:   4,
 							CharAt: 8,
 						},
-						Identifier{
-							Name:   "c",
-							Line:   1,
-							CharAt: 10,
-						},
+						Line:   4,
+						CharAt: 1,
 					},
-					Body:   []Statement{},
-					Line:   1,
-					CharAt: 1,
 				},
+				Line:   1,
+				CharAt: 1,
 			},
 		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			// exp, _, _ := parseExpression(lexer.Lex(tt.in))
-			// require.Equal(t, tt.want, exp)
-			ast, _ := ToAST(lexer.Lex(tt.in))
-			require.Equal(t, tt.want, ast)
+			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, exp)
+			// ast, _ := ToAST(lexer.Lex(tt.in))
+			// require.Equal(t, tt.want, ast)
 		})
 	}
 }
@@ -4309,6 +4382,114 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 								},
 							},
 							Line:   3,
+							CharAt: 1,
+						},
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse function #4",
+			in: `func a(b,c){
+					var a,b=1
+					var c=2
+					return a+b
+				 }`,
+			want: []Statement{
+				FunctionDeclaration{
+					ID: Identifier{
+						Name:   "a",
+						Line:   1,
+						CharAt: 6,
+					},
+					Params: []Identifier{
+						Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 8,
+						},
+						Identifier{
+							Name:   "c",
+							Line:   1,
+							CharAt: 10,
+						},
+					},
+					Body: []Statement{
+						VariableDeclaration{
+							Declarations: []VariableDeclarator{
+								VariableDeclarator{
+									ID: Identifier{
+										Name:   "a",
+										Line:   2,
+										CharAt: 5,
+									},
+									Init: &LiteralExpression{
+										Type:   "number",
+										Value:  "1",
+										Line:   2,
+										CharAt: 9,
+									},
+									Line:   2,
+									CharAt: 5,
+								},
+								VariableDeclarator{
+									ID: Identifier{
+										Name:   "b",
+										Line:   2,
+										CharAt: 7,
+									},
+									Init:   nil,
+									Line:   2,
+									CharAt: 7,
+								},
+							},
+							Line:   2,
+							CharAt: 1,
+						},
+						VariableDeclaration{
+							Declarations: []VariableDeclarator{
+								VariableDeclarator{
+									ID: Identifier{
+										Name:   "c",
+										Line:   3,
+										CharAt: 5,
+									},
+									Init: &LiteralExpression{
+										Type:   "number",
+										Value:  "2",
+										Line:   3,
+										CharAt: 7,
+									},
+									Line:   3,
+									CharAt: 5,
+								},
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+						ReturnStatement{
+							Argument: &BinaryExpression{
+								Left: &VariableExpression{
+									Name:   "a",
+									Line:   4,
+									CharAt: 8,
+								},
+								Right: &VariableExpression{
+									Name:   "b",
+									Line:   4,
+									CharAt: 10,
+								},
+								Operator: operator.Operator{
+									Symbol: "+",
+									Line:   4,
+									CharAt: 9,
+								},
+								Line:   4,
+								CharAt: 8,
+							},
+							Line:   4,
 							CharAt: 1,
 						},
 					},

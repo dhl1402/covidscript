@@ -35,6 +35,15 @@ func parseStatements(tokens []lexer.Token) ([]Statement, int, error) {
 				ss = append(ss, *s)
 				i = i + processed - 1
 			}
+		case "return":
+			{
+				s, processed, err := parseReturnStatement(tokens[i:])
+				if err != nil {
+					return nil, 0, err
+				}
+				ss = append(ss, *s)
+				i = i + processed - 1
+			}
 		case "}":
 			return ss, i, nil
 		default:
@@ -77,29 +86,29 @@ func parseFunctionDeclaration(tokens []lexer.Token) (*FunctionDeclaration, int, 
 		Line:   tokens[0].Line,
 		CharAt: tokens[0].CharAt,
 	}
-	params, processed, err := parseSequentIdentifiers(tokens[i+1:])
-	i = i + processed + 1
+	params, statements, processed, err := parseFunctionParamAndBody(tokens[i:])
 	if err != nil {
 		return nil, 0, err
 	}
 	f.Params = params
-	if tokens[i].Value != ")" {
+	f.Body = statements
+	return f, i + processed, nil
+}
+
+func parseReturnStatement(tokens []lexer.Token) (*ReturnStatement, int, error) {
+	if len(tokens) == 0 {
 		return nil, 0, fmt.Errorf("TODO")
 	}
-	i++
-	if tokens[i].Value != "{" {
-		return nil, 0, fmt.Errorf("TODO")
+	r := &ReturnStatement{
+		Line:   tokens[0].Line,
+		CharAt: tokens[0].CharAt,
 	}
-	statements, processed, err := parseStatements(tokens[i+1:])
-	i = i + processed + 1
+	exp, i, err := parseExpression(tokens[1:]) // skip 'return'
 	if err != nil {
 		return nil, 0, err
 	}
-	f.Body = statements
-	if tokens[i].Value != "}" {
-		return nil, 0, fmt.Errorf("TODO")
-	}
-	return f, i + 1, nil
+	r.Argument = exp
+	return r, i + 1, nil
 }
 
 func parseVariableDeclaration(tokens []lexer.Token) (*VariableDeclaration, int, error) {
@@ -509,12 +518,53 @@ func parseArrayExpression(tokens []lexer.Token) (Expression, int, error) {
 }
 
 func parseFunctionExpression(tokens []lexer.Token) (*FunctionExpression, int, error) {
-	if len(tokens) == 0 {
+	if len(tokens) < 5 { // 6 is len of the most simple function
 		return nil, 0, fmt.Errorf("TODO")
 	}
-	f := &FunctionExpression{}
-	var i int
-	for i = 0; i < len(tokens); i++ {
+	if tokens[1].Value != "(" {
+		return nil, 0, fmt.Errorf("TODO")
 	}
-	return f, i, nil
+	i := 1
+	f := &FunctionExpression{
+		Line:   tokens[0].Line,
+		CharAt: tokens[0].CharAt,
+	}
+	params, statements, processed, err := parseFunctionParamAndBody(tokens[i:])
+	if err != nil {
+		return nil, 0, err
+	}
+	f.Params = params
+	f.Body = statements
+	return f, i + processed, nil
+}
+
+func parseFunctionParamAndBody(tokens []lexer.Token) ([]Identifier, []Statement, int, error) {
+	if len(tokens) < 4 { // (){} -> min len = 4
+		return nil, nil, 0, fmt.Errorf("TODO")
+	}
+	if tokens[0].Value != "(" {
+		return nil, nil, 0, fmt.Errorf("TODO")
+	}
+	i := 0
+	params, processed, err := parseSequentIdentifiers(tokens[i+1:])
+	i = i + processed + 1
+	if err != nil {
+		return nil, nil, 0, err
+	}
+	if tokens[i].Value != ")" {
+		return nil, nil, 0, fmt.Errorf("TODO")
+	}
+	i++
+	if tokens[i].Value != "{" {
+		return nil, nil, 0, fmt.Errorf("TODO")
+	}
+	statements, processed, err := parseStatements(tokens[i+1:])
+	i = i + processed + 1
+	if err != nil {
+		return nil, nil, 0, err
+	}
+	if tokens[i].Value != "}" {
+		return nil, nil, 0, fmt.Errorf("TODO")
+	}
+	return params, statements, i + 1, nil
 }

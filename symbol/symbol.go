@@ -7,7 +7,7 @@ import (
 // hardcoding: = , true false { } [] func
 
 func IsReservedKeyword(s string) bool {
-	ss := []string{"var", "func", "true", "false"}
+	ss := []string{"var", "func", "return", "true", "false"}
 	return utils.IncludeStr(ss, s)
 }
 
