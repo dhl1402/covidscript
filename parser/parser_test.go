@@ -16,42 +16,42 @@ func Test(t *testing.T) {
 		want Expression
 		// want []Statement
 	}{
-		{
-			name: "parse call expression #9",
-			in:   "[a[1],[2],b]",
-			want: &CallExpression{
-				Callee: &VariableExpression{
-					Name:   "a",
-					Line:   1,
-					CharAt: 1,
-				},
-				Arguments: []Expression{
-					&CallExpression{
-						Callee: &VariableExpression{
-							Name:   "b",
-							Line:   1,
-							CharAt: 3,
-						},
-						Arguments: []Expression{
-							&CallExpression{
-								Callee: &VariableExpression{
-									Name:   "c",
-									Line:   1,
-									CharAt: 5,
-								},
-								Arguments: []Expression{},
-								Line:      1,
-								CharAt:    5,
-							},
-						},
-						Line:   1,
-						CharAt: 3,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
+		// {
+		// 	name: "parse call expression #9",
+		// 	in:   "[a[1],[2],b]",
+		// 	want: &CallExpression{
+		// 		Callee: &VariableExpression{
+		// 			Name:   "a",
+		// 			Line:   1,
+		// 			CharAt: 1,
+		// 		},
+		// 		Arguments: []Expression{
+		// 			&CallExpression{
+		// 				Callee: &VariableExpression{
+		// 					Name:   "b",
+		// 					Line:   1,
+		// 					CharAt: 3,
+		// 				},
+		// 				Arguments: []Expression{
+		// 					&CallExpression{
+		// 						Callee: &VariableExpression{
+		// 							Name:   "c",
+		// 							Line:   1,
+		// 							CharAt: 5,
+		// 						},
+		// 						Arguments: []Expression{},
+		// 						Line:      1,
+		// 						CharAt:    5,
+		// 					},
+		// 				},
+		// 				Line:   1,
+		// 				CharAt: 3,
+		// 			},
+		// 		},
+		// 		Line:   1,
+		// 		CharAt: 1,
+		// 	},
+		// },
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
@@ -2485,6 +2485,128 @@ func TestParseExpression_Precedence(t *testing.T) {
 					Symbol: "+",
 					Line:   1,
 					CharAt: 12,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+((((a).b()).c)+2)+3",
+			in:   "1+((((a).b(4+(5+6)))[(func(){})()])+2)+3",
+			want: &BinaryExpression{
+				Left: &BinaryExpression{
+					Left: &LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &BinaryExpression{
+						Left: &MemberAccessExpression{
+							Object: &CallExpression{
+								Callee: &MemberAccessExpression{
+									Object: &VariableExpression{
+										Name:   "a",
+										Line:   1,
+										CharAt: 7,
+									},
+									Property: &VariableExpression{
+										Name:   "b",
+										Line:   1,
+										CharAt: 10,
+									},
+									Line:   1,
+									CharAt: 7,
+								},
+								Arguments: []Expression{
+									&BinaryExpression{
+										Left: &LiteralExpression{
+											Type:   "number",
+											Value:  "4",
+											Line:   1,
+											CharAt: 12,
+										},
+										Right: &BinaryExpression{
+											Left: &LiteralExpression{
+												Type:   "number",
+												Value:  "5",
+												Line:   1,
+												CharAt: 15,
+											},
+											Right: &LiteralExpression{
+												Type:   "number",
+												Value:  "6",
+												Line:   1,
+												CharAt: 17,
+											},
+											Operator: operator.Operator{
+												Symbol: "+",
+												Line:   1,
+												CharAt: 16,
+											},
+											Group:  true,
+											Line:   1,
+											CharAt: 15,
+										},
+										Operator: operator.Operator{
+											Symbol: "+",
+											Line:   1,
+											CharAt: 13,
+										},
+										Line:   1,
+										CharAt: 12,
+									},
+								},
+								Line:   1,
+								CharAt: 7,
+							},
+							Property: &CallExpression{
+								Callee: &FunctionExpression{
+									Params: []Identifier{},
+									Body:   []Statement{},
+									Line:   1,
+									CharAt: 23,
+								},
+								Arguments: []Expression{},
+								Line:      1,
+								CharAt:    23,
+							},
+							Line:   1,
+							CharAt: 7,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 37,
+						},
+						Operator: operator.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 36,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 7,
+					},
+					Operator: operator.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 2,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "3",
+					Line:   1,
+					CharAt: 40,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 39,
 				},
 				Line:   1,
 				CharAt: 1,
