@@ -155,7 +155,6 @@ func parseVariableDeclaration(tokens []lexer.Token) (*VariableDeclaration, int, 
 }
 
 // primitive, object, array, function, function call, binary expression, object property, array element, identifier
-// identifier: call expression
 func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 	if len(tokens) == 0 {
 		return nil, 0, fmt.Errorf("TODO")
@@ -190,9 +189,6 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 					lastBexp.Right = maexp
 					lastBexp.Group = false
 				} else if maexp == nil {
-					if tmpExp == nil {
-						return nil, 0, fmt.Errorf("TODO")
-					}
 					maexp = &MemberAccessExpression{
 						Object:   tmpExp,
 						Property: aexp.Elements[0],
@@ -295,13 +291,41 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 			}
 			tmpExp = nil
 		} else if t.Value == "(" {
-			// TODO: handle function call
 			openParen++
+			if tmpExp != nil {
+				args, processed, err := parseSequentExpressions(tokens[i+1:])
+				if err != nil {
+					return nil, 0, err
+				}
+				i = i + processed
+				if i+1 >= len(tokens) || tokens[i+1].Value != ")" {
+					return nil, 0, fmt.Errorf("TODO")
+				}
+				if lastBexp != nil {
+					tmpExp = &CallExpression{
+						Callee:    lastBexp.Right,
+						Arguments: args,
+						Line:      t.Line, // TODO: lastBexp.Right.GetLine()
+						CharAt:    lastBexp.Right.GetCharAt(),
+					}
+					lastBexp.Right = tmpExp
+					lastBexp.Group = false
+				} else {
+					tmpExp = &CallExpression{
+						Callee:    tmpExp,
+						Arguments: args,
+						Line:      t.Line, // TODO: lastBexp.Right.GetLine()
+						CharAt:    tmpExp.GetCharAt(),
+					}
+				}
+			}
 		} else if t.Value == ")" {
-			// TODO: handle function call
-			if openParen >= len(bexpsAfterGroup) {
+			if openParen == 0 && len(bexpsAfterGroup) == 0 {
+				// it means this ')' doesn't belong to current expreesion
+				break
+			}
+			if openParen > 0 && openParen >= len(bexpsAfterGroup) {
 				// if openParen is increased by some exp like (a)
-				// TODO: check if not function call
 				openParen--
 			} else if bexp != nil {
 				if len(bexpsAfterGroup) > 0 {
@@ -331,9 +355,9 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 	if bexp != nil {
 		return bexp, i, nil
 	}
-	if maexp != nil {
-		return maexp, i, nil
-	}
+	// if maexp != nil {
+	// 	return maexp, i, nil
+	// }
 	return tmpExp, i, nil
 }
 
@@ -376,6 +400,9 @@ func parseTempExpression(tokens []lexer.Token) (Expression, int, error) {
 	}
 	if t.Value == "[" {
 		return parseArrayExpression(tokens)
+	}
+	if t.Value == "func" {
+		return parseFunctionExpression(tokens)
 	}
 	return nil, 0, fmt.Errorf("TODO")
 }

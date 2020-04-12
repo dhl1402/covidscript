@@ -17,100 +17,35 @@ func Test(t *testing.T) {
 		// want []Statement
 	}{
 		{
-			name: "parse function #4",
-			in: `func (b,c){
-					var a,b=1
-					var c=2
-					return a+b
-				 }`,
-			want: &FunctionExpression{
-				Params: []Identifier{
-					Identifier{
-						Name:   "b",
-						Line:   1,
-						CharAt: 8,
-					},
-					Identifier{
-						Name:   "c",
-						Line:   1,
-						CharAt: 10,
-					},
+			name: "parse call expression #9",
+			in:   "[a[1],[2],b]",
+			want: &CallExpression{
+				Callee: &VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
 				},
-				Body: []Statement{
-					VariableDeclaration{
-						Declarations: []VariableDeclarator{
-							VariableDeclarator{
-								ID: Identifier{
-									Name:   "a",
-									Line:   2,
-									CharAt: 5,
-								},
-								Init: &LiteralExpression{
-									Type:   "number",
-									Value:  "1",
-									Line:   2,
-									CharAt: 9,
-								},
-								Line:   2,
-								CharAt: 5,
-							},
-							VariableDeclarator{
-								ID: Identifier{
-									Name:   "b",
-									Line:   2,
-									CharAt: 7,
-								},
-								Init:   nil,
-								Line:   2,
-								CharAt: 7,
-							},
+				Arguments: []Expression{
+					&CallExpression{
+						Callee: &VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 3,
 						},
-						Line:   2,
-						CharAt: 1,
-					},
-					VariableDeclaration{
-						Declarations: []VariableDeclarator{
-							VariableDeclarator{
-								ID: Identifier{
+						Arguments: []Expression{
+							&CallExpression{
+								Callee: &VariableExpression{
 									Name:   "c",
-									Line:   3,
+									Line:   1,
 									CharAt: 5,
 								},
-								Init: &LiteralExpression{
-									Type:   "number",
-									Value:  "2",
-									Line:   3,
-									CharAt: 7,
-								},
-								Line:   3,
-								CharAt: 5,
+								Arguments: []Expression{},
+								Line:      1,
+								CharAt:    5,
 							},
 						},
-						Line:   3,
-						CharAt: 1,
-					},
-					ReturnStatement{
-						Argument: &BinaryExpression{
-							Left: &VariableExpression{
-								Name:   "a",
-								Line:   4,
-								CharAt: 8,
-							},
-							Right: &VariableExpression{
-								Name:   "b",
-								Line:   4,
-								CharAt: 10,
-							},
-							Operator: operator.Operator{
-								Symbol: "+",
-								Line:   4,
-								CharAt: 9,
-							},
-							Line:   4,
-							CharAt: 8,
-						},
-						Line:   4,
-						CharAt: 1,
+						Line:   1,
+						CharAt: 3,
 					},
 				},
 				Line:   1,
@@ -3819,6 +3754,75 @@ func TestParseExpression_Array(t *testing.T) {
 				CharAt: 1,
 			},
 		},
+		{
+			name: "parse binary expression 1+(func (){})",
+			in:   `1+(func (){})`,
+			want: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &FunctionExpression{
+					Params: []Identifier{},
+					Body:   []Statement{},
+					Line:   1,
+					CharAt: 4,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression (func (){})+1",
+			in:   `(func (){})+1`,
+			want: &BinaryExpression{
+				Right: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 13,
+				},
+				Left: &FunctionExpression{
+					Params: []Identifier{},
+					Body:   []Statement{},
+					Line:   1,
+					CharAt: 2,
+				},
+				Operator: operator.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 12,
+				},
+				Line:   1,
+				CharAt: 2,
+			},
+		},
+		{
+			name: "parse member access expression (func (){}).abc",
+			in:   `(func (){}).abc`,
+			want: &MemberAccessExpression{
+				Object: &FunctionExpression{
+					Params: []Identifier{},
+					Body:   []Statement{},
+					Line:   1,
+					CharAt: 2,
+				},
+				Property: &VariableExpression{
+					Name:   "abc",
+					Line:   1,
+					CharAt: 13,
+				},
+				Line:   1,
+				CharAt: 2,
+			},
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
@@ -4503,6 +4507,484 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ast, _ := ToAST(lexer.Lex(tt.in))
 			require.Equal(t, tt.want, ast)
+		})
+	}
+}
+
+func TestParseExpression_Function(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want Expression
+	}{
+		{
+			name: "parse function expression #1",
+			in:   `func (b,c){}`,
+			want: &FunctionExpression{
+				Params: []Identifier{
+					Identifier{
+						Name:   "b",
+						Line:   1,
+						CharAt: 7,
+					},
+					Identifier{
+						Name:   "c",
+						Line:   1,
+						CharAt: 9,
+					},
+				},
+				Body:   []Statement{},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse function expression #2",
+			in: `func (b,c){
+					var a,b=1
+					var c=2
+					return a+b
+				 }`,
+			want: &FunctionExpression{
+				Params: []Identifier{
+					Identifier{
+						Name:   "b",
+						Line:   1,
+						CharAt: 7,
+					},
+					Identifier{
+						Name:   "c",
+						Line:   1,
+						CharAt: 9,
+					},
+				},
+				Body: []Statement{
+					VariableDeclaration{
+						Declarations: []VariableDeclarator{
+							VariableDeclarator{
+								ID: Identifier{
+									Name:   "a",
+									Line:   2,
+									CharAt: 5,
+								},
+								Init: &LiteralExpression{
+									Type:   "number",
+									Value:  "1",
+									Line:   2,
+									CharAt: 9,
+								},
+								Line:   2,
+								CharAt: 5,
+							},
+							VariableDeclarator{
+								ID: Identifier{
+									Name:   "b",
+									Line:   2,
+									CharAt: 7,
+								},
+								Init:   nil,
+								Line:   2,
+								CharAt: 7,
+							},
+						},
+						Line:   2,
+						CharAt: 1,
+					},
+					VariableDeclaration{
+						Declarations: []VariableDeclarator{
+							VariableDeclarator{
+								ID: Identifier{
+									Name:   "c",
+									Line:   3,
+									CharAt: 5,
+								},
+								Init: &LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   3,
+									CharAt: 7,
+								},
+								Line:   3,
+								CharAt: 5,
+							},
+						},
+						Line:   3,
+						CharAt: 1,
+					},
+					ReturnStatement{
+						Argument: &BinaryExpression{
+							Left: &VariableExpression{
+								Name:   "a",
+								Line:   4,
+								CharAt: 8,
+							},
+							Right: &VariableExpression{
+								Name:   "b",
+								Line:   4,
+								CharAt: 10,
+							},
+							Operator: operator.Operator{
+								Symbol: "+",
+								Line:   4,
+								CharAt: 9,
+							},
+							Line:   4,
+							CharAt: 8,
+						},
+						Line:   4,
+						CharAt: 1,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, exp)
+		})
+	}
+}
+
+func TestParseExpression_CallExpression(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want Expression
+	}{
+		{
+			name: "parse call expression #1",
+			in:   "a()",
+			want: &CallExpression{
+				Callee: &VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				Arguments: []Expression{},
+				Line:      1,
+				CharAt:    1,
+			},
+		},
+		{
+			name: "parse call expression #2",
+			in:   "((a))(1)",
+			want: &CallExpression{
+				Callee: &VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 3,
+				},
+				Arguments: []Expression{
+					&LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 7,
+					},
+				},
+				Line:   1,
+				CharAt: 3,
+			},
+		},
+		{
+			name: "parse call expression #3",
+			in:   "((a))(1,(2+3))",
+			want: &CallExpression{
+				Callee: &VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 3,
+				},
+				Arguments: []Expression{
+					&LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 7,
+					},
+					&BinaryExpression{
+						Left: &LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   1,
+							CharAt: 10,
+						},
+						Right: &LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   1,
+							CharAt: 12,
+						},
+						Operator: operator.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 11,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Line:   1,
+				CharAt: 3,
+			},
+		},
+		{
+			name: "parse call expression #4",
+			in:   "((a))(1,(2+3))(4)",
+			want: &CallExpression{
+				Callee: &CallExpression{
+					Callee: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 3,
+					},
+					Arguments: []Expression{
+						&LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 7,
+						},
+						&BinaryExpression{
+							Left: &LiteralExpression{
+								Type:   "number",
+								Value:  "2",
+								Line:   1,
+								CharAt: 10,
+							},
+							Right: &LiteralExpression{
+								Type:   "number",
+								Value:  "3",
+								Line:   1,
+								CharAt: 12,
+							},
+							Operator: operator.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 11,
+							},
+							Group:  true,
+							Line:   1,
+							CharAt: 10,
+						},
+					},
+					Line:   1,
+					CharAt: 3,
+				},
+				Arguments: []Expression{
+					&LiteralExpression{
+						Type:   "number",
+						Value:  "4",
+						Line:   1,
+						CharAt: 16,
+					},
+				},
+				Line:   1,
+				CharAt: 3,
+			},
+		},
+		{
+			name: "parse call expression #5",
+			in:   "((a(1,(2+3))))(4)",
+			want: &CallExpression{
+				Callee: &CallExpression{
+					Callee: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 3,
+					},
+					Arguments: []Expression{
+						&LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 5,
+						},
+						&BinaryExpression{
+							Left: &LiteralExpression{
+								Type:   "number",
+								Value:  "2",
+								Line:   1,
+								CharAt: 8,
+							},
+							Right: &LiteralExpression{
+								Type:   "number",
+								Value:  "3",
+								Line:   1,
+								CharAt: 10,
+							},
+							Operator: operator.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 9,
+							},
+							Group:  true,
+							Line:   1,
+							CharAt: 8,
+						},
+					},
+					Line:   1,
+					CharAt: 3,
+				},
+				Arguments: []Expression{
+					&LiteralExpression{
+						Type:   "number",
+						Value:  "4",
+						Line:   1,
+						CharAt: 16,
+					},
+				},
+				Line:   1,
+				CharAt: 3,
+			},
+		},
+		{
+			name: "parse call expression #6",
+			in:   "a[1](2)",
+			want: &CallExpression{
+				Callee: &MemberAccessExpression{
+					Object: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					Property: &LiteralExpression{
+						Type:   "number",
+						Value:  "1",
+						Line:   1,
+						CharAt: 3,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Arguments: []Expression{
+					&LiteralExpression{
+						Type:   "number",
+						Value:  "2",
+						Line:   1,
+						CharAt: 6,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse call expression #7",
+			in:   "[a,b(a),c]",
+			want: &ArrayExpression{
+				Elements: []Expression{
+					&VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 2,
+					},
+					&CallExpression{
+						Callee: &VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 4,
+						},
+						Arguments: []Expression{
+							&VariableExpression{
+								Name:   "a",
+								Line:   1,
+								CharAt: 6,
+							},
+						},
+						Line:   1,
+						CharAt: 4,
+					},
+					&VariableExpression{
+						Name:   "c",
+						Line:   1,
+						CharAt: 9,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse call expression #8",
+			in:   "{a:b(a)}",
+			want: &ObjectExpression{
+				Properties: []ObjectProperty{
+					ObjectProperty{
+						KeyIdentifier: Identifier{
+							Name:   "a",
+							Line:   1,
+							CharAt: 2,
+						},
+						Value: &CallExpression{
+							Callee: &VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 4,
+							},
+							Arguments: []Expression{
+								&VariableExpression{
+									Name:   "a",
+									Line:   1,
+									CharAt: 6,
+								},
+							},
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse call expression #9",
+			in:   "a(b(c()))",
+			want: &CallExpression{
+				Callee: &VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				Arguments: []Expression{
+					&CallExpression{
+						Callee: &VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 3,
+						},
+						Arguments: []Expression{
+							&CallExpression{
+								Callee: &VariableExpression{
+									Name:   "c",
+									Line:   1,
+									CharAt: 5,
+								},
+								Arguments: []Expression{},
+								Line:      1,
+								CharAt:    5,
+							},
+						},
+						Line:   1,
+						CharAt: 3,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, exp)
 		})
 	}
 }
