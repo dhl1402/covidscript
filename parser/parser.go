@@ -53,7 +53,7 @@ func parseStatements(tokens []lexer.Token) ([]Statement, int, error) {
 					return nil, 0, err
 				}
 				if e != nil {
-					ss = append(ss, &ExpressionStatement{
+					ss = append(ss, ExpressionStatement{
 						Expression: e,
 						Line:       1, // TODO e.GetLine()
 						CharAt:     e.GetCharAt(),

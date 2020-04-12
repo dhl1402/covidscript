@@ -13,52 +13,21 @@ func Test(t *testing.T) {
 	cases := []struct {
 		name string
 		in   string
-		want Expression
-		// want []Statement
+		// want Expression
+		want []Statement
 	}{
 		// {
 		// 	name: "parse call expression #9",
-		// 	in:   "[a[1],[2],b]",
-		// 	want: &CallExpression{
-		// 		Callee: &VariableExpression{
-		// 			Name:   "a",
-		// 			Line:   1,
-		// 			CharAt: 1,
-		// 		},
-		// 		Arguments: []Expression{
-		// 			&CallExpression{
-		// 				Callee: &VariableExpression{
-		// 					Name:   "b",
-		// 					Line:   1,
-		// 					CharAt: 3,
-		// 				},
-		// 				Arguments: []Expression{
-		// 					&CallExpression{
-		// 						Callee: &VariableExpression{
-		// 							Name:   "c",
-		// 							Line:   1,
-		// 							CharAt: 5,
-		// 						},
-		// 						Arguments: []Expression{},
-		// 						Line:      1,
-		// 						CharAt:    5,
-		// 					},
-		// 				},
-		// 				Line:   1,
-		// 				CharAt: 3,
-		// 			},
-		// 		},
-		// 		Line:   1,
-		// 		CharAt: 1,
-		// 	},
+		// 	in:   "var a a",
+		// 	want: nil,
 		// },
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			exp, _, _ := parseExpression(lexer.Lex(tt.in))
-			require.Equal(t, tt.want, exp)
-			// ast, _ := ToAST(lexer.Lex(tt.in))
-			// require.Equal(t, tt.want, ast)
+			// exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			// require.Equal(t, tt.want, exp)
+			ast, _ := ToAST(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, ast)
 		})
 	}
 }
@@ -5107,6 +5076,140 @@ func TestParseExpression_CallExpression(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			exp, _, _ := parseExpression(lexer.Lex(tt.in))
 			require.Equal(t, tt.want, exp)
+		})
+	}
+}
+
+func TestToAST_ExpressionStatement(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want []Statement
+	}{
+		{
+			name: "parse ExpressionStatement #1",
+			in:   "a",
+			want: []Statement{
+				ExpressionStatement{
+					Expression: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse ExpressionStatement #2",
+			in:   "var a a",
+			want: []Statement{
+				VariableDeclaration{
+					Declarations: []VariableDeclarator{
+						VariableDeclarator{
+							ID: Identifier{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							Init:   nil,
+							Line:   1,
+							CharAt: 5,
+						},
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				ExpressionStatement{
+					Expression: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 7,
+					},
+					Line:   1,
+					CharAt: 7,
+				},
+			},
+		},
+		{
+			name: "parse ExpressionStatement #3",
+			in:   "var a,b=1 a",
+			want: []Statement{
+				VariableDeclaration{
+					Declarations: []VariableDeclarator{
+						VariableDeclarator{
+							ID: Identifier{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							Init: &LiteralExpression{
+								Type:   "number",
+								Value:  "1",
+								Line:   1,
+								CharAt: 9,
+							},
+							Line:   1,
+							CharAt: 5,
+						},
+						VariableDeclarator{
+							ID: Identifier{
+								Name:   "b",
+								Line:   1,
+								CharAt: 7,
+							},
+							Init:   nil,
+							Line:   1,
+							CharAt: 7,
+						},
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				ExpressionStatement{
+					Expression: &VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 11,
+					},
+					Line:   1,
+					CharAt: 11,
+				},
+			},
+		},
+		{
+			name: "parse ExpressionStatement #4",
+			in:   "func a(){b}",
+			want: []Statement{
+				FunctionDeclaration{
+					ID: Identifier{
+						Name:   "a",
+						Line:   1,
+						CharAt: 6,
+					},
+					Params: []Identifier{},
+					Body: []Statement{
+						ExpressionStatement{
+							Expression: &VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 10,
+							},
+							Line:   1,
+							CharAt: 10,
+						},
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			ast, _ := ToAST(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, ast)
 		})
 	}
 }
