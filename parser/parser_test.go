@@ -13,15 +13,44 @@ func Test(t *testing.T) {
 	cases := []struct {
 		name string
 		in   string
-		want Expression
-		// want []Statement
-	}{}
+		// want Expression
+		want []Statement
+	}{
+		{
+			name: "",
+			in:   `func a(b,c){}`,
+			want: []Statement{
+				FunctionDeclaration{
+					ID: Identifier{
+						Name:   "a",
+						Line:   1,
+						CharAt: 6,
+					},
+					Params: []Identifier{
+						Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 8,
+						},
+						Identifier{
+							Name:   "c",
+							Line:   1,
+							CharAt: 10,
+						},
+					},
+					Body:   []Statement{},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			exp, _, _ := parseExpression(lexer.Lex(tt.in))
-			require.Equal(t, tt.want, exp)
-			// ast, _ := ToAST(lexer.Lex(tt.in))
-			// require.Equal(t, tt.want, ast)
+			// exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			// require.Equal(t, tt.want, exp)
+			ast, _ := ToAST(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, ast)
 		})
 	}
 }
@@ -4140,6 +4169,150 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 						},
 					},
 					Line:   2,
+					CharAt: 1,
+				},
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			ast, _ := ToAST(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, ast)
+		})
+	}
+}
+
+func TestToAST_FunctionDeclaration(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want []Statement
+	}{
+		{
+			name: "parse function #1",
+			in:   `func a(){}`,
+			want: []Statement{
+				FunctionDeclaration{
+					ID: Identifier{
+						Name:   "a",
+						Line:   1,
+						CharAt: 6,
+					},
+					Params: []Identifier{},
+					Body:   []Statement{},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse function #2",
+			in:   `func a(b,c){}`,
+			want: []Statement{
+				FunctionDeclaration{
+					ID: Identifier{
+						Name:   "a",
+						Line:   1,
+						CharAt: 6,
+					},
+					Params: []Identifier{
+						Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 8,
+						},
+						Identifier{
+							Name:   "c",
+							Line:   1,
+							CharAt: 10,
+						},
+					},
+					Body:   []Statement{},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse function #3",
+			in: `func a(b,c){
+					var a,b=1
+					var c=2
+				 }`,
+			want: []Statement{
+				FunctionDeclaration{
+					ID: Identifier{
+						Name:   "a",
+						Line:   1,
+						CharAt: 6,
+					},
+					Params: []Identifier{
+						Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 8,
+						},
+						Identifier{
+							Name:   "c",
+							Line:   1,
+							CharAt: 10,
+						},
+					},
+					Body: []Statement{
+						VariableDeclaration{
+							Declarations: []VariableDeclarator{
+								VariableDeclarator{
+									ID: Identifier{
+										Name:   "a",
+										Line:   2,
+										CharAt: 5,
+									},
+									Init: &LiteralExpression{
+										Type:   "number",
+										Value:  "1",
+										Line:   2,
+										CharAt: 9,
+									},
+									Line:   2,
+									CharAt: 5,
+								},
+								VariableDeclarator{
+									ID: Identifier{
+										Name:   "b",
+										Line:   2,
+										CharAt: 7,
+									},
+									Init:   nil,
+									Line:   2,
+									CharAt: 7,
+								},
+							},
+							Line:   2,
+							CharAt: 1,
+						},
+						VariableDeclaration{
+							Declarations: []VariableDeclarator{
+								VariableDeclarator{
+									ID: Identifier{
+										Name:   "c",
+										Line:   3,
+										CharAt: 5,
+									},
+									Init: &LiteralExpression{
+										Type:   "number",
+										Value:  "2",
+										Line:   3,
+										CharAt: 7,
+									},
+									Line:   3,
+									CharAt: 5,
+								},
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+					},
+					Line:   1,
 					CharAt: 1,
 				},
 			},
