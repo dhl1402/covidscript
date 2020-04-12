@@ -16,8 +16,12 @@ func parseStatements(tokens []lexer.Token) ([]Statement, int, error) {
 	var i int
 	for i = 0; i < len(tokens); i++ {
 		t := tokens[i]
-		switch t.Value {
-		case "var":
+		var nt *lexer.Token
+		if i+1 < len(tokens) {
+			nt = &tokens[i+1]
+		}
+		switch {
+		case t.Value == "var":
 			{
 				s, processed, err := parseVariableDeclaration(tokens[i:])
 				if err != nil {
@@ -26,7 +30,7 @@ func parseStatements(tokens []lexer.Token) ([]Statement, int, error) {
 				ss = append(ss, *s)
 				i = i + processed - 1
 			}
-		case "func":
+		case t.Value == "func":
 			{
 				s, processed, err := parseFunctionDeclaration(tokens[i:])
 				if err != nil {
@@ -35,7 +39,7 @@ func parseStatements(tokens []lexer.Token) ([]Statement, int, error) {
 				ss = append(ss, *s)
 				i = i + processed - 1
 			}
-		case "return":
+		case t.Value == "return":
 			{
 				s, processed, err := parseReturnStatement(tokens[i:])
 				if err != nil {
@@ -44,8 +48,17 @@ func parseStatements(tokens []lexer.Token) ([]Statement, int, error) {
 				ss = append(ss, *s)
 				i = i + processed - 1
 			}
-		case "}":
+		case t.Value == "}":
 			return ss, i, nil
+		case t.IsIdentifier() && nt != nil && nt.Value == "=":
+			{
+				s, processed, err := parseAssignmentStatement(tokens[i:])
+				if err != nil {
+					return nil, 0, err
+				}
+				ss = append(ss, *s)
+				i = i + processed - 1
+			}
 		default:
 			{
 				e, processed, err := parseExpression(tokens[i:])
@@ -64,6 +77,33 @@ func parseStatements(tokens []lexer.Token) ([]Statement, int, error) {
 		}
 	}
 	return ss, i, nil
+}
+
+func parseAssignmentStatement(tokens []lexer.Token) (*AssignmentStatement, int, error) {
+	if len(tokens) < 3 { // 3 is len of the most simple assignment statement
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	if !tokens[0].IsIdentifier() {
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	if tokens[1].Value != "=" {
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	as := &AssignmentStatement{
+		Left: Identifier{
+			Name:   tokens[0].Value,
+			Line:   tokens[0].Line,
+			CharAt: tokens[0].CharAt,
+		},
+		Line:   tokens[0].Line,
+		CharAt: tokens[0].CharAt,
+	}
+	exp, processed, err := parseExpression(tokens[2:])
+	if err != nil {
+		return nil, 0, err
+	}
+	as.Right = exp
+	return as, processed + 2, nil
 }
 
 func parseFunctionDeclaration(tokens []lexer.Token) (*FunctionDeclaration, int, error) {

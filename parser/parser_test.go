@@ -18,7 +18,7 @@ func Test(t *testing.T) {
 	}{
 		// {
 		// 	name: "parse call expression #9",
-		// 	in:   "var a a",
+		// 	in:   "a=b",
 		// 	want: nil,
 		// },
 	}
@@ -5201,6 +5201,83 @@ func TestToAST_ExpressionStatement(t *testing.T) {
 						},
 					},
 					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			ast, _ := ToAST(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, ast)
+		})
+	}
+}
+
+func TestToAST_AssignmentStatement(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want []Statement
+	}{
+		{
+			name: "parse assignment statement #1",
+			in:   "a=b",
+			want: []Statement{
+				AssignmentStatement{
+					Left: Identifier{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &VariableExpression{
+						Name:   "b",
+						Line:   1,
+						CharAt: 3,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse call expression #2",
+			in: `var a=1 
+			     a=(b)`,
+			want: []Statement{
+				VariableDeclaration{
+					Declarations: []VariableDeclarator{
+						VariableDeclarator{
+							ID: Identifier{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							Init: &LiteralExpression{
+								Type:   "number",
+								Value:  "1",
+								Line:   1,
+								CharAt: 7,
+							},
+							Line:   1,
+							CharAt: 5,
+						},
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				AssignmentStatement{
+					Left: Identifier{
+						Name:   "a",
+						Line:   2,
+						CharAt: 1,
+					},
+					Right: &VariableExpression{
+						Name:   "b",
+						Line:   2,
+						CharAt: 4,
+					},
+					Line:   2,
 					CharAt: 1,
 				},
 			},
