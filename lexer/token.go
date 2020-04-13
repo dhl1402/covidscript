@@ -1,8 +1,8 @@
 package lexer
 
 import (
-	"gs/operator"
-	"gs/symbol"
+	"gs/core"
+	"gs/utils"
 	"strconv"
 )
 
@@ -15,7 +15,7 @@ type Token struct {
 func (t Token) IsIdentifier() bool {
 	// TODO: regex to test identifier
 	s := t.Value
-	return s != "" && !symbol.IsReservedKeyword(s) && !symbol.IsSpecialChars(s) && !symbol.IsStringBoundary(s) && !symbol.IsWhiteSpace(s) && !symbol.IsNewLine(s)
+	return s != "" && !utils.IsReservedKeyword(s) && !utils.IsSpecialChars(s) && !utils.IsStringBoundary(s) && !utils.IsWhiteSpace(s) && !utils.IsNewLine(s)
 }
 
 func (t Token) IsNumber() bool {
@@ -28,7 +28,7 @@ func (t Token) IsNumber() bool {
 }
 
 func (t Token) IsString() bool {
-	return t.Value != "" && symbol.IsStringBoundary(string(t.Value[0]))
+	return t.Value != "" && utils.IsStringBoundary(string(t.Value[0]))
 }
 
 func (t Token) IsBoolean() bool {
@@ -36,7 +36,7 @@ func (t Token) IsBoolean() bool {
 }
 
 func (t Token) IsOperatorSymbol() bool {
-	return operator.IsOperatorSymbol(t.Value)
+	return core.IsOperatorSymbol(t.Value)
 }
 
 func (t Token) IsPrimitiveValue() bool {

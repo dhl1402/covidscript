@@ -1,8 +1,6 @@
 package lexer
 
-import (
-	"gs/symbol"
-)
+import "gs/utils"
 
 // todo: lex float, :=
 // Lex source code into tokens
@@ -12,20 +10,20 @@ func Lex(sc string) (tokens []Token) {
 	charAt := 1
 	for len(sc) > 0 {
 		c := string(sc[0])
-		if symbol.IsStringBoundary(c) {
+		if utils.IsStringBoundary(c) {
 			str := lexString(sc)
 			tokens = append(tokens, Token{Value: str, Line: line, CharAt: charAt})
 			sc = sc[len(str):]
 			charAt = charAt + len(str)
 			continue
 		}
-		if symbol.IsReservedKeyword(c) || symbol.IsSpecialChars(c) {
+		if utils.IsReservedKeyword(c) || utils.IsSpecialChars(c) {
 			if tmp != "" {
 				tokens = append(tokens, Token{Value: tmp, Line: line, CharAt: charAt - len(tmp)})
 				tmp = ""
 			}
 			tokens = append(tokens, Token{Value: c, Line: line, CharAt: charAt})
-		} else if symbol.IsWhiteSpace(c) || symbol.IsNewLine(c) {
+		} else if utils.IsWhiteSpace(c) || utils.IsNewLine(c) {
 			if tmp != "" {
 				tokens = append(tokens, Token{Value: tmp, Line: line, CharAt: charAt - len(tmp)})
 				tmp = ""
@@ -35,10 +33,10 @@ func Lex(sc string) (tokens []Token) {
 		}
 
 		sc = sc[1:]
-		if symbol.IsNewLine(c) {
+		if utils.IsNewLine(c) {
 			line++
 			charAt = 1
-		} else if !symbol.IsWhiteSpace(c) || charAt != 1 {
+		} else if !utils.IsWhiteSpace(c) || charAt != 1 {
 			charAt++
 		}
 	}
@@ -52,7 +50,7 @@ func lexString(sc string) (result string) {
 	openStrChar := ""
 	for _, s := range sc {
 		c := string(s)
-		if openStrChar == "" && symbol.IsStringBoundary(c) {
+		if openStrChar == "" && utils.IsStringBoundary(c) {
 			openStrChar = c
 			result = result + c
 		} else if openStrChar != "" {

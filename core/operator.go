@@ -1,4 +1,4 @@
-package operator
+package core
 
 type Operator struct {
 	Symbol string

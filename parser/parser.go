@@ -2,17 +2,17 @@ package parser
 
 import (
 	"fmt"
+	"gs/core"
 	"gs/lexer"
-	"gs/operator"
 )
 
-func ToAST(tokens []lexer.Token) ([]Statement, error) {
+func ToAST(tokens []lexer.Token) ([]core.Statement, error) {
 	ast, _, err := parseStatements(tokens)
 	return ast, err
 }
 
-func parseStatements(tokens []lexer.Token) ([]Statement, int, error) {
-	ss := []Statement{}
+func parseStatements(tokens []lexer.Token) ([]core.Statement, int, error) {
+	ss := []core.Statement{}
 	var i int
 	for i = 0; i < len(tokens); i++ {
 		t := tokens[i]
@@ -66,7 +66,7 @@ func parseStatements(tokens []lexer.Token) ([]Statement, int, error) {
 					return nil, 0, err
 				}
 				if e != nil {
-					ss = append(ss, ExpressionStatement{
+					ss = append(ss, core.ExpressionStatement{
 						Expression: e,
 						Line:       1, // TODO e.GetLine()
 						CharAt:     e.GetCharAt(),
@@ -79,7 +79,7 @@ func parseStatements(tokens []lexer.Token) ([]Statement, int, error) {
 	return ss, i, nil
 }
 
-func parseAssignmentStatement(tokens []lexer.Token) (*AssignmentStatement, int, error) {
+func parseAssignmentStatement(tokens []lexer.Token) (*core.AssignmentStatement, int, error) {
 	if len(tokens) < 3 { // 3 is len of the most simple assignment statement
 		return nil, 0, fmt.Errorf("TODO")
 	}
@@ -89,8 +89,8 @@ func parseAssignmentStatement(tokens []lexer.Token) (*AssignmentStatement, int, 
 	if tokens[1].Value != "=" {
 		return nil, 0, fmt.Errorf("TODO")
 	}
-	as := &AssignmentStatement{
-		Left: Identifier{
+	as := &core.AssignmentStatement{
+		Left: core.Identifier{
 			Name:   tokens[0].Value,
 			Line:   tokens[0].Line,
 			CharAt: tokens[0].CharAt,
@@ -106,7 +106,7 @@ func parseAssignmentStatement(tokens []lexer.Token) (*AssignmentStatement, int, 
 	return as, processed + 2, nil
 }
 
-func parseFunctionDeclaration(tokens []lexer.Token) (*FunctionDeclaration, int, error) {
+func parseFunctionDeclaration(tokens []lexer.Token) (*core.FunctionDeclaration, int, error) {
 	if len(tokens) < 6 { // 6 is len of the most simple function
 		return nil, 0, fmt.Errorf("TODO")
 	}
@@ -117,8 +117,8 @@ func parseFunctionDeclaration(tokens []lexer.Token) (*FunctionDeclaration, int, 
 		return nil, 0, fmt.Errorf("TODO")
 	}
 	i := 2
-	f := &FunctionDeclaration{
-		ID: Identifier{
+	f := &core.FunctionDeclaration{
+		ID: core.Identifier{
 			Name:   tokens[1].Value,
 			Line:   tokens[1].Line,
 			CharAt: tokens[1].CharAt,
@@ -135,11 +135,11 @@ func parseFunctionDeclaration(tokens []lexer.Token) (*FunctionDeclaration, int, 
 	return f, i + processed, nil
 }
 
-func parseReturnStatement(tokens []lexer.Token) (*ReturnStatement, int, error) {
+func parseReturnStatement(tokens []lexer.Token) (*core.ReturnStatement, int, error) {
 	if len(tokens) == 0 {
 		return nil, 0, fmt.Errorf("TODO")
 	}
-	r := &ReturnStatement{
+	r := &core.ReturnStatement{
 		Line:   tokens[0].Line,
 		CharAt: tokens[0].CharAt,
 	}
@@ -151,7 +151,7 @@ func parseReturnStatement(tokens []lexer.Token) (*ReturnStatement, int, error) {
 	return r, i + 1, nil
 }
 
-func parseVariableDeclaration(tokens []lexer.Token) (*VariableDeclaration, int, error) {
+func parseVariableDeclaration(tokens []lexer.Token) (*core.VariableDeclaration, int, error) {
 	if len(tokens) == 0 {
 		return nil, 0, fmt.Errorf("TODO")
 	}
@@ -162,12 +162,12 @@ func parseVariableDeclaration(tokens []lexer.Token) (*VariableDeclaration, int, 
 	if len(ids) == 0 {
 		return nil, 0, fmt.Errorf("TODO")
 	}
-	s := &VariableDeclaration{
+	s := &core.VariableDeclaration{
 		Line:   tokens[0].Line,
 		CharAt: tokens[0].CharAt,
 	}
 	for _, id := range ids {
-		s.Declarations = append(s.Declarations, VariableDeclarator{
+		s.Declarations = append(s.Declarations, core.VariableDeclarator{
 			ID:     id,
 			Init:   nil,
 			Line:   id.Line,
@@ -195,15 +195,15 @@ func parseVariableDeclaration(tokens []lexer.Token) (*VariableDeclaration, int, 
 }
 
 // primitive, object, array, function, function call, binary expression, object property, array element, identifier
-func parseExpression(tokens []lexer.Token) (Expression, int, error) {
+func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if len(tokens) == 0 {
 		return nil, 0, fmt.Errorf("TODO")
 	}
-	var tmpExp Expression
-	var bexp *BinaryExpression
-	var lastBexp *BinaryExpression
-	var maexp *MemberAccessExpression
-	bexpsAfterGroup := []*BinaryExpression{}
+	var tmpExp core.Expression
+	var bexp *core.BinaryExpression
+	var lastBexp *core.BinaryExpression
+	var maexp *core.MemberAccessExpression
+	bexpsAfterGroup := []*core.BinaryExpression{}
 	openParen := 0
 	var i int
 	for i = 0; i < len(tokens); i++ {
@@ -213,14 +213,14 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 			nt = &tokens[i+1]
 		}
 		if exp, processed, _ := parseTempExpression(tokens[i:]); exp != nil {
-			aexp, _ := exp.(*ArrayExpression)
+			aexp, _ := exp.(*core.ArrayExpression)
 			if tmpExp != nil && (aexp == nil || len(aexp.Elements) != 1) {
 				return tmpExp, i, nil
 			}
 			i = i + processed - 1
 			if tmpExp != nil && aexp != nil && len(aexp.Elements) == 1 {
 				if lastBexp != nil {
-					maexp = &MemberAccessExpression{
+					maexp = &core.MemberAccessExpression{
 						Object:   lastBexp.Right,
 						Property: aexp.Elements[0],
 						Line:     t.Line, // TODO: lastBexp.Right.GetLine()
@@ -229,14 +229,14 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 					lastBexp.Right = maexp
 					lastBexp.Group = false
 				} else if maexp == nil {
-					maexp = &MemberAccessExpression{
+					maexp = &core.MemberAccessExpression{
 						Object:   tmpExp,
 						Property: aexp.Elements[0],
 						Line:     t.Line, // TODO: tmpExp.GetLine()
 						CharAt:   tmpExp.GetCharAt(),
 					}
 				} else if maexp.Property != nil {
-					maexp = &MemberAccessExpression{
+					maexp = &core.MemberAccessExpression{
 						Object:   maexp,
 						Property: aexp.Elements[0],
 						Line:     maexp.Line,
@@ -261,7 +261,7 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 				lastBexp = bexp
 				lastBexpAfterGroup, _ := getLastBexpAfterGroup(bexpsAfterGroup, false)
 				// Check prececdence and swap expression order if needed
-				if lbexp, ok := bexp.Left.(*BinaryExpression); ok && lbexp.Operator.Compare(bexp.Operator) > 0 && !lbexp.Group && (lastBexpAfterGroup == nil || bexp != lastBexpAfterGroup) {
+				if lbexp, ok := bexp.Left.(*core.BinaryExpression); ok && lbexp.Operator.Compare(bexp.Operator) > 0 && !lbexp.Group && (lastBexpAfterGroup == nil || bexp != lastBexpAfterGroup) {
 					bexp.Left = lbexp.Right
 					bexp.CharAt = lbexp.Right.GetCharAt()
 					lbexp.Right = bexp
@@ -270,7 +270,7 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 			}
 		} else if t.Value == "." {
 			if lastBexp != nil {
-				maexp = &MemberAccessExpression{
+				maexp = &core.MemberAccessExpression{
 					Object: lastBexp.Right,
 					Line:   t.Line, // TODO: lastBexp.Right.GetLine()
 					CharAt: lastBexp.Right.GetCharAt(),
@@ -281,13 +281,13 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 				if tmpExp == nil {
 					return nil, 0, fmt.Errorf("TODO")
 				}
-				maexp = &MemberAccessExpression{
+				maexp = &core.MemberAccessExpression{
 					Object: tmpExp,
 					Line:   t.Line, // TODO: tmpExp.GetLine()
 					CharAt: tmpExp.GetCharAt(),
 				}
 			} else if maexp.Property != nil {
-				maexp = &MemberAccessExpression{
+				maexp = &core.MemberAccessExpression{
 					Object: maexp,
 					Line:   maexp.Line,
 					CharAt: maexp.CharAt,
@@ -297,7 +297,7 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 			}
 			tmpExp = nil
 		} else if t.IsOperatorSymbol() {
-			op := operator.Operator{
+			op := core.Operator{
 				Symbol: t.Value,
 				Line:   t.Line,
 				CharAt: t.CharAt,
@@ -309,14 +309,14 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 				if tmpExp == maexp {
 					maexp = nil
 				}
-				bexp = &BinaryExpression{
+				bexp = &core.BinaryExpression{
 					Left:     tmpExp,
 					Line:     t.Line, // tmpExp.getCharAt()
 					CharAt:   tmpExp.GetCharAt(),
 					Operator: op,
 				}
 			} else if bexp.Right != nil {
-				bexp = &BinaryExpression{
+				bexp = &core.BinaryExpression{
 					Left:     bexp,
 					Line:     bexp.Line,
 					CharAt:   bexp.CharAt,
@@ -342,7 +342,7 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 					return nil, 0, fmt.Errorf("TODO")
 				}
 				if lastBexp != nil {
-					tmpExp = &CallExpression{
+					tmpExp = &core.CallExpression{
 						Callee:    lastBexp.Right,
 						Arguments: args,
 						Line:      t.Line, // TODO: lastBexp.Right.GetLine()
@@ -351,7 +351,7 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 					lastBexp.Right = tmpExp
 					lastBexp.Group = false
 				} else {
-					tmpExp = &CallExpression{
+					tmpExp = &core.CallExpression{
 						Callee:    tmpExp,
 						Arguments: args,
 						Line:      t.Line, // TODO: lastBexp.Right.GetLine()
@@ -371,7 +371,7 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 				if len(bexpsAfterGroup) > 0 {
 					// Swap expression order to match expression group
 					lastBexpAfterGroup, i := getLastBexpAfterGroup(bexpsAfterGroup, true)
-					if bexpBeforeGroup, ok := lastBexpAfterGroup.Left.(*BinaryExpression); ok {
+					if bexpBeforeGroup, ok := lastBexpAfterGroup.Left.(*core.BinaryExpression); ok {
 						lastBexpAfterGroup.Left = bexpBeforeGroup.Right
 						lastBexpAfterGroup.CharAt = bexpBeforeGroup.Right.GetCharAt()
 						bexpBeforeGroup.Right = bexp
@@ -380,9 +380,9 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 
 						// loop from groupedBexp to lastBexpAfterGroup and update exp CharAt
 						groupedBexp.CharAt = lastBexpAfterGroup.CharAt
-						for tmpBexp, _ := groupedBexp.Left.(*BinaryExpression); tmpBexp != nil; {
+						for tmpBexp, _ := groupedBexp.Left.(*core.BinaryExpression); tmpBexp != nil; {
 							tmpBexp.CharAt = lastBexpAfterGroup.CharAt
-							tmpBexp, _ = tmpBexp.Left.(*BinaryExpression)
+							tmpBexp, _ = tmpBexp.Left.(*core.BinaryExpression)
 						}
 					}
 					bexpsAfterGroup = append(bexpsAfterGroup[i+1:], bexpsAfterGroup[:i]...)
@@ -401,7 +401,7 @@ func parseExpression(tokens []lexer.Token) (Expression, int, error) {
 	return tmpExp, i, nil
 }
 
-func getLastBexpAfterGroup(bexps []*BinaryExpression, rightShouldNotNil bool) (*BinaryExpression, int) {
+func getLastBexpAfterGroup(bexps []*core.BinaryExpression, rightShouldNotNil bool) (*core.BinaryExpression, int) {
 	for i := len(bexps) - 1; i >= 0; i-- {
 		bexp := bexps[i]
 		if !rightShouldNotNil {
@@ -415,13 +415,13 @@ func getLastBexpAfterGroup(bexps []*BinaryExpression, rightShouldNotNil bool) (*
 }
 
 // Check first token, if it is the start of an expression then parse it and return
-func parseTempExpression(tokens []lexer.Token) (Expression, int, error) {
+func parseTempExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if len(tokens) == 0 {
 		return nil, 0, fmt.Errorf("TODO")
 	}
 	t := tokens[0]
 	if ptype, ok := t.ParsePrimitiveType(); ok {
-		return &LiteralExpression{
+		return &core.LiteralExpression{
 			Type:   ptype,
 			Value:  t.Value,
 			Line:   t.Line,
@@ -429,7 +429,7 @@ func parseTempExpression(tokens []lexer.Token) (Expression, int, error) {
 		}, 1, nil
 	}
 	if t.IsIdentifier() {
-		return &VariableExpression{
+		return &core.VariableExpression{
 			Name:   t.Value,
 			Line:   t.Line,
 			CharAt: t.CharAt,
@@ -447,8 +447,8 @@ func parseTempExpression(tokens []lexer.Token) (Expression, int, error) {
 	return nil, 0, fmt.Errorf("TODO")
 }
 
-func parseSequentIdentifiers(tokens []lexer.Token) ([]Identifier, int, error) {
-	ids := []Identifier{}
+func parseSequentIdentifiers(tokens []lexer.Token) ([]core.Identifier, int, error) {
+	ids := []core.Identifier{}
 	var i int
 	for i = 0; i < len(tokens); i++ {
 		t := tokens[i]
@@ -456,7 +456,7 @@ func parseSequentIdentifiers(tokens []lexer.Token) ([]Identifier, int, error) {
 			return ids, i, nil
 		}
 		if t.IsIdentifier() {
-			ids = append(ids, Identifier{
+			ids = append(ids, core.Identifier{
 				Name:   t.Value,
 				Line:   t.Line,
 				CharAt: t.CharAt,
@@ -470,8 +470,8 @@ func parseSequentIdentifiers(tokens []lexer.Token) ([]Identifier, int, error) {
 	return ids, i, nil
 }
 
-func parseSequentExpressions(tokens []lexer.Token) ([]Expression, int, error) {
-	exps := []Expression{}
+func parseSequentExpressions(tokens []lexer.Token) ([]core.Expression, int, error) {
+	exps := []core.Expression{}
 	var i int
 	for i = 0; i < len(tokens); i++ {
 		exp, processed, err := parseExpression(tokens[i:])
@@ -493,16 +493,16 @@ func parseSequentExpressions(tokens []lexer.Token) ([]Expression, int, error) {
 }
 
 // TODO: function, method, shorthand, compute
-func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
+func parseObjectExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if len(tokens) == 0 || tokens[0].Value != "{" {
 		return nil, 0, fmt.Errorf("TODO")
 	}
-	obj := &ObjectExpression{
-		Properties: []ObjectProperty{},
+	obj := &core.ObjectExpression{
+		Properties: []core.ObjectProperty{},
 		Line:       tokens[0].Line,
 		CharAt:     tokens[0].CharAt,
 	}
-	var prop *ObjectProperty
+	var prop *core.ObjectProperty
 	var i int
 	for i = 1; i < len(tokens); i++ { // skip first '{'
 		t := tokens[i]
@@ -525,12 +525,12 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 			continue
 		}
 		if prop == nil && pt.Value == "{" || pt.Value == "," {
-			prop = &ObjectProperty{
+			prop = &core.ObjectProperty{
 				Line:   t.Line,
 				CharAt: t.CharAt,
 			}
 			if t.IsIdentifier() {
-				prop.KeyIdentifier = Identifier{
+				prop.KeyIdentifier = core.Identifier{
 					Name:   t.Value,
 					Line:   t.Line,
 					CharAt: t.CharAt,
@@ -540,7 +540,7 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 				if err != nil {
 					return nil, 0, err
 				}
-				aexp, _ := exp.(*ArrayExpression)
+				aexp, _ := exp.(*core.ArrayExpression)
 				if aexp == nil || len(aexp.Elements) != 1 {
 					return nil, 0, fmt.Errorf("TODO")
 				}
@@ -566,7 +566,7 @@ func parseObjectExpression(tokens []lexer.Token) (Expression, int, error) {
 	return obj, i + 1, nil
 }
 
-func parseArrayExpression(tokens []lexer.Token) (Expression, int, error) {
+func parseArrayExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if len(tokens) == 0 || tokens[0].Value != "[" {
 		return nil, 0, fmt.Errorf("TODO")
 	}
@@ -577,14 +577,14 @@ func parseArrayExpression(tokens []lexer.Token) (Expression, int, error) {
 	if processed+1 >= len(tokens) || tokens[processed+1].Value != "]" {
 		return nil, 0, fmt.Errorf("TODO")
 	}
-	return &ArrayExpression{
+	return &core.ArrayExpression{
 		Elements: exps,
 		Line:     tokens[0].Line,
 		CharAt:   tokens[0].CharAt,
 	}, processed + 2, nil
 }
 
-func parseFunctionExpression(tokens []lexer.Token) (*FunctionExpression, int, error) {
+func parseFunctionExpression(tokens []lexer.Token) (*core.FunctionExpression, int, error) {
 	if len(tokens) < 5 { // 6 is len of the most simple function
 		return nil, 0, fmt.Errorf("TODO")
 	}
@@ -592,7 +592,7 @@ func parseFunctionExpression(tokens []lexer.Token) (*FunctionExpression, int, er
 		return nil, 0, fmt.Errorf("TODO")
 	}
 	i := 1
-	f := &FunctionExpression{
+	f := &core.FunctionExpression{
 		Line:   tokens[0].Line,
 		CharAt: tokens[0].CharAt,
 	}
@@ -605,7 +605,7 @@ func parseFunctionExpression(tokens []lexer.Token) (*FunctionExpression, int, er
 	return f, i + processed, nil
 }
 
-func parseFunctionParamAndBody(tokens []lexer.Token) ([]Identifier, []Statement, int, error) {
+func parseFunctionParamAndBody(tokens []lexer.Token) ([]core.Identifier, []core.Statement, int, error) {
 	if len(tokens) < 4 { // (){} -> min len = 4
 		return nil, nil, 0, fmt.Errorf("TODO")
 	}
