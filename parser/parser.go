@@ -16,94 +16,68 @@ func parseStatements(tokens []lexer.Token) ([]core.Statement, int, error) {
 	var i int
 	for i = 0; i < len(tokens); i++ {
 		t := tokens[i]
-		var nt *lexer.Token
-		if i+1 < len(tokens) {
-			nt = &tokens[i+1]
-		}
 		switch {
 		case t.Value == "var":
-			{
-				s, processed, err := parseVariableDeclaration(tokens[i:])
-				if err != nil {
-					return nil, 0, err
-				}
-				ss = append(ss, *s)
-				i = i + processed - 1
+			s, processed, err := parseVariableDeclaration(tokens[i:])
+			if err != nil {
+				return nil, 0, err
 			}
+			ss = append(ss, *s)
+			i = i + processed - 1
 		case t.Value == "func":
-			{
-				s, processed, err := parseFunctionDeclaration(tokens[i:])
-				if err != nil {
-					return nil, 0, err
-				}
-				ss = append(ss, *s)
-				i = i + processed - 1
+			s, processed, err := parseFunctionDeclaration(tokens[i:])
+			if err != nil {
+				return nil, 0, err
 			}
+			ss = append(ss, *s)
+			i = i + processed - 1
 		case t.Value == "return":
-			{
-				s, processed, err := parseReturnStatement(tokens[i:])
-				if err != nil {
-					return nil, 0, err
-				}
-				ss = append(ss, *s)
-				i = i + processed - 1
+			s, processed, err := parseReturnStatement(tokens[i:])
+			if err != nil {
+				return nil, 0, err
 			}
+			ss = append(ss, *s)
+			i = i + processed - 1
 		case t.Value == "}":
 			return ss, i, nil
-		case t.IsIdentifier() && nt != nil && nt.Value == "=":
-			{
-				s, processed, err := parseAssignmentStatement(tokens[i:])
-				if err != nil {
-					return nil, 0, err
-				}
-				ss = append(ss, *s)
-				i = i + processed - 1
-			}
 		default:
-			{
-				e, processed, err := parseExpression(tokens[i:])
+			e, processed, err := parseExpression(tokens[i:])
+			if err != nil {
+				return nil, 0, err
+			}
+			if i+processed < len(tokens) && tokens[i+processed].Value == "=" && e != nil {
+				// parse AssignmentStatement
+				i = i + processed + 1 // handle '=' -> +1
+				switch e.(type) {
+				case *core.VariableExpression:
+				case *core.MemberAccessExpression:
+				default:
+					return nil, 0, fmt.Errorf("TODO") // left of assignment must be VariableExpression or MemberAccessExpression
+				}
+				as := core.AssignmentStatement{
+					Left:   e,
+					Line:   t.Line,
+					CharAt: t.CharAt,
+				}
+				rightExp, processed, err := parseExpression(tokens[i:])
 				if err != nil {
 					return nil, 0, err
 				}
-				if e != nil {
-					ss = append(ss, core.ExpressionStatement{
-						Expression: e,
-						Line:       1, // TODO e.GetLine()
-						CharAt:     e.GetCharAt(),
-					})
-					i = i + processed - 1
-				}
+				as.Right = rightExp
+				ss = append(ss, as)
+				i = i + processed - 1
+			} else if e != nil {
+				// parse ExpressionStatement
+				ss = append(ss, core.ExpressionStatement{
+					Expression: e,
+					Line:       1, // TODO e.GetLine()
+					CharAt:     e.GetCharAt(),
+				})
+				i = i + processed - 1
 			}
 		}
 	}
 	return ss, i, nil
-}
-
-func parseAssignmentStatement(tokens []lexer.Token) (*core.AssignmentStatement, int, error) {
-	if len(tokens) < 3 { // 3 is len of the most simple assignment statement
-		return nil, 0, fmt.Errorf("TODO")
-	}
-	if !tokens[0].IsIdentifier() {
-		return nil, 0, fmt.Errorf("TODO")
-	}
-	if tokens[1].Value != "=" {
-		return nil, 0, fmt.Errorf("TODO")
-	}
-	as := &core.AssignmentStatement{
-		Left: core.Identifier{
-			Name:   tokens[0].Value,
-			Line:   tokens[0].Line,
-			CharAt: tokens[0].CharAt,
-		},
-		Line:   tokens[0].Line,
-		CharAt: tokens[0].CharAt,
-	}
-	exp, processed, err := parseExpression(tokens[2:])
-	if err != nil {
-		return nil, 0, err
-	}
-	as.Right = exp
-	return as, processed + 2, nil
 }
 
 func parseFunctionDeclaration(tokens []lexer.Token) (*core.FunctionDeclaration, int, error) {

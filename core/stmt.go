@@ -29,7 +29,7 @@ type ExpressionStatement struct {
 }
 
 type AssignmentStatement struct {
-	Left   Identifier
+	Left   Expression
 	Right  Expression
 	Line   int
 	CharAt int

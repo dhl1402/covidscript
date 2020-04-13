@@ -18,7 +18,7 @@ func Test(t *testing.T) {
 	}{
 		// {
 		// 	name: "parse call expression #9",
-		// 	in:   "a=b",
+		// 	in:   "a.b=1",
 		// 	want: nil,
 		// },
 	}
@@ -5225,7 +5225,7 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 			in:   "a=b",
 			want: []core.Statement{
 				core.AssignmentStatement{
-					Left: core.Identifier{
+					Left: &core.VariableExpression{
 						Name:   "a",
 						Line:   1,
 						CharAt: 1,
@@ -5267,7 +5267,7 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 					CharAt: 1,
 				},
 				core.AssignmentStatement{
-					Left: core.Identifier{
+					Left: &core.VariableExpression{
 						Name:   "a",
 						Line:   2,
 						CharAt: 1,
@@ -5278,6 +5278,35 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 						CharAt: 4,
 					},
 					Line:   2,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse assignment statement #3",
+			in:   "a.b=c",
+			want: []core.Statement{
+				core.AssignmentStatement{
+					Left: &core.MemberAccessExpression{
+						Object: &core.VariableExpression{
+							Name:   "a",
+							Line:   1,
+							CharAt: 1,
+						},
+						Property: &core.VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 3,
+						},
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &core.VariableExpression{
+						Name:   "c",
+						Line:   1,
+						CharAt: 5,
+					},
+					Line:   1,
 					CharAt: 1,
 				},
 			},
