@@ -186,7 +186,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 		if i+1 < len(tokens) {
 			nt = &tokens[i+1]
 		}
-		if exp, processed, _ := parseTempExpression(tokens[i:]); exp != nil {
+		if exp, processed, err := parseTempExpression(tokens[i:]); exp != nil {
 			aexp, _ := exp.(*core.ArrayExpression)
 			if tmpExp != nil && (aexp == nil || len(aexp.Elements) != 1) {
 				return tmpExp, i, nil
@@ -362,16 +362,15 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					bexpsAfterGroup = append(bexpsAfterGroup[i+1:], bexpsAfterGroup[:i]...)
 				}
 			}
+		} else if (bexp == nil || bexp.Right == nil) && tmpExp == nil {
+			return nil, 0, err
 		} else {
 			break
 		}
 	}
-	if bexp != nil {
+	if bexp != nil && bexp.Right != nil {
 		return bexp, i, nil
 	}
-	// if maexp != nil {
-	// 	return maexp, i, nil
-	// }
 	return tmpExp, i, nil
 }
 
@@ -448,10 +447,7 @@ func parseSequentExpressions(tokens []lexer.Token) ([]core.Expression, int, erro
 	exps := []core.Expression{}
 	var i int
 	for i = 0; i < len(tokens); i++ {
-		exp, processed, err := parseExpression(tokens[i:])
-		if err != nil {
-			return nil, 0, err
-		}
+		exp, processed, _ := parseExpression(tokens[i:])
 		if exp == nil {
 			return exps, i, nil
 		}
@@ -466,7 +462,7 @@ func parseSequentExpressions(tokens []lexer.Token) ([]core.Expression, int, erro
 	return exps, i, nil
 }
 
-// TODO: function, method, shorthand, compute
+// TODO: method, shorthand
 func parseObjectExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if len(tokens) == 0 || tokens[0].Value != "{" {
 		return nil, 0, fmt.Errorf("TODO")

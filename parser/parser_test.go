@@ -13,21 +13,25 @@ func Test(t *testing.T) {
 	cases := []struct {
 		name string
 		in   string
-		// want core.Expression
-		want []core.Statement
+		want core.Expression
+		// want []core.Statement
 	}{
-		// {
-		// 	name: "parse call expression #9",
-		// 	in:   "a.b=1",
-		// 	want: nil,
-		// },
+		{
+			name: "parse array expression []",
+			in:   "[]",
+			want: &core.ArrayExpression{
+				Elements: []core.Expression{},
+				Line:     1,
+				CharAt:   1,
+			},
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			// exp, _, _ := parseExpression(lexer.Lex(tt.in))
-			// require.Equal(t, tt.want, exp)
-			ast, _ := ToAST(lexer.Lex(tt.in))
-			require.Equal(t, tt.want, ast)
+			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, exp)
+			// ast, _ := ToAST(lexer.Lex(tt.in))
+			// require.Equal(t, tt.want, ast)
 		})
 	}
 }
@@ -3105,14 +3109,14 @@ func TestParseExpression_Object(t *testing.T) {
 	}
 }
 
-func TestParseExpression_Array(t *testing.T) {
+func TestParseExpression_ArrayExpression(t *testing.T) {
 	cases := []struct {
 		name string
 		in   string
 		want core.Expression
 	}{
 		{
-			name: "parse object expression []",
+			name: "parse array expression []",
 			in:   "[]",
 			want: &core.ArrayExpression{
 				Elements: []core.Expression{},
@@ -3121,7 +3125,7 @@ func TestParseExpression_Array(t *testing.T) {
 			},
 		},
 		{
-			name: "parse object expression [1,a]",
+			name: "parse array expression [1,a]",
 			in:   "[1,a]",
 			want: &core.ArrayExpression{
 				Elements: []core.Expression{
@@ -3142,7 +3146,7 @@ func TestParseExpression_Array(t *testing.T) {
 			},
 		},
 		{
-			name: "parse object expression [1,[a,b]]",
+			name: "parse array expression [1,[a,b]]",
 			in:   "[1,[a,b]]",
 			want: &core.ArrayExpression{
 				Elements: []core.Expression{
@@ -3174,7 +3178,7 @@ func TestParseExpression_Array(t *testing.T) {
 			},
 		},
 		{
-			name: "parse object expression [1,[a,b]]",
+			name: "parse array expression [1,[a,b]]",
 			in:   "[1,{a:1,b:2}]",
 			want: &core.ArrayExpression{
 				Elements: []core.Expression{
@@ -3226,7 +3230,7 @@ func TestParseExpression_Array(t *testing.T) {
 			},
 		},
 		{
-			name: "parse object expression [1,[a,1+a.b*2+c.d+3]]",
+			name: "parse array expression [1,[a,1+a.b*2+c.d+3]]",
 			in:   "[1,[a,1+a.b*2+c.d+3]]",
 			want: &core.ArrayExpression{
 				Elements: []core.Expression{
@@ -3335,7 +3339,7 @@ func TestParseExpression_Array(t *testing.T) {
 			},
 		},
 		{
-			name: "parse binary expression a+([b])",
+			name: "parse array expression a+([b])",
 			in:   "a+([b])",
 			want: &core.BinaryExpression{
 				Left: &core.VariableExpression{
