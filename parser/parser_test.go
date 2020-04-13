@@ -17,12 +17,30 @@ func Test(t *testing.T) {
 		// want []core.Statement
 	}{
 		{
-			name: "parse array expression []",
-			in:   "[]",
-			want: &core.ArrayExpression{
-				Elements: []core.Expression{},
-				Line:     1,
-				CharAt:   1,
+			name: "parse member access expression a.b.c",
+			in:   "a.b.c",
+			want: &core.MemberAccessExpression{
+				Object: &core.MemberAccessExpression{
+					Object: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					PropertyIdentifier: core.Identifier{
+						Name:   "b",
+						Line:   1,
+						CharAt: 3,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				PropertyIdentifier: core.Identifier{
+					Name:   "c",
+					Line:   1,
+					CharAt: 5,
+				},
+				Line:   1,
+				CharAt: 1,
 			},
 		},
 	}
@@ -67,7 +85,7 @@ func TestParseExpression(t *testing.T) {
 			in:   `"1"`,
 			want: &core.LiteralExpression{
 				Type:   "string",
-				Value:  `"1"`,
+				Value:  "1",
 				Line:   1,
 				CharAt: 1,
 			},
@@ -1243,7 +1261,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					Line:   1,
 					CharAt: 1,
 				},
-				Property: &core.VariableExpression{
+				PropertyIdentifier: core.Identifier{
 					Name:   "b",
 					Line:   1,
 					CharAt: 3,
@@ -1262,7 +1280,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 1,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "b",
 						Line:   1,
 						CharAt: 3,
@@ -1270,7 +1288,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					Line:   1,
 					CharAt: 1,
 				},
-				Property: &core.VariableExpression{
+				PropertyIdentifier: core.Identifier{
 					Name:   "c",
 					Line:   1,
 					CharAt: 5,
@@ -1289,7 +1307,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 3,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "b",
 						Line:   1,
 						CharAt: 5,
@@ -1297,7 +1315,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					Line:   1,
 					CharAt: 3,
 				},
-				Property: &core.VariableExpression{
+				PropertyIdentifier: core.Identifier{
 					Name:   "c",
 					Line:   1,
 					CharAt: 9,
@@ -1316,7 +1334,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 1,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "b",
 						Line:   1,
 						CharAt: 3,
@@ -1350,7 +1368,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 3,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
 							CharAt: 6,
@@ -1358,7 +1376,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 3,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "c",
 						Line:   1,
 						CharAt: 9,
@@ -1392,7 +1410,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 3,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
 							CharAt: 6,
@@ -1400,7 +1418,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 3,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "c",
 						Line:   1,
 						CharAt: 9,
@@ -1449,7 +1467,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 3,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
 							CharAt: 6,
@@ -1457,7 +1475,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 3,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "c",
 						Line:   1,
 						CharAt: 9,
@@ -1513,7 +1531,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 3,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
 							CharAt: 5,
@@ -1562,7 +1580,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:   1,
 								CharAt: 5,
 							},
-							Property: &core.VariableExpression{
+							PropertyIdentifier: core.Identifier{
 								Name:   "b",
 								Line:   1,
 								CharAt: 8,
@@ -1570,7 +1588,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 5,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "c",
 							Line:   1,
 							CharAt: 11,
@@ -1619,7 +1637,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:   1,
 								CharAt: 5,
 							},
-							Property: &core.VariableExpression{
+							PropertyIdentifier: core.Identifier{
 								Name:   "b",
 								Line:   1,
 								CharAt: 8,
@@ -1627,7 +1645,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 5,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "c",
 							Line:   1,
 							CharAt: 11,
@@ -1691,7 +1709,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:   1,
 								CharAt: 7,
 							},
-							Property: &core.VariableExpression{
+							PropertyIdentifier: core.Identifier{
 								Name:   "b",
 								Line:   1,
 								CharAt: 10,
@@ -1699,7 +1717,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 7,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "c",
 							Line:   1,
 							CharAt: 13,
@@ -1755,7 +1773,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 									Line:   1,
 									CharAt: 8,
 								},
-								Property: &core.VariableExpression{
+								PropertyIdentifier: core.Identifier{
 									Name:   "b",
 									Line:   1,
 									CharAt: 11,
@@ -1763,7 +1781,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:   1,
 								CharAt: 8,
 							},
-							Property: &core.VariableExpression{
+							PropertyIdentifier: core.Identifier{
 								Name:   "c",
 								Line:   1,
 								CharAt: 14,
@@ -1818,7 +1836,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 3,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "b",
 						Line:   1,
 						CharAt: 5,
@@ -1852,7 +1870,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 5,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
 							CharAt: 8,
@@ -1860,7 +1878,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 5,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "c",
 						Line:   1,
 						CharAt: 11,
@@ -1894,7 +1912,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 6,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
 							CharAt: 9,
@@ -1902,7 +1920,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 6,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "c",
 						Line:   1,
 						CharAt: 12,
@@ -1943,7 +1961,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:   1,
 								CharAt: 8,
 							},
-							Property: &core.VariableExpression{
+							PropertyIdentifier: core.Identifier{
 								Name:   "b",
 								Line:   1,
 								CharAt: 11,
@@ -1951,7 +1969,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 8,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "c",
 							Line:   1,
 							CharAt: 14,
@@ -2008,7 +2026,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 8,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
 							CharAt: 11,
@@ -2016,7 +2034,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 8,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "c",
 						Line:   1,
 						CharAt: 14,
@@ -2051,7 +2069,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:   1,
 								CharAt: 6,
 							},
-							Property: &core.VariableExpression{
+							PropertyIdentifier: core.Identifier{
 								Name:   "b",
 								Line:   1,
 								CharAt: 9,
@@ -2059,7 +2077,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 6,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "c",
 							Line:   1,
 							CharAt: 12,
@@ -2115,7 +2133,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:   1,
 								CharAt: 8,
 							},
-							Property: &core.VariableExpression{
+							PropertyIdentifier: core.Identifier{
 								Name:   "b",
 								Line:   1,
 								CharAt: 11,
@@ -2123,7 +2141,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 8,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "c",
 							Line:   1,
 							CharAt: 14,
@@ -2174,7 +2192,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 									Line:   1,
 									CharAt: 9,
 								},
-								Property: &core.VariableExpression{
+								PropertyIdentifier: core.Identifier{
 									Name:   "b",
 									Line:   1,
 									CharAt: 12,
@@ -2182,7 +2200,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:   1,
 								CharAt: 9,
 							},
-							Property: &core.VariableExpression{
+							PropertyIdentifier: core.Identifier{
 								Name:   "c",
 								Line:   1,
 								CharAt: 15,
@@ -2241,7 +2259,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 									Line:   1,
 									CharAt: 7,
 								},
-								Property: &core.VariableExpression{
+								PropertyIdentifier: core.Identifier{
 									Name:   "b",
 									Line:   1,
 									CharAt: 10,
@@ -2249,7 +2267,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:   1,
 								CharAt: 7,
 							},
-							Property: &core.VariableExpression{
+							PropertyIdentifier: core.Identifier{
 								Name:   "c",
 								Line:   1,
 								CharAt: 13,
@@ -2305,7 +2323,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 1,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "b",
 						Line:   1,
 						CharAt: 3,
@@ -2319,7 +2337,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 5,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "d",
 						Line:   1,
 						CharAt: 7,
@@ -2346,7 +2364,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 3,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "b",
 						Line:   1,
 						CharAt: 6,
@@ -2360,7 +2378,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						Line:   1,
 						CharAt: 9,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "d",
 						Line:   1,
 						CharAt: 11,
@@ -2396,7 +2414,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 									Line:   1,
 									CharAt: 3,
 								},
-								Property: &core.VariableExpression{
+								PropertyIdentifier: core.Identifier{
 									Name:   "b",
 									Line:   1,
 									CharAt: 5,
@@ -2432,7 +2450,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							Line:   1,
 							CharAt: 9,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "d",
 							Line:   1,
 							CharAt: 11,
@@ -2483,7 +2501,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 										Line:   1,
 										CharAt: 7,
 									},
-									Property: &core.VariableExpression{
+									PropertyIdentifier: core.Identifier{
 										Name:   "b",
 										Line:   1,
 										CharAt: 10,
@@ -2533,7 +2551,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:   1,
 								CharAt: 7,
 							},
-							Property: &core.CallExpression{
+							PropertyExpression: &core.CallExpression{
 								Callee: &core.FunctionExpression{
 									Params: []core.Identifier{},
 									Body:   []core.Statement{},
@@ -2544,8 +2562,9 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Line:      1,
 								CharAt:    23,
 							},
-							Line:   1,
-							CharAt: 7,
+							Compute: true,
+							Line:    1,
+							CharAt:  7,
 						},
 						Right: &core.LiteralExpression{
 							Type:   "number",
@@ -2832,9 +2851,9 @@ func TestParseExpression_Object(t *testing.T) {
 		{
 			name: "parse object expression {a:{c:1},b:{d:2}}",
 			in: `{
-						   a:{c:1+a.b*2+c.d+3},
-						   b:{d:2}
-						 }`,
+				    a:{c:1+a.b*2+c.d+3},
+					b:{d:2}
+				 }`,
 			want: &core.ObjectExpression{
 				Properties: []core.ObjectProperty{
 					core.ObjectProperty{
@@ -2867,7 +2886,7 @@ func TestParseExpression_Object(t *testing.T) {
 															Line:   2,
 															CharAt: 8,
 														},
-														Property: &core.VariableExpression{
+														PropertyIdentifier: core.Identifier{
 															Name:   "b",
 															Line:   2,
 															CharAt: 10,
@@ -2903,7 +2922,7 @@ func TestParseExpression_Object(t *testing.T) {
 													Line:   2,
 													CharAt: 14,
 												},
-												Property: &core.VariableExpression{
+												PropertyIdentifier: core.Identifier{
 													Name:   "d",
 													Line:   2,
 													CharAt: 16,
@@ -3263,7 +3282,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 													Line:   1,
 													CharAt: 9,
 												},
-												Property: &core.VariableExpression{
+												PropertyIdentifier: core.Identifier{
 													Name:   "b",
 													Line:   1,
 													CharAt: 11,
@@ -3299,7 +3318,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 											Line:   1,
 											CharAt: 15,
 										},
-										Property: &core.VariableExpression{
+										PropertyIdentifier: core.Identifier{
 											Name:   "d",
 											Line:   1,
 											CharAt: 17,
@@ -3376,13 +3395,14 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 					Line:   1,
 					CharAt: 1,
 				},
-				Property: &core.VariableExpression{
+				PropertyExpression: &core.VariableExpression{
 					Name:   "b",
 					Line:   1,
 					CharAt: 3,
 				},
-				Line:   1,
-				CharAt: 1,
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
 			},
 		},
 		{
@@ -3395,21 +3415,23 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 						Line:   1,
 						CharAt: 1,
 					},
-					Property: &core.VariableExpression{
+					PropertyExpression: &core.VariableExpression{
 						Name:   "b",
 						Line:   1,
 						CharAt: 3,
 					},
-					Line:   1,
-					CharAt: 1,
+					Compute: true,
+					Line:    1,
+					CharAt:  1,
 				},
-				Property: &core.VariableExpression{
+				PropertyExpression: &core.VariableExpression{
 					Name:   "c",
 					Line:   1,
 					CharAt: 6,
 				},
-				Line:   1,
-				CharAt: 1,
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
 			},
 		},
 		{
@@ -3422,21 +3444,23 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 						Line:   1,
 						CharAt: 3,
 					},
-					Property: &core.VariableExpression{
+					PropertyExpression: &core.VariableExpression{
 						Name:   "b",
 						Line:   1,
 						CharAt: 5,
 					},
-					Line:   1,
-					CharAt: 3,
+					Compute: true,
+					Line:    1,
+					CharAt:  3,
 				},
-				Property: &core.VariableExpression{
+				PropertyExpression: &core.VariableExpression{
 					Name:   "c",
 					Line:   1,
 					CharAt: 10,
 				},
-				Line:   1,
-				CharAt: 3,
+				Compute: true,
+				Line:    1,
+				CharAt:  3,
 			},
 		},
 		{
@@ -3449,7 +3473,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 						Line:   1,
 						CharAt: 1,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "b",
 						Line:   1,
 						CharAt: 3,
@@ -3457,13 +3481,14 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 					Line:   1,
 					CharAt: 1,
 				},
-				Property: &core.VariableExpression{
+				PropertyExpression: &core.VariableExpression{
 					Name:   "c",
 					Line:   1,
 					CharAt: 5,
 				},
-				Line:   1,
-				CharAt: 1,
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
 			},
 		},
 		{
@@ -3476,7 +3501,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 						Line:   1,
 						CharAt: 2,
 					},
-					Property: &core.VariableExpression{
+					PropertyIdentifier: core.Identifier{
 						Name:   "b",
 						Line:   1,
 						CharAt: 4,
@@ -3484,13 +3509,14 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 					Line:   1,
 					CharAt: 2,
 				},
-				Property: &core.VariableExpression{
+				PropertyExpression: &core.VariableExpression{
 					Name:   "c",
 					Line:   1,
 					CharAt: 7,
 				},
-				Line:   1,
-				CharAt: 2,
+				Compute: true,
+				Line:    1,
+				CharAt:  2,
 			},
 		},
 		{
@@ -3502,22 +3528,24 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 					Line:   1,
 					CharAt: 1,
 				},
-				Property: &core.MemberAccessExpression{
+				PropertyExpression: &core.MemberAccessExpression{
 					Object: &core.VariableExpression{
 						Name:   "b",
 						Line:   1,
 						CharAt: 3,
 					},
-					Property: &core.VariableExpression{
+					PropertyExpression: &core.VariableExpression{
 						Name:   "c",
 						Line:   1,
 						CharAt: 5,
 					},
-					Line:   1,
-					CharAt: 3,
+					Compute: true,
+					Line:    1,
+					CharAt:  3,
 				},
-				Line:   1,
-				CharAt: 1,
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
 			},
 		},
 		{
@@ -3530,22 +3558,24 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 						Line:   1,
 						CharAt: 1,
 					},
-					Property: &core.MemberAccessExpression{
+					PropertyExpression: &core.MemberAccessExpression{
 						Object: &core.VariableExpression{
 							Name:   "b",
 							Line:   1,
 							CharAt: 3,
 						},
-						Property: &core.VariableExpression{
+						PropertyExpression: &core.VariableExpression{
 							Name:   "c",
 							Line:   1,
 							CharAt: 5,
 						},
-						Line:   1,
-						CharAt: 3,
+						Compute: true,
+						Line:    1,
+						CharAt:  3,
 					},
-					Line:   1,
-					CharAt: 1,
+					Compute: true,
+					Line:    1,
+					CharAt:  1,
 				},
 				Right: &core.LiteralExpression{
 					Type:   "number",
@@ -3578,22 +3608,24 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 						Line:   1,
 						CharAt: 3,
 					},
-					Property: &core.MemberAccessExpression{
+					PropertyExpression: &core.MemberAccessExpression{
 						Object: &core.VariableExpression{
 							Name:   "b",
 							Line:   1,
 							CharAt: 5,
 						},
-						Property: &core.VariableExpression{
+						PropertyExpression: &core.VariableExpression{
 							Name:   "c",
 							Line:   1,
 							CharAt: 7,
 						},
-						Line:   1,
-						CharAt: 5,
+						Compute: true,
+						Line:    1,
+						CharAt:  5,
 					},
-					Line:   1,
-					CharAt: 3,
+					Compute: true,
+					Line:    1,
+					CharAt:  3,
 				},
 				Operator: core.Operator{
 					Symbol: "+",
@@ -3621,22 +3653,24 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 							Line:   1,
 							CharAt: 3,
 						},
-						Property: &core.MemberAccessExpression{
+						PropertyExpression: &core.MemberAccessExpression{
 							Object: &core.VariableExpression{
 								Name:   "b",
 								Line:   1,
 								CharAt: 5,
 							},
-							Property: &core.VariableExpression{
+							PropertyExpression: &core.VariableExpression{
 								Name:   "c",
 								Line:   1,
 								CharAt: 7,
 							},
-							Line:   1,
-							CharAt: 5,
+							Compute: true,
+							Line:    1,
+							CharAt:  5,
 						},
-						Line:   1,
-						CharAt: 3,
+						Compute: true,
+						Line:    1,
+						CharAt:  3,
 					},
 					Operator: core.Operator{
 						Symbol: "+",
@@ -3684,22 +3718,24 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 							Line:   1,
 							CharAt: 3,
 						},
-						Property: &core.MemberAccessExpression{
+						PropertyExpression: &core.MemberAccessExpression{
 							Object: &core.VariableExpression{
 								Name:   "b",
 								Line:   1,
 								CharAt: 5,
 							},
-							Property: &core.VariableExpression{
+							PropertyExpression: &core.VariableExpression{
 								Name:   "c",
 								Line:   1,
 								CharAt: 7,
 							},
-							Line:   1,
-							CharAt: 5,
+							Compute: true,
+							Line:    1,
+							CharAt:  5,
 						},
-						Line:   1,
-						CharAt: 3,
+						Compute: true,
+						Line:    1,
+						CharAt:  3,
 					},
 					Operator: core.Operator{
 						Symbol: "*",
@@ -3741,22 +3777,24 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 							Line:   1,
 							CharAt: 5,
 						},
-						Property: &core.MemberAccessExpression{
+						PropertyExpression: &core.MemberAccessExpression{
 							Object: &core.VariableExpression{
 								Name:   "b",
 								Line:   1,
 								CharAt: 7,
 							},
-							Property: &core.VariableExpression{
+							PropertyExpression: &core.VariableExpression{
 								Name:   "c",
 								Line:   1,
 								CharAt: 9,
 							},
-							Line:   1,
-							CharAt: 7,
+							Compute: true,
+							Line:    1,
+							CharAt:  7,
 						},
-						Line:   1,
-						CharAt: 5,
+						Compute: true,
+						Line:    1,
+						CharAt:  5,
 					},
 					Operator: core.Operator{
 						Symbol: "+",
@@ -3800,22 +3838,24 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 								Line:   1,
 								CharAt: 5,
 							},
-							Property: &core.MemberAccessExpression{
+							PropertyExpression: &core.MemberAccessExpression{
 								Object: &core.VariableExpression{
 									Name:   "b",
 									Line:   1,
 									CharAt: 7,
 								},
-								Property: &core.VariableExpression{
+								PropertyExpression: &core.VariableExpression{
 									Name:   "c",
 									Line:   1,
 									CharAt: 9,
 								},
-								Line:   1,
-								CharAt: 7,
+								Compute: true,
+								Line:    1,
+								CharAt:  7,
 							},
-							Line:   1,
-							CharAt: 5,
+							Compute: true,
+							Line:    1,
+							CharAt:  5,
 						},
 						Operator: core.Operator{
 							Symbol: "+",
@@ -3909,7 +3949,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 					Line:   1,
 					CharAt: 2,
 				},
-				Property: &core.VariableExpression{
+				PropertyIdentifier: core.Identifier{
 					Name:   "abc",
 					Line:   1,
 					CharAt: 13,
@@ -4035,7 +4075,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 							},
 							Init: &core.LiteralExpression{
 								Type:   "string",
-								Value:  `"xxx"`,
+								Value:  "xxx",
 								Line:   1,
 								CharAt: 7,
 							},
@@ -4101,7 +4141,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 									},
 									&core.LiteralExpression{
 										Type:   "string",
-										Value:  `"456"`,
+										Value:  "456",
 										Line:   3,
 										CharAt: 1,
 									},
@@ -4273,7 +4313,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 							},
 							Init: &core.LiteralExpression{
 								Type:   "string",
-								Value:  "'2'",
+								Value:  "2",
 								Line:   1,
 								CharAt: 11,
 							},
@@ -4947,14 +4987,15 @@ func TestParseExpression_CallExpression(t *testing.T) {
 						Line:   1,
 						CharAt: 1,
 					},
-					Property: &core.LiteralExpression{
+					PropertyExpression: &core.LiteralExpression{
 						Type:   "number",
 						Value:  "1",
 						Line:   1,
 						CharAt: 3,
 					},
-					Line:   1,
-					CharAt: 1,
+					Compute: true,
+					Line:    1,
+					CharAt:  1,
 				},
 				Arguments: []core.Expression{
 					&core.LiteralExpression{
@@ -5297,7 +5338,7 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 							Line:   1,
 							CharAt: 1,
 						},
-						Property: &core.VariableExpression{
+						PropertyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
 							CharAt: 3,

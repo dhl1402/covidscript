@@ -195,26 +195,29 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 			if tmpExp != nil && aexp != nil && len(aexp.Elements) == 1 {
 				if lastBexp != nil {
 					maexp = &core.MemberAccessExpression{
-						Object:   lastBexp.Right,
-						Property: aexp.Elements[0],
-						Line:     t.Line, // TODO: lastBexp.Right.GetLine()
-						CharAt:   lastBexp.Right.GetCharAt(),
+						Object:             lastBexp.Right,
+						PropertyExpression: aexp.Elements[0],
+						Compute:            true,
+						Line:               t.Line, // TODO: lastBexp.Right.GetLine()
+						CharAt:             lastBexp.Right.GetCharAt(),
 					}
 					lastBexp.Right = maexp
 					lastBexp.Group = false
 				} else if maexp == nil {
 					maexp = &core.MemberAccessExpression{
-						Object:   tmpExp,
-						Property: aexp.Elements[0],
-						Line:     t.Line, // TODO: tmpExp.GetLine()
-						CharAt:   tmpExp.GetCharAt(),
+						Object:             tmpExp,
+						PropertyExpression: aexp.Elements[0],
+						Compute:            true,
+						Line:               t.Line, // TODO: tmpExp.GetLine()
+						CharAt:             tmpExp.GetCharAt(),
 					}
-				} else if maexp.Property != nil {
+				} else if maexp.PropertyExpression != nil || maexp.PropertyIdentifier.Name != "" {
 					maexp = &core.MemberAccessExpression{
-						Object:   maexp,
-						Property: aexp.Elements[0],
-						Line:     maexp.Line,
-						CharAt:   maexp.CharAt,
+						Object:             maexp,
+						PropertyExpression: aexp.Elements[0],
+						Compute:            true,
+						Line:               maexp.Line,
+						CharAt:             maexp.CharAt,
 					}
 				} else {
 					return nil, 0, fmt.Errorf("TODO")
@@ -223,8 +226,16 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 			} else {
 				tmpExp = exp
 			}
-			if maexp != nil && maexp.Property == nil {
-				maexp.Property = tmpExp
+			if maexp != nil && maexp.PropertyExpression == nil && maexp.PropertyIdentifier.Name == "" {
+				vexp, _ := tmpExp.(*core.VariableExpression)
+				if vexp == nil {
+					return nil, 0, fmt.Errorf("TODO")
+				}
+				maexp.PropertyIdentifier = core.Identifier{
+					Name:   vexp.Name,
+					Line:   vexp.Line,
+					CharAt: vexp.CharAt,
+				}
 				tmpExp = maexp
 			}
 			if bexp != nil && nt != nil && nt.Value == ")" && openParen <= len(bexpsAfterGroup) {
@@ -260,7 +271,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					Line:   t.Line, // TODO: tmpExp.GetLine()
 					CharAt: tmpExp.GetCharAt(),
 				}
-			} else if maexp.Property != nil {
+			} else if maexp.PropertyExpression != nil || maexp.PropertyIdentifier.Name != "" {
 				maexp = &core.MemberAccessExpression{
 					Object: maexp,
 					Line:   maexp.Line,
@@ -394,9 +405,13 @@ func parseTempExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	}
 	t := tokens[0]
 	if ptype, ok := t.ParsePrimitiveType(); ok {
+		v := t.Value
+		if ptype == "string" {
+			v = t.Value[1 : len(t.Value)-1]
+		}
 		return &core.LiteralExpression{
 			Type:   ptype,
-			Value:  t.Value,
+			Value:  v,
 			Line:   t.Line,
 			CharAt: t.CharAt,
 		}, 1, nil
