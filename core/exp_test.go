@@ -88,6 +88,183 @@ func TestEvaluate_VariableExpression(t *testing.T) {
 	}
 }
 
+func TestEvaluate_BinaryExpression(t *testing.T) {
+	cases := []struct {
+		name string
+		ec   ExecutionContext
+		exp  Expression
+		want Expression
+		err  error
+	}{
+		{
+			name: "evaluate binary expression #1",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: BinaryExpression{
+				Left: LiteralExpression{
+					Type:  "number",
+					Value: "1",
+				},
+				Right: LiteralExpression{
+					Type:  "number",
+					Value: "2",
+				},
+				Operator: Operator{
+					Symbol: "+",
+				},
+			},
+			want: LiteralExpression{
+				Type:  "number",
+				Value: "3",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #2",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": LiteralExpression{
+						Type:  "number",
+						Value: "3",
+					},
+				},
+			},
+			exp: BinaryExpression{
+				Left: LiteralExpression{
+					Type:  "number",
+					Value: "1",
+				},
+				Right: BinaryExpression{
+					Left: LiteralExpression{
+						Type:  "number",
+						Value: "2",
+					},
+					Right: VariableExpression{
+						Name: "a",
+					},
+					Operator: Operator{
+						Symbol: "+",
+					},
+				},
+				Operator: Operator{
+					Symbol: "+",
+				},
+			},
+			want: LiteralExpression{
+				Type:  "number",
+				Value: "6",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #3",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: BinaryExpression{
+				Left: LiteralExpression{
+					Type:  "number",
+					Value: "1",
+				},
+				Right: LiteralExpression{
+					Type:  "string",
+					Value: "2",
+				},
+				Operator: Operator{
+					Symbol: "+",
+				},
+			},
+			want: LiteralExpression{
+				Type:  "string",
+				Value: "12",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #4",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: BinaryExpression{
+				Left: LiteralExpression{
+					Type:  "string",
+					Value: "abc",
+				},
+				Right: LiteralExpression{
+					Type:  "string",
+					Value: "xyz",
+				},
+				Operator: Operator{
+					Symbol: "+",
+				},
+			},
+			want: LiteralExpression{
+				Type:  "string",
+				Value: "abcxyz",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #5",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: BinaryExpression{
+				Left: LiteralExpression{
+					Type:  "number",
+					Value: "1",
+				},
+				Right: LiteralExpression{
+					Type:  "string",
+					Value: "xyz",
+				},
+				Operator: Operator{
+					Symbol: "-",
+					Line:   1,
+					CharAt: 2,
+				},
+			},
+			want: nil,
+			err:  fmt.Errorf("Cannot use '-' operator with string. [1,2]"),
+		},
+		{
+			name: "evaluate binary expression #6",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: BinaryExpression{
+				Left: LiteralExpression{
+					Type:  "number",
+					Value: "1",
+				},
+				Right: ArrayExpression{
+					Elements: []Expression{
+						LiteralExpression{
+							Type:  "number",
+							Value: "1",
+						},
+					},
+				},
+				Operator: Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+			},
+			want: nil,
+			err:  fmt.Errorf("Cannot use '+' operator with array. [1,2]"),
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			exp, err := tt.exp.Evaluate(tt.ec)
+			require.Equal(t, tt.want, exp)
+			require.Equal(t, tt.err, err)
+		})
+	}
+}
+
 func TestEvaluate_ArrayExpression(t *testing.T) {
 	cases := []struct {
 		name string
