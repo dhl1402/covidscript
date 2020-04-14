@@ -44,6 +44,12 @@ func (t Token) IsPrimitiveValue() bool {
 }
 
 func (t Token) ParsePrimitiveType() (string, bool) {
+	if t.Value == "undefined" {
+		return "undefined", true
+	}
+	if t.Value == "null" {
+		return "null", true
+	}
 	if t.IsBoolean() {
 		return "boolean", true
 	}

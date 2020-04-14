@@ -70,7 +70,7 @@ func parseStatements(tokens []lexer.Token) ([]core.Statement, int, error) {
 				// parse ExpressionStatement
 				ss = append(ss, core.ExpressionStatement{
 					Expression: e,
-					Line:       1, // TODO e.GetLine()
+					Line:       e.GetLine(),
 					CharAt:     e.GetCharAt(),
 				})
 				i = i + processed - 1
@@ -198,7 +198,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 						Object:             lastBexp.Right,
 						PropertyExpression: aexp.Elements[0],
 						Compute:            true,
-						Line:               t.Line, // TODO: lastBexp.Right.GetLine()
+						Line:               lastBexp.Right.GetLine(),
 						CharAt:             lastBexp.Right.GetCharAt(),
 					}
 					lastBexp.Right = maexp
@@ -208,7 +208,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 						Object:             tmpExp,
 						PropertyExpression: aexp.Elements[0],
 						Compute:            true,
-						Line:               t.Line, // TODO: tmpExp.GetLine()
+						Line:               tmpExp.GetLine(),
 						CharAt:             tmpExp.GetCharAt(),
 					}
 				} else if maexp.PropertyExpression != nil || maexp.PropertyIdentifier.Name != "" {
@@ -257,7 +257,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 			if lastBexp != nil {
 				maexp = &core.MemberAccessExpression{
 					Object: lastBexp.Right,
-					Line:   t.Line, // TODO: lastBexp.Right.GetLine()
+					Line:   lastBexp.Right.GetLine(),
 					CharAt: lastBexp.Right.GetCharAt(),
 				}
 				lastBexp.Right = maexp
@@ -268,7 +268,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 				}
 				maexp = &core.MemberAccessExpression{
 					Object: tmpExp,
-					Line:   t.Line, // TODO: tmpExp.GetLine()
+					Line:   tmpExp.GetLine(),
 					CharAt: tmpExp.GetCharAt(),
 				}
 			} else if maexp.PropertyExpression != nil || maexp.PropertyIdentifier.Name != "" {
@@ -330,7 +330,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					tmpExp = &core.CallExpression{
 						Callee:    lastBexp.Right,
 						Arguments: args,
-						Line:      t.Line, // TODO: lastBexp.Right.GetLine()
+						Line:      lastBexp.Right.GetLine(),
 						CharAt:    lastBexp.Right.GetCharAt(),
 					}
 					lastBexp.Right = tmpExp
@@ -339,7 +339,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					tmpExp = &core.CallExpression{
 						Callee:    tmpExp,
 						Arguments: args,
-						Line:      t.Line, // TODO: lastBexp.Right.GetLine()
+						Line:      tmpExp.GetLine(),
 						CharAt:    tmpExp.GetCharAt(),
 					}
 				}

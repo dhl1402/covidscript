@@ -14,3 +14,11 @@ func (e LiteralExpression) Evaluate(ec ExecutionContext) (Expression, error) {
 func (e LiteralExpression) GetCharAt() int {
 	return e.CharAt
 }
+
+func (e LiteralExpression) GetLine() int {
+	return e.Line
+}
+
+func (e LiteralExpression) GetType() string {
+	return e.Type
+}

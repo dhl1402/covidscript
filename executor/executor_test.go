@@ -18,9 +18,8 @@ func Test(t *testing.T) {
 	}{
 		{
 			name: "",
-			in: `
-				 var a=2
-				 a=3
+			in: `var a=[1,2]
+				var b = a.ac
 			`,
 			want: nil,
 		},
