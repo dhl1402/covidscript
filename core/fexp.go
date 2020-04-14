@@ -3,11 +3,23 @@ package core
 type FunctionExpression struct {
 	Params []Identifier
 	Body   []Statement
+	EC     *ExecutionContext
 	Line   int
 	CharAt int
 }
 
 func (e *FunctionExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+	e.EC = &ExecutionContext{
+		Outer:     &ec,
+		Variables: map[string]Expression{},
+	}
+	for _, p := range e.Params {
+		e.EC.Set(p.Name, &LiteralExpression{
+			Type:   "undefined",
+			Line:   p.Line,
+			CharAt: p.CharAt,
+		})
+	}
 	return e, nil
 }
 
