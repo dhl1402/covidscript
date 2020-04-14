@@ -18,11 +18,11 @@ func TestEvaluate_LiteralExpression(t *testing.T) {
 		{
 			name: "evaluate literal expression",
 			ec:   ExecutionContext{},
-			exp: LiteralExpression{
+			exp: &LiteralExpression{
 				Type:  "number",
 				Value: "1",
 			},
-			want: LiteralExpression{
+			want: &LiteralExpression{
 				Type:  "number",
 				Value: "1",
 			},
@@ -47,30 +47,34 @@ func TestEvaluate_VariableExpression(t *testing.T) {
 		err  error
 	}{
 		{
-			name: "evaluate array expression #1",
+			name: "evaluate variable expression #1",
 			ec: ExecutionContext{
 				Variables: map[string]Expression{
-					"a": LiteralExpression{
-						Type:  "number",
-						Value: "3",
+					"a": &LiteralExpression{
+						Type:   "number",
+						Value:  "3",
+						Line:   1,
+						CharAt: 1,
 					},
 				},
 			},
-			exp: VariableExpression{
+			exp: &VariableExpression{
 				Name:   "a",
-				Line:   1,
+				Line:   2,
 				CharAt: 1,
 			},
-			want: LiteralExpression{
-				Type:  "number",
-				Value: "3",
+			want: &LiteralExpression{
+				Type:   "number",
+				Value:  "3",
+				Line:   2,
+				CharAt: 1,
 			},
 			err: nil,
 		},
 		{
 			name: "evaluate variable expression #2",
 			ec:   ExecutionContext{},
-			exp: VariableExpression{
+			exp: &VariableExpression{
 				Name:   "a",
 				Line:   1,
 				CharAt: 1,
@@ -101,12 +105,12 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			ec: ExecutionContext{
 				Variables: map[string]Expression{},
 			},
-			exp: BinaryExpression{
-				Left: LiteralExpression{
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
 					Type:  "number",
 					Value: "1",
 				},
-				Right: LiteralExpression{
+				Right: &LiteralExpression{
 					Type:  "number",
 					Value: "2",
 				},
@@ -114,7 +118,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 					Symbol: "+",
 				},
 			},
-			want: LiteralExpression{
+			want: &LiteralExpression{
 				Type:  "number",
 				Value: "3",
 			},
@@ -124,23 +128,23 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			name: "evaluate binary expression #2",
 			ec: ExecutionContext{
 				Variables: map[string]Expression{
-					"a": LiteralExpression{
+					"a": &LiteralExpression{
 						Type:  "number",
 						Value: "3",
 					},
 				},
 			},
-			exp: BinaryExpression{
-				Left: LiteralExpression{
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
 					Type:  "number",
 					Value: "1",
 				},
-				Right: BinaryExpression{
-					Left: LiteralExpression{
+				Right: &BinaryExpression{
+					Left: &LiteralExpression{
 						Type:  "number",
 						Value: "2",
 					},
-					Right: VariableExpression{
+					Right: &VariableExpression{
 						Name: "a",
 					},
 					Operator: Operator{
@@ -151,7 +155,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 					Symbol: "+",
 				},
 			},
-			want: LiteralExpression{
+			want: &LiteralExpression{
 				Type:  "number",
 				Value: "6",
 			},
@@ -162,12 +166,12 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			ec: ExecutionContext{
 				Variables: map[string]Expression{},
 			},
-			exp: BinaryExpression{
-				Left: LiteralExpression{
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
 					Type:  "number",
 					Value: "1",
 				},
-				Right: LiteralExpression{
+				Right: &LiteralExpression{
 					Type:  "string",
 					Value: "2",
 				},
@@ -175,7 +179,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 					Symbol: "+",
 				},
 			},
-			want: LiteralExpression{
+			want: &LiteralExpression{
 				Type:  "string",
 				Value: "12",
 			},
@@ -186,12 +190,12 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			ec: ExecutionContext{
 				Variables: map[string]Expression{},
 			},
-			exp: BinaryExpression{
-				Left: LiteralExpression{
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
 					Type:  "string",
 					Value: "abc",
 				},
-				Right: LiteralExpression{
+				Right: &LiteralExpression{
 					Type:  "string",
 					Value: "xyz",
 				},
@@ -199,7 +203,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 					Symbol: "+",
 				},
 			},
-			want: LiteralExpression{
+			want: &LiteralExpression{
 				Type:  "string",
 				Value: "abcxyz",
 			},
@@ -210,12 +214,12 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			ec: ExecutionContext{
 				Variables: map[string]Expression{},
 			},
-			exp: BinaryExpression{
-				Left: LiteralExpression{
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
 					Type:  "number",
 					Value: "1",
 				},
-				Right: LiteralExpression{
+				Right: &LiteralExpression{
 					Type:  "string",
 					Value: "xyz",
 				},
@@ -233,14 +237,14 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			ec: ExecutionContext{
 				Variables: map[string]Expression{},
 			},
-			exp: BinaryExpression{
-				Left: LiteralExpression{
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
 					Type:  "number",
 					Value: "1",
 				},
-				Right: ArrayExpression{
+				Right: &ArrayExpression{
 					Elements: []Expression{
-						LiteralExpression{
+						&LiteralExpression{
 							Type:  "number",
 							Value: "1",
 						},
@@ -254,6 +258,35 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			},
 			want: nil,
 			err:  fmt.Errorf("Cannot use '+' operator with array. [1,2]"),
+		},
+		{
+			name: "evaluate binary expression #6",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &LiteralExpression{
+						Type:   "number",
+						Value:  "0",
+						Line:   1,
+						CharAt: 1,
+					},
+				},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  "number",
+					Value: "1",
+				},
+				Right: &VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 3,
+				},
+				Operator: Operator{
+					Symbol: "/",
+				},
+			},
+			want: nil,
+			err:  fmt.Errorf("Cannot divide by zero. [1,3]"),
 		},
 	}
 	for _, tt := range cases {
@@ -278,17 +311,17 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 			ec: ExecutionContext{
 				Variables: map[string]Expression{},
 			},
-			exp: ArrayExpression{
+			exp: &ArrayExpression{
 				Elements: []Expression{
-					LiteralExpression{
+					&LiteralExpression{
 						Type:  "number",
 						Value: "1",
 					},
 				},
 			},
-			want: ArrayExpression{
+			want: &ArrayExpression{
 				Elements: []Expression{
-					LiteralExpression{
+					&LiteralExpression{
 						Type:  "number",
 						Value: "1",
 					},
@@ -301,14 +334,14 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 			ec: ExecutionContext{
 				Variables: map[string]Expression{},
 			},
-			exp: ArrayExpression{
+			exp: &ArrayExpression{
 				Elements: []Expression{
-					BinaryExpression{
-						Left: LiteralExpression{
+					&BinaryExpression{
+						Left: &LiteralExpression{
 							Type:  "number",
 							Value: "1",
 						},
-						Right: LiteralExpression{
+						Right: &LiteralExpression{
 							Type:  "number",
 							Value: "1",
 						},
@@ -318,9 +351,9 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 					},
 				},
 			},
-			want: ArrayExpression{
+			want: &ArrayExpression{
 				Elements: []Expression{
-					LiteralExpression{
+					&LiteralExpression{
 						Type:  "number",
 						Value: "2",
 					},
@@ -332,25 +365,25 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 			name: "evaluate array expression #3",
 			ec: ExecutionContext{
 				Variables: map[string]Expression{
-					"a": LiteralExpression{
+					"a": &LiteralExpression{
 						Type:  "number",
 						Value: "3",
 					},
 				},
 			},
-			exp: ArrayExpression{
+			exp: &ArrayExpression{
 				Elements: []Expression{
-					BinaryExpression{
-						Left: LiteralExpression{
+					&BinaryExpression{
+						Left: &LiteralExpression{
 							Type:  "number",
 							Value: "1",
 						},
-						Right: BinaryExpression{
-							Left: LiteralExpression{
+						Right: &BinaryExpression{
+							Left: &LiteralExpression{
 								Type:  "number",
 								Value: "2",
 							},
-							Right: VariableExpression{
+							Right: &VariableExpression{
 								Name: "a",
 							},
 							Operator: Operator{
@@ -361,18 +394,18 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 							Symbol: "+",
 						},
 					},
-					VariableExpression{
+					&VariableExpression{
 						Name: "a",
 					},
 				},
 			},
-			want: ArrayExpression{
+			want: &ArrayExpression{
 				Elements: []Expression{
-					LiteralExpression{
+					&LiteralExpression{
 						Type:  "number",
 						Value: "6",
 					},
-					LiteralExpression{
+					&LiteralExpression{
 						Type:  "number",
 						Value: "3",
 					},
@@ -403,26 +436,26 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 			ec: ExecutionContext{
 				Variables: map[string]Expression{},
 			},
-			exp: ObjectExpression{
+			exp: &ObjectExpression{
 				Properties: []ObjectProperty{
 					ObjectProperty{
 						KeyIdentifier: Identifier{
 							Name: "a",
 						},
-						Value: LiteralExpression{
+						Value: &LiteralExpression{
 							Type:  "string",
 							Value: "xxx",
 						},
 					},
 				},
 			},
-			want: ObjectExpression{
+			want: &ObjectExpression{
 				Properties: []ObjectProperty{
 					ObjectProperty{
 						KeyIdentifier: Identifier{
 							Name: "a",
 						},
-						Value: LiteralExpression{
+						Value: &LiteralExpression{
 							Type:  "string",
 							Value: "xxx",
 						},
@@ -435,21 +468,21 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 			name: "evaluate object expression #2",
 			ec: ExecutionContext{
 				Variables: map[string]Expression{
-					"a": LiteralExpression{
+					"a": &LiteralExpression{
 						Type:  "number",
 						Value: "3",
 					},
 				},
 			},
-			exp: ObjectExpression{
+			exp: &ObjectExpression{
 				Properties: []ObjectProperty{
 					ObjectProperty{
-						KeyExpression: BinaryExpression{
-							Left: LiteralExpression{
+						KeyExpression: &BinaryExpression{
+							Left: &LiteralExpression{
 								Type:  "string",
 								Value: "a",
 							},
-							Right: LiteralExpression{
+							Right: &LiteralExpression{
 								Type:  "string",
 								Value: "b",
 							},
@@ -457,12 +490,12 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 								Symbol: "+",
 							},
 						},
-						Value: BinaryExpression{
-							Left: LiteralExpression{
+						Value: &BinaryExpression{
+							Left: &LiteralExpression{
 								Type:  "number",
 								Value: "2",
 							},
-							Right: VariableExpression{
+							Right: &VariableExpression{
 								Name: "a",
 							},
 							Operator: Operator{
@@ -473,20 +506,398 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 					},
 				},
 			},
-			want: ObjectExpression{
+			want: &ObjectExpression{
 				Properties: []ObjectProperty{
 					ObjectProperty{
-						KeyExpression: LiteralExpression{
+						KeyExpression: &LiteralExpression{
 							Type:  "string",
 							Value: "ab",
 						},
-						Value: LiteralExpression{
+						Value: &LiteralExpression{
 							Type:  "number",
 							Value: "5",
 						},
 						Computed: true,
 					},
 				},
+			},
+			err: nil,
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			exp, err := tt.exp.Evaluate(tt.ec)
+			require.Equal(t, tt.want, exp)
+			require.Equal(t, tt.err, err)
+		})
+	}
+}
+
+func TestEvaluate_MemberAccessExpression(t *testing.T) {
+	cases := []struct {
+		name string
+		ec   ExecutionContext
+		exp  Expression
+		want Expression
+		err  error
+	}{
+		{
+			name: "evaluate member access expression #1",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ObjectExpression{
+						Properties: []ObjectProperty{
+							ObjectProperty{
+								KeyExpression: &LiteralExpression{
+									Type:  "string",
+									Value: "b",
+								},
+								Value: &LiteralExpression{
+									Type:  "boolean",
+									Value: "true",
+								},
+								Computed: true,
+							},
+						},
+					},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name: "a",
+				},
+				PropertyIdentifier: Identifier{
+					Name: "b",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  "boolean",
+				Value: "true",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate member access expression #2",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ObjectExpression{
+						Properties: []ObjectProperty{
+							ObjectProperty{
+								KeyExpression: &LiteralExpression{
+									Type:  "string",
+									Value: "b",
+								},
+								Value: &LiteralExpression{
+									Type:  "boolean",
+									Value: "true",
+								},
+								Computed: true,
+							},
+						},
+					},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name: "a",
+				},
+				PropertyExpression: &LiteralExpression{
+					Type:  "string",
+					Value: "b",
+				},
+				Compute: true,
+			},
+			want: &LiteralExpression{
+				Type:  "boolean",
+				Value: "true",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate member access expression #3",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ObjectExpression{
+						Properties: []ObjectProperty{
+							ObjectProperty{
+								KeyIdentifier: Identifier{
+									Name: "b",
+								},
+								Value: &LiteralExpression{
+									Type:  "boolean",
+									Value: "true",
+								},
+							},
+						},
+					},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name: "a",
+				},
+				PropertyExpression: &LiteralExpression{
+					Type:  "string",
+					Value: "b",
+				},
+				Compute: true,
+			},
+			want: &LiteralExpression{
+				Type:  "boolean",
+				Value: "true",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate member access expression #4",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ObjectExpression{},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name: "a",
+				},
+				PropertyIdentifier: Identifier{
+					Name: "c",
+				},
+			},
+			want: &LiteralExpression{
+				Type: "undefined",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate member access expression #5",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ObjectExpression{},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name: "a",
+				},
+				PropertyExpression: &LiteralExpression{
+					Type:   "boolean",
+					Value:  "true",
+					Line:   1,
+					CharAt: 4,
+				},
+				Compute: true,
+			},
+			want: nil,
+			err:  fmt.Errorf("Property key of type boolean is not supported. [1,4]"),
+		},
+		{
+			name: "evaluate member access expression #6",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ArrayExpression{
+						Elements: []Expression{
+							&LiteralExpression{
+								Type:  "number",
+								Value: "1",
+							},
+						},
+					},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name: "a",
+				},
+				PropertyExpression: &LiteralExpression{
+					Type:  "number",
+					Value: "0",
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
+			},
+			want: &LiteralExpression{
+				Type:   "number",
+				Value:  "1",
+				Line:   1,
+				CharAt: 1,
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate member access expression #7",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ArrayExpression{
+						Elements: []Expression{
+							&LiteralExpression{
+								Type:  "number",
+								Value: "1",
+							},
+						},
+					},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name: "a",
+				},
+				PropertyIdentifier: Identifier{
+					Name: "xxx",
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+			want: &LiteralExpression{
+				Type:   "undefined",
+				Line:   1,
+				CharAt: 1,
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate member access expression #8",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ArrayExpression{
+						Elements: []Expression{
+							&LiteralExpression{
+								Type:  "number",
+								Value: "1",
+							},
+						},
+					},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name: "a",
+				},
+				PropertyExpression: &LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   1,
+					CharAt: 3,
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
+			},
+			want: nil,
+			err:  fmt.Errorf("Index is out of range. [1.3]"),
+		},
+		{
+			name: "evaluate member access expression #9",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ArrayExpression{
+						Elements: []Expression{
+							&LiteralExpression{
+								Type:  "number",
+								Value: "1",
+							},
+						},
+					},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name: "a",
+				},
+				PropertyExpression: &LiteralExpression{
+					Type:   "string",
+					Value:  "1",
+					Line:   1,
+					CharAt: 3,
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
+			},
+			want: nil,
+			err:  fmt.Errorf("Index must be number. [1,3]"),
+		},
+		{
+			name: "evaluate member access expression #10",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ArrayExpression{
+						Elements: []Expression{
+							&LiteralExpression{
+								Type:  "number",
+								Value: "1",
+							},
+						},
+					},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &LiteralExpression{
+					Type:  "number",
+					Value: "0",
+				},
+				PropertyExpression: &LiteralExpression{
+					Type:   "string",
+					Value:  "1",
+					Line:   1,
+					CharAt: 3,
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
+			},
+			want: nil,
+			err:  fmt.Errorf("Can't access property of type number. [1,1]"),
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			exp, err := tt.exp.Evaluate(tt.ec)
+			require.Equal(t, tt.want, exp)
+			require.Equal(t, tt.err, err)
+		})
+	}
+}
+
+func TestEvaluate_TMP(t *testing.T) {
+	cases := []struct {
+		name string
+		ec   ExecutionContext
+		exp  Expression
+		want Expression
+		err  error
+	}{
+		{
+			name: "evaluate member access expression #6",
+			ec: ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &ArrayExpression{
+						Elements: []Expression{
+							&LiteralExpression{
+								Type:  "number",
+								Value: "1",
+							},
+						},
+					},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name: "a",
+				},
+				PropertyExpression: &LiteralExpression{
+					Type:  "number",
+					Value: "0",
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
+			},
+			want: &LiteralExpression{
+				Type:   "number",
+				Value:  "1",
+				Line:   1,
+				CharAt: 1,
 			},
 			err: nil,
 		},

@@ -9,7 +9,7 @@ import (
 	"gs/lexer"
 )
 
-func Test(t *testing.T) {
+func Test_TMP(t *testing.T) {
 	cases := []struct {
 		name string
 		in   string

@@ -18,7 +18,7 @@ type (
 	}
 )
 
-func (e ObjectExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+func (e *ObjectExpression) Evaluate(ec ExecutionContext) (Expression, error) {
 	props := []ObjectProperty{}
 	for _, p := range e.Properties {
 		if p.Computed {
@@ -26,9 +26,13 @@ func (e ObjectExpression) Evaluate(ec ExecutionContext) (Expression, error) {
 			if err != nil {
 				return nil, err
 			}
+			kexp.SetLine(p.KeyExpression.GetLine())
+			kexp.SetCharAt(p.KeyExpression.GetCharAt())
 			p.KeyExpression = kexp
 		}
 		v, err := p.Value.Evaluate(ec)
+		v.SetLine(p.Value.GetLine())
+		v.SetCharAt(p.Value.GetCharAt())
 		if err != nil {
 			return nil, err
 		}
@@ -39,14 +43,22 @@ func (e ObjectExpression) Evaluate(ec ExecutionContext) (Expression, error) {
 	return e, nil
 }
 
-func (e ObjectExpression) GetCharAt() int {
+func (e *ObjectExpression) GetCharAt() int {
 	return e.CharAt
 }
 
-func (e ObjectExpression) GetLine() int {
+func (e *ObjectExpression) GetLine() int {
 	return e.Line
 }
 
-func (e ObjectExpression) GetType() string {
+func (e *ObjectExpression) SetLine(i int) {
+	e.Line = i
+}
+
+func (e *ObjectExpression) SetCharAt(i int) {
+	e.CharAt = i
+}
+
+func (e *ObjectExpression) GetType() string {
 	return "object"
 }

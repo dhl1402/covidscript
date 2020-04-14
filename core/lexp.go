@@ -7,18 +7,26 @@ type LiteralExpression struct {
 	CharAt int
 }
 
-func (e LiteralExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+func (e *LiteralExpression) Evaluate(ec ExecutionContext) (Expression, error) {
 	return e, nil
 }
 
-func (e LiteralExpression) GetCharAt() int {
+func (e *LiteralExpression) GetCharAt() int {
 	return e.CharAt
 }
 
-func (e LiteralExpression) GetLine() int {
+func (e *LiteralExpression) GetLine() int {
 	return e.Line
 }
 
-func (e LiteralExpression) GetType() string {
+func (e *LiteralExpression) SetLine(i int) {
+	e.Line = i
+}
+
+func (e *LiteralExpression) SetCharAt(i int) {
+	e.CharAt = i
+}
+
+func (e *LiteralExpression) GetType() string {
 	return e.Type
 }
