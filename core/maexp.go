@@ -14,7 +14,7 @@ type MemberAccessExpression struct {
 	CharAt             int
 }
 
-func (e *MemberAccessExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	var pexp *LiteralExpression
 	obj, err := e.Object.Evaluate(ec)
 	if err != nil {

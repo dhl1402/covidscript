@@ -9,51 +9,6 @@ import (
 	"gs/lexer"
 )
 
-func Test_TMP(t *testing.T) {
-	cases := []struct {
-		name string
-		in   string
-		want core.Expression
-		// want []core.Statement
-	}{
-		{
-			name: "parse member access expression a.b.c",
-			in:   "a.b.c",
-			want: &core.MemberAccessExpression{
-				Object: &core.MemberAccessExpression{
-					Object: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 1,
-					},
-					PropertyIdentifier: core.Identifier{
-						Name:   "b",
-						Line:   1,
-						CharAt: 3,
-					},
-					Line:   1,
-					CharAt: 1,
-				},
-				PropertyIdentifier: core.Identifier{
-					Name:   "c",
-					Line:   1,
-					CharAt: 5,
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-	}
-	for _, tt := range cases {
-		t.Run(tt.name, func(t *testing.T) {
-			exp, _, _ := parseExpression(lexer.Lex(tt.in))
-			require.Equal(t, tt.want, exp)
-			// ast, _ := ToAST(lexer.Lex(tt.in))
-			// require.Equal(t, tt.want, ast)
-		})
-	}
-}
-
 func TestParseExpression(t *testing.T) {
 	cases := []struct {
 		name string
@@ -5361,6 +5316,51 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ast, _ := ToAST(lexer.Lex(tt.in))
 			require.Equal(t, tt.want, ast)
+		})
+	}
+}
+
+func Test_TMP(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want core.Expression
+		// want []core.Statement
+	}{
+		{
+			name: "parse member access expression a.b.c",
+			in:   "a.b.c",
+			want: &core.MemberAccessExpression{
+				Object: &core.MemberAccessExpression{
+					Object: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					PropertyIdentifier: core.Identifier{
+						Name:   "b",
+						Line:   1,
+						CharAt: 3,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				PropertyIdentifier: core.Identifier{
+					Name:   "c",
+					Line:   1,
+					CharAt: 5,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			require.Equal(t, tt.want, exp)
+			// ast, _ := ToAST(lexer.Lex(tt.in))
+			// require.Equal(t, tt.want, ast)
 		})
 	}
 }

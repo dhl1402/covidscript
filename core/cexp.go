@@ -9,7 +9,7 @@ type CallExpression struct {
 	CharAt    int
 }
 
-func (e *CallExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+func (e *CallExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	callee, err := e.Callee.Evaluate(ec)
 	if err != nil {
 		return nil, err
@@ -27,8 +27,39 @@ func (e *CallExpression) Evaluate(ec ExecutionContext) (Expression, error) {
 			f.EC.Set(p.Name, arg)
 		}
 	}
-	// TODO: execute function
-	return e, nil
+	return Execute(f.EC, f.Body)
+}
+
+func Execute(ec *ExecutionContext, statement []Statement) (Expression, error) {
+	for _, ss := range statement {
+		switch s := ss.(type) {
+		case VariableDeclaration:
+			for _, d := range s.Declarations {
+				if d.Init != nil {
+					if f, ok := d.Init.(*FunctionExpression); ok {
+						f.EC = &ExecutionContext{
+							Outer:     ec,
+							Variables: map[string]Expression{},
+						}
+					}
+					value, err := d.Init.Evaluate(ec)
+					if err != nil {
+						return nil, err
+					}
+					ec.Set(d.ID.Name, value)
+				} else {
+					ec.Set(d.ID.Name, &LiteralExpression{
+						Type:   "undefined",
+						Line:   d.ID.Line,
+						CharAt: d.ID.CharAt,
+					})
+				}
+			}
+		case ReturnStatement:
+			return s.Argument.Evaluate(ec)
+		}
+	}
+	return nil, nil
 }
 
 func (e *CallExpression) GetCharAt() int {

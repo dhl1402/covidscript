@@ -18,7 +18,7 @@ type (
 	}
 )
 
-func (e *ObjectExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+func (e *ObjectExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	props := []ObjectProperty{}
 	for _, p := range e.Properties {
 		if p.Computed {

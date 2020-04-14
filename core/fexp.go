@@ -8,9 +8,9 @@ type FunctionExpression struct {
 	CharAt int
 }
 
-func (e *FunctionExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+func (e *FunctionExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	e.EC = &ExecutionContext{
-		Outer:     &ec,
+		Outer:     e.EC.Outer,
 		Variables: map[string]Expression{},
 	}
 	for _, p := range e.Params {

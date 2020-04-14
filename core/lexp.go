@@ -7,7 +7,7 @@ type LiteralExpression struct {
 	CharAt int
 }
 
-func (e *LiteralExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+func (e *LiteralExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	return e, nil
 }
 

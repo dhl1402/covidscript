@@ -14,7 +14,7 @@ type BinaryExpression struct {
 	CharAt   int
 }
 
-func (e *BinaryExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	left, err := e.Left.Evaluate(ec)
 	if err != nil {
 		return nil, err

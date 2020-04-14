@@ -10,7 +10,7 @@ type VariableExpression struct {
 	CharAt int
 }
 
-func (e *VariableExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+func (e *VariableExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	if exp, ok := ec.Get(e.Name); ok {
 		result, err := exp.Evaluate(ec)
 		if err != nil {

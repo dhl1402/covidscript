@@ -18,8 +18,10 @@ func Test_TMP(t *testing.T) {
 	}{
 		{
 			name: "",
-			in: `var a=[1,2]
-				var b = a.ac
+			in: `var a=func(){
+				return 1
+			}
+				var b = a()
 			`,
 			want: nil,
 		},

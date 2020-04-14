@@ -1,7 +1,7 @@
 package core
 
 type Expression interface {
-	Evaluate(ExecutionContext) (Expression, error)
+	Evaluate(*ExecutionContext) (Expression, error)
 	GetLine() int
 	GetCharAt() int
 	SetLine(int)

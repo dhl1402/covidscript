@@ -6,7 +6,7 @@ type ArrayExpression struct {
 	CharAt   int
 }
 
-func (e *ArrayExpression) Evaluate(ec ExecutionContext) (Expression, error) {
+func (e *ArrayExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	elems := []Expression{}
 	for _, ee := range e.Elements {
 		exp, err := ee.Evaluate(ec)
