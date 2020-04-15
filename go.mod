@@ -1,4 +1,4 @@
-module covs
+module github.com/dhl1402/covidscript
 
 go 1.12
 

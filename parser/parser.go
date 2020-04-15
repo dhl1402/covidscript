@@ -1,9 +1,10 @@
 package parser
 
 import (
-	"covs/core"
-	"covs/lexer"
 	"fmt"
+
+	"github.com/dhl1402/covidscript/core"
+	"github.com/dhl1402/covidscript/lexer"
 )
 
 func ToAST(tokens []lexer.Token) ([]core.Statement, error) {

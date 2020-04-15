@@ -1,17 +1,18 @@
 package main
 
 import (
-	"covs/builtin"
-	"covs/executor"
-	"covs/lexer"
-	"covs/parser"
 	"fmt"
+
+	"github.com/dhl1402/covidscript/builtin"
+	"github.com/dhl1402/covidscript/executor"
+	"github.com/dhl1402/covidscript/lexer"
+	"github.com/dhl1402/covidscript/parser"
 )
 
 func main() {
 	code := `
 		var a = func(){
-			echo("Hello","world!","This","is","covid-script")
+			echo("Hello","world!","This","is","covidscript")
 		}
 		a()
 	`

@@ -1,9 +1,10 @@
 package lexer
 
 import (
-	"covs/core"
-	"covs/utils"
 	"strconv"
+
+	"github.com/dhl1402/covidscript/core"
+	"github.com/dhl1402/covidscript/utils"
 )
 
 type Token struct {

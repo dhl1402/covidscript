@@ -1,6 +1,6 @@
 package builtin
 
-import "covs/core"
+import "github.com/dhl1402/covidscript/core"
 
 func CreateGlobalEC() *core.ExecutionContext {
 	return &core.ExecutionContext{

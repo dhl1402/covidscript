@@ -1,6 +1,6 @@
 package lexer
 
-import "covs/utils"
+import "github.com/dhl1402/covidscript/utils"
 
 // todo: lex float, :=
 // Lex source code into tokens

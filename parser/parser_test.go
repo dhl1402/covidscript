@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"covs/core"
-	"covs/lexer"
+	"github.com/dhl1402/covidscript/core"
+	"github.com/dhl1402/covidscript/lexer"
 )
 
 func TestParseExpression(t *testing.T) {

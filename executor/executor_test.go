@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"covs/core"
-	"covs/lexer"
-	"covs/parser"
+	"github.com/dhl1402/covidscript/core"
+	"github.com/dhl1402/covidscript/lexer"
+	"github.com/dhl1402/covidscript/parser"
 )
 
 func TestExecute(t *testing.T) {

@@ -1,8 +1,9 @@
 package builtin
 
 import (
-	"covs/core"
 	"fmt"
+
+	"github.com/dhl1402/covidscript/core"
 )
 
 func Echo() *core.FunctionExpression {
