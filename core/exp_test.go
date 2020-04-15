@@ -947,8 +947,10 @@ func TestEvaluate_CallExpression(t *testing.T) {
 				},
 				Arguments: []Expression{},
 			},
-			want: nil,
-			err:  nil,
+			want: &LiteralExpression{
+				Type: "undefined",
+			},
+			err: nil,
 		},
 		{
 			name: "evaluate call expression #2",
