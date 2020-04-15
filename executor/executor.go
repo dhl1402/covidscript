@@ -1,7 +1,7 @@
 package executor
 
 import (
-	"gs/core"
+	"covs/core"
 )
 
 func Execute(gec *core.ExecutionContext, stmts []core.Statement) error {

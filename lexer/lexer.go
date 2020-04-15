@@ -1,6 +1,6 @@
 package lexer
 
-import "gs/utils"
+import "covs/utils"
 
 // todo: lex float, :=
 // Lex source code into tokens

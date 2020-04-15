@@ -1,6 +1,6 @@
 package builtin
 
-import "gs/core"
+import "covs/core"
 
 func CreateGlobalEC() *core.ExecutionContext {
 	return &core.ExecutionContext{

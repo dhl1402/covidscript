@@ -1,9 +1,9 @@
 package parser
 
 import (
+	"covs/core"
+	"covs/lexer"
 	"fmt"
-	"gs/core"
-	"gs/lexer"
 )
 
 func ToAST(tokens []lexer.Token) ([]core.Statement, error) {

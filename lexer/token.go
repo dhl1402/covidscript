@@ -1,8 +1,8 @@
 package lexer
 
 import (
-	"gs/core"
-	"gs/utils"
+	"covs/core"
+	"covs/utils"
 	"strconv"
 )
 

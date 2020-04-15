@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"gs/core"
-	"gs/lexer"
+	"covs/core"
+	"covs/lexer"
 )
 
 func TestParseExpression(t *testing.T) {

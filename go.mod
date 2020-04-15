@@ -1,4 +1,4 @@
-module gs
+module covs
 
 go 1.12
 

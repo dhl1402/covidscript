@@ -1,7 +1,5 @@
 package utils
 
-// hardcoding: = , true false { } [] func
-
 func IsReservedKeyword(s string) bool {
 	ss := []string{"var", "func", "return", "true", "false", "null", "undefined"}
 	return IncludeStr(ss, s)

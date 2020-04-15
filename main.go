@@ -1,11 +1,11 @@
 package main
 
 import (
+	"covs/builtin"
+	"covs/executor"
+	"covs/lexer"
+	"covs/parser"
 	"fmt"
-	"gs/builtin"
-	"gs/executor"
-	"gs/lexer"
-	"gs/parser"
 )
 
 func main() {

@@ -1,8 +1,8 @@
 package builtin
 
 import (
+	"covs/core"
 	"fmt"
-	"gs/core"
 )
 
 func Echo() *core.FunctionExpression {
