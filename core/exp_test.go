@@ -438,7 +438,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 			},
 			exp: &ObjectExpression{
 				Properties: []ObjectProperty{
-					ObjectProperty{
+					{
 						KeyIdentifier: Identifier{
 							Name: "a",
 						},
@@ -451,7 +451,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 			},
 			want: &ObjectExpression{
 				Properties: []ObjectProperty{
-					ObjectProperty{
+					{
 						KeyIdentifier: Identifier{
 							Name: "a",
 						},
@@ -476,7 +476,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 			},
 			exp: &ObjectExpression{
 				Properties: []ObjectProperty{
-					ObjectProperty{
+					{
 						KeyExpression: &BinaryExpression{
 							Left: &LiteralExpression{
 								Type:  "string",
@@ -508,7 +508,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 			},
 			want: &ObjectExpression{
 				Properties: []ObjectProperty{
-					ObjectProperty{
+					{
 						KeyExpression: &LiteralExpression{
 							Type:  "string",
 							Value: "ab",
@@ -547,7 +547,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				Variables: map[string]Expression{
 					"a": &ObjectExpression{
 						Properties: []ObjectProperty{
-							ObjectProperty{
+							{
 								KeyExpression: &LiteralExpression{
 									Type:  "string",
 									Value: "b",
@@ -582,7 +582,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				Variables: map[string]Expression{
 					"a": &ObjectExpression{
 						Properties: []ObjectProperty{
-							ObjectProperty{
+							{
 								KeyExpression: &LiteralExpression{
 									Type:  "string",
 									Value: "b",
@@ -619,7 +619,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				Variables: map[string]Expression{
 					"a": &ObjectExpression{
 						Properties: []ObjectProperty{
-							ObjectProperty{
+							{
 								KeyIdentifier: Identifier{
 									Name: "b",
 								},
@@ -872,10 +872,10 @@ func TestEvaluate_FunctionExpression(t *testing.T) {
 			ec:   nil,
 			exp: &FunctionExpression{
 				Params: []Identifier{
-					Identifier{
+					{
 						Name: "a",
 					},
-					Identifier{
+					{
 						Name: "b",
 					},
 				},
@@ -884,10 +884,10 @@ func TestEvaluate_FunctionExpression(t *testing.T) {
 			},
 			want: &FunctionExpression{
 				Params: []Identifier{
-					Identifier{
+					{
 						Name: "a",
 					},
-					Identifier{
+					{
 						Name: "b",
 					},
 				},
@@ -929,10 +929,10 @@ func TestEvaluate_CallExpression(t *testing.T) {
 				Variables: map[string]Expression{
 					"a": &FunctionExpression{
 						Params: []Identifier{
-							Identifier{
+							{
 								Name: "a",
 							},
-							Identifier{
+							{
 								Name: "b",
 							},
 						},
@@ -956,10 +956,10 @@ func TestEvaluate_CallExpression(t *testing.T) {
 				Variables: map[string]Expression{
 					"a": &FunctionExpression{
 						Params: []Identifier{
-							Identifier{
+							{
 								Name: "a",
 							},
-							Identifier{
+							{
 								Name: "b",
 							},
 						},
@@ -1029,35 +1029,6 @@ func TestEvaluate_CallExpression(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			exp, err := tt.exp.Evaluate(tt.ec)
 			require.Equal(t, tt.want, exp)
-			require.Equal(t, tt.err, err)
-		})
-	}
-}
-
-func TestExecute(t *testing.T) {
-	cases := []struct {
-		name    string
-		in      []Statement
-		inEC    *ExecutionContext
-		wantEC  *ExecutionContext
-		wantExp Expression
-		err     error
-	}{}
-	for _, tt := range cases {
-		t.Run(tt.name, func(t *testing.T) {
-			gec := &ExecutionContext{
-				Variables: map[string]Expression{},
-			}
-			cexp := CallExpression{
-				Callee: &FunctionExpression{
-					Body:   tt.in,
-					Params: []Identifier{},
-					EC:     gec,
-				},
-			}
-			exp, err := cexp.Evaluate(gec)
-			require.Equal(t, tt.wantEC, gec)
-			require.Equal(t, tt.wantExp, exp)
 			require.Equal(t, tt.err, err)
 		})
 	}

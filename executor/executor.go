@@ -4,13 +4,10 @@ import (
 	"gs/core"
 )
 
-func Execute(statement []core.Statement) error {
-	gec := &core.ExecutionContext{
-		Variables: map[string]core.Expression{},
-	}
+func Execute(gec *core.ExecutionContext, stmts []core.Statement) error {
 	cexp := core.CallExpression{
 		Callee: &core.FunctionExpression{
-			Body:   statement,
+			Body:   stmts,
 			Params: []core.Identifier{},
 			EC:     gec,
 		},

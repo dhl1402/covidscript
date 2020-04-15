@@ -27,11 +27,12 @@ func (e *CallExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 			f.EC.Set(p.Name, arg)
 		}
 	}
-	return Execute(f.EC, f.Body)
+	exp, err := executeFunctionBody(f.EC, f.Body)
+	return exp, err
 }
 
-func Execute(ec *ExecutionContext, statement []Statement) (Expression, error) {
-	for _, ss := range statement {
+func executeFunctionBody(ec *ExecutionContext, body []Statement) (Expression, error) {
+	for _, ss := range body {
 		switch s := ss.(type) {
 		case VariableDeclaration:
 			for _, d := range s.Declarations {

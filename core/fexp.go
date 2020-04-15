@@ -9,10 +9,7 @@ type FunctionExpression struct {
 }
 
 func (e *FunctionExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
-	e.EC = &ExecutionContext{
-		Outer:     e.EC.Outer,
-		Variables: map[string]Expression{},
-	}
+	e.EC.Variables = map[string]Expression{}
 	for _, p := range e.Params {
 		e.EC.Set(p.Name, &LiteralExpression{
 			Type:   "undefined",
