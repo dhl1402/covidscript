@@ -437,7 +437,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 				Variables: map[string]Expression{},
 			},
 			exp: &ObjectExpression{
-				Properties: []ObjectProperty{
+				Properties: []*ObjectProperty{
 					{
 						KeyIdentifier: Identifier{
 							Name: "a",
@@ -450,7 +450,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 				},
 			},
 			want: &ObjectExpression{
-				Properties: []ObjectProperty{
+				Properties: []*ObjectProperty{
 					{
 						KeyIdentifier: Identifier{
 							Name: "a",
@@ -475,7 +475,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 				},
 			},
 			exp: &ObjectExpression{
-				Properties: []ObjectProperty{
+				Properties: []*ObjectProperty{
 					{
 						KeyExpression: &BinaryExpression{
 							Left: &LiteralExpression{
@@ -507,7 +507,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 				},
 			},
 			want: &ObjectExpression{
-				Properties: []ObjectProperty{
+				Properties: []*ObjectProperty{
 					{
 						KeyExpression: &LiteralExpression{
 							Type:  "string",
@@ -546,7 +546,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &ObjectExpression{
-						Properties: []ObjectProperty{
+						Properties: []*ObjectProperty{
 							{
 								KeyExpression: &LiteralExpression{
 									Type:  "string",
@@ -581,7 +581,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &ObjectExpression{
-						Properties: []ObjectProperty{
+						Properties: []*ObjectProperty{
 							{
 								KeyExpression: &LiteralExpression{
 									Type:  "string",
@@ -618,7 +618,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &ObjectExpression{
-						Properties: []ObjectProperty{
+						Properties: []*ObjectProperty{
 							{
 								KeyIdentifier: Identifier{
 									Name: "b",

@@ -17,12 +17,6 @@ type (
 func (stmt VariableDeclaration) Execute(ec *ExecutionContext) (Expression, error) {
 	for _, d := range stmt.Declarations {
 		if d.Init != nil {
-			if f, ok := d.Init.(*FunctionExpression); ok {
-				f.EC = &ExecutionContext{
-					Outer:     ec,
-					Variables: map[string]Expression{},
-				}
-			}
 			value, err := d.Init.Evaluate(ec)
 			if err != nil {
 				return nil, err

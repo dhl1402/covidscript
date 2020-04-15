@@ -12,14 +12,14 @@ type (
 		CharAt        int
 	}
 	ObjectExpression struct {
-		Properties []ObjectProperty
+		Properties []*ObjectProperty
 		Line       int
 		CharAt     int
 	}
 )
 
 func (e *ObjectExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
-	props := []ObjectProperty{}
+	props := []*ObjectProperty{}
 	for _, p := range e.Properties {
 		if p.Computed {
 			kexp, err := p.KeyExpression.Evaluate(ec)

@@ -483,7 +483,7 @@ func parseObjectExpression(tokens []lexer.Token) (core.Expression, int, error) {
 		return nil, 0, fmt.Errorf("TODO")
 	}
 	obj := &core.ObjectExpression{
-		Properties: []core.ObjectProperty{},
+		Properties: []*core.ObjectProperty{},
 		Line:       tokens[0].Line,
 		CharAt:     tokens[0].CharAt,
 	}
@@ -542,7 +542,7 @@ func parseObjectExpression(tokens []lexer.Token) (core.Expression, int, error) {
 			}
 			i = i + processed
 			prop.Value = exp
-			obj.Properties = append(obj.Properties, *prop)
+			obj.Properties = append(obj.Properties, prop)
 			prop = nil
 		} else {
 			return nil, 0, fmt.Errorf("TODO")

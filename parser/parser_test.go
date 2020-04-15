@@ -2578,7 +2578,7 @@ func TestParseExpression_Object(t *testing.T) {
 			name: "parse object expression {}",
 			in:   "{}",
 			want: &core.ObjectExpression{
-				Properties: []core.ObjectProperty{},
+				Properties: []*core.ObjectProperty{},
 				Line:       1,
 				CharAt:     1,
 			},
@@ -2587,8 +2587,8 @@ func TestParseExpression_Object(t *testing.T) {
 			name: "parse object expression {a:1,b:2}",
 			in:   "{a:1,b:2}",
 			want: &core.ObjectExpression{
-				Properties: []core.ObjectProperty{
-					core.ObjectProperty{
+				Properties: []*core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "a",
 							Line:   1,
@@ -2603,7 +2603,7 @@ func TestParseExpression_Object(t *testing.T) {
 						Line:   1,
 						CharAt: 2,
 					},
-					core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
@@ -2627,8 +2627,8 @@ func TestParseExpression_Object(t *testing.T) {
 			name: "parse object expression {[a+b]:1,c:2}",
 			in:   "{[a+b]:1,c:2}",
 			want: &core.ObjectExpression{
-				Properties: []core.ObjectProperty{
-					core.ObjectProperty{
+				Properties: []*core.ObjectProperty{
+					{
 						KeyExpression: &core.BinaryExpression{
 							Left: &core.VariableExpression{
 								Name:   "a",
@@ -2658,7 +2658,7 @@ func TestParseExpression_Object(t *testing.T) {
 						Line:     1,
 						CharAt:   2,
 					},
-					core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "c",
 							Line:   1,
@@ -2682,16 +2682,16 @@ func TestParseExpression_Object(t *testing.T) {
 			name: "parse object expression {a:{c:1},b:2}",
 			in:   "{a:{c:1},b:2}",
 			want: &core.ObjectExpression{
-				Properties: []core.ObjectProperty{
-					core.ObjectProperty{
+				Properties: []*core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "a",
 							Line:   1,
 							CharAt: 2,
 						},
 						Value: &core.ObjectExpression{
-							Properties: []core.ObjectProperty{
-								core.ObjectProperty{
+							Properties: []*core.ObjectProperty{
+								{
 									KeyIdentifier: core.Identifier{
 										Name:   "c",
 										Line:   1,
@@ -2713,7 +2713,7 @@ func TestParseExpression_Object(t *testing.T) {
 						Line:   1,
 						CharAt: 2,
 					},
-					core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
@@ -2737,16 +2737,16 @@ func TestParseExpression_Object(t *testing.T) {
 			name: "parse object expression {a:{c:1},b:{d:2}}",
 			in:   "{a:{c:1},b:{d:2}}",
 			want: &core.ObjectExpression{
-				Properties: []core.ObjectProperty{
-					core.ObjectProperty{
+				Properties: []*core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "a",
 							Line:   1,
 							CharAt: 2,
 						},
 						Value: &core.ObjectExpression{
-							Properties: []core.ObjectProperty{
-								core.ObjectProperty{
+							Properties: []*core.ObjectProperty{
+								{
 									KeyIdentifier: core.Identifier{
 										Name:   "c",
 										Line:   1,
@@ -2768,15 +2768,15 @@ func TestParseExpression_Object(t *testing.T) {
 						Line:   1,
 						CharAt: 2,
 					},
-					core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
 							CharAt: 10,
 						},
 						Value: &core.ObjectExpression{
-							Properties: []core.ObjectProperty{
-								core.ObjectProperty{
+							Properties: []*core.ObjectProperty{
+								{
 									KeyIdentifier: core.Identifier{
 										Name:   "d",
 										Line:   1,
@@ -2810,16 +2810,16 @@ func TestParseExpression_Object(t *testing.T) {
 					b:{d:2}
 				 }`,
 			want: &core.ObjectExpression{
-				Properties: []core.ObjectProperty{
-					core.ObjectProperty{
+				Properties: []*core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "a",
 							Line:   2,
 							CharAt: 1,
 						},
 						Value: &core.ObjectExpression{
-							Properties: []core.ObjectProperty{
-								core.ObjectProperty{
+							Properties: []*core.ObjectProperty{
+								{
 									KeyIdentifier: core.Identifier{
 										Name:   "c",
 										Line:   2,
@@ -2917,15 +2917,15 @@ func TestParseExpression_Object(t *testing.T) {
 						Line:   2,
 						CharAt: 1,
 					},
-					core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   3,
 							CharAt: 1,
 						},
 						Value: &core.ObjectExpression{
-							Properties: []core.ObjectProperty{
-								core.ObjectProperty{
+							Properties: []*core.ObjectProperty{
+								{
 									KeyIdentifier: core.Identifier{
 										Name:   "d",
 										Line:   3,
@@ -2956,16 +2956,16 @@ func TestParseExpression_Object(t *testing.T) {
 			name: "parse object expression {a:{c:1},b:[2,3]}",
 			in:   "{a:{c:1},b:[2,3]}",
 			want: &core.ObjectExpression{
-				Properties: []core.ObjectProperty{
-					core.ObjectProperty{
+				Properties: []*core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "a",
 							Line:   1,
 							CharAt: 2,
 						},
 						Value: &core.ObjectExpression{
-							Properties: []core.ObjectProperty{
-								core.ObjectProperty{
+							Properties: []*core.ObjectProperty{
+								{
 									KeyIdentifier: core.Identifier{
 										Name:   "c",
 										Line:   1,
@@ -2987,7 +2987,7 @@ func TestParseExpression_Object(t *testing.T) {
 						Line:   1,
 						CharAt: 2,
 					},
-					core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "b",
 							Line:   1,
@@ -3030,8 +3030,8 @@ func TestParseExpression_Object(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.ObjectExpression{
-					Properties: []core.ObjectProperty{
-						core.ObjectProperty{
+					Properties: []*core.ObjectProperty{
+						{
 							KeyIdentifier: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -3046,7 +3046,7 @@ func TestParseExpression_Object(t *testing.T) {
 							Line:   1,
 							CharAt: 5,
 						},
-						core.ObjectProperty{
+						{
 							KeyIdentifier: core.Identifier{
 								Name:   "b",
 								Line:   1,
@@ -3163,8 +3163,8 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 						CharAt: 2,
 					},
 					&core.ObjectExpression{
-						Properties: []core.ObjectProperty{
-							core.ObjectProperty{
+						Properties: []*core.ObjectProperty{
+							{
 								KeyIdentifier: core.Identifier{
 									Name:   "a",
 									Line:   1,
@@ -3179,7 +3179,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 								Line:   1,
 								CharAt: 5,
 							},
-							core.ObjectProperty{
+							{
 								KeyIdentifier: core.Identifier{
 									Name:   "b",
 									Line:   1,
@@ -3934,7 +3934,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -3957,7 +3957,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -3973,7 +3973,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 				},
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "b",
 								Line:   2,
@@ -3995,7 +3995,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -4022,7 +4022,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -4049,7 +4049,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -4080,7 +4080,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -4140,15 +4140,15 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "c",
 								Line:   1,
 								CharAt: 5,
 							},
 							Init: &core.ObjectExpression{
-								Properties: []core.ObjectProperty{
-									core.ObjectProperty{
+								Properties: []*core.ObjectProperty{
+									{
 										KeyIdentifier: core.Identifier{
 											Name:   "a",
 											Line:   1,
@@ -4163,7 +4163,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 										Line:   1,
 										CharAt: 8,
 									},
-									core.ObjectProperty{
+									{
 										KeyIdentifier: core.Identifier{
 											Name:   "b",
 											Line:   1,
@@ -4198,7 +4198,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -4219,7 +4219,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 				},
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "b",
 								Line:   2,
@@ -4245,7 +4245,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -4260,7 +4260,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 							Line:   1,
 							CharAt: 5,
 						},
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "b",
 								Line:   1,
@@ -4288,7 +4288,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -4303,7 +4303,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 							Line:   1,
 							CharAt: 5,
 						},
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "b",
 								Line:   1,
@@ -4319,7 +4319,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 				},
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "c",
 								Line:   2,
@@ -4383,12 +4383,12 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 						CharAt: 6,
 					},
 					Params: []core.Identifier{
-						core.Identifier{
+						{
 							Name:   "b",
 							Line:   1,
 							CharAt: 8,
 						},
-						core.Identifier{
+						{
 							Name:   "c",
 							Line:   1,
 							CharAt: 10,
@@ -4414,12 +4414,12 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 						CharAt: 6,
 					},
 					Params: []core.Identifier{
-						core.Identifier{
+						{
 							Name:   "b",
 							Line:   1,
 							CharAt: 8,
 						},
-						core.Identifier{
+						{
 							Name:   "c",
 							Line:   1,
 							CharAt: 10,
@@ -4428,7 +4428,7 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 					Body: []core.Statement{
 						core.VariableDeclaration{
 							Declarations: []core.VariableDeclarator{
-								core.VariableDeclarator{
+								{
 									ID: core.Identifier{
 										Name:   "a",
 										Line:   2,
@@ -4443,7 +4443,7 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 									Line:   2,
 									CharAt: 5,
 								},
-								core.VariableDeclarator{
+								{
 									ID: core.Identifier{
 										Name:   "b",
 										Line:   2,
@@ -4459,7 +4459,7 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 						},
 						core.VariableDeclaration{
 							Declarations: []core.VariableDeclarator{
-								core.VariableDeclarator{
+								{
 									ID: core.Identifier{
 										Name:   "c",
 										Line:   3,
@@ -4499,12 +4499,12 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 						CharAt: 6,
 					},
 					Params: []core.Identifier{
-						core.Identifier{
+						{
 							Name:   "b",
 							Line:   1,
 							CharAt: 8,
 						},
-						core.Identifier{
+						{
 							Name:   "c",
 							Line:   1,
 							CharAt: 10,
@@ -4513,7 +4513,7 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 					Body: []core.Statement{
 						core.VariableDeclaration{
 							Declarations: []core.VariableDeclarator{
-								core.VariableDeclarator{
+								{
 									ID: core.Identifier{
 										Name:   "a",
 										Line:   2,
@@ -4528,7 +4528,7 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 									Line:   2,
 									CharAt: 5,
 								},
-								core.VariableDeclarator{
+								{
 									ID: core.Identifier{
 										Name:   "b",
 										Line:   2,
@@ -4544,7 +4544,7 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 						},
 						core.VariableDeclaration{
 							Declarations: []core.VariableDeclarator{
-								core.VariableDeclarator{
+								{
 									ID: core.Identifier{
 										Name:   "c",
 										Line:   3,
@@ -4612,12 +4612,12 @@ func TestParseExpression_Function(t *testing.T) {
 			in:   `func (b,c){}`,
 			want: &core.FunctionExpression{
 				Params: []core.Identifier{
-					core.Identifier{
+					{
 						Name:   "b",
 						Line:   1,
 						CharAt: 7,
 					},
-					core.Identifier{
+					{
 						Name:   "c",
 						Line:   1,
 						CharAt: 9,
@@ -4637,12 +4637,12 @@ func TestParseExpression_Function(t *testing.T) {
 				 }`,
 			want: &core.FunctionExpression{
 				Params: []core.Identifier{
-					core.Identifier{
+					{
 						Name:   "b",
 						Line:   1,
 						CharAt: 7,
 					},
-					core.Identifier{
+					{
 						Name:   "c",
 						Line:   1,
 						CharAt: 9,
@@ -4651,7 +4651,7 @@ func TestParseExpression_Function(t *testing.T) {
 				Body: []core.Statement{
 					core.VariableDeclaration{
 						Declarations: []core.VariableDeclarator{
-							core.VariableDeclarator{
+							{
 								ID: core.Identifier{
 									Name:   "a",
 									Line:   2,
@@ -4666,7 +4666,7 @@ func TestParseExpression_Function(t *testing.T) {
 								Line:   2,
 								CharAt: 5,
 							},
-							core.VariableDeclarator{
+							{
 								ID: core.Identifier{
 									Name:   "b",
 									Line:   2,
@@ -4682,7 +4682,7 @@ func TestParseExpression_Function(t *testing.T) {
 					},
 					core.VariableDeclaration{
 						Declarations: []core.VariableDeclarator{
-							core.VariableDeclarator{
+							{
 								ID: core.Identifier{
 									Name:   "c",
 									Line:   3,
@@ -5004,8 +5004,8 @@ func TestParseExpression_CallExpression(t *testing.T) {
 			name: "parse call expression #8",
 			in:   "{a:b(a)}",
 			want: &core.ObjectExpression{
-				Properties: []core.ObjectProperty{
-					core.ObjectProperty{
+				Properties: []*core.ObjectProperty{
+					{
 						KeyIdentifier: core.Identifier{
 							Name:   "a",
 							Line:   1,
@@ -5107,7 +5107,7 @@ func TestToAST_ExpressionStatement(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -5138,7 +5138,7 @@ func TestToAST_ExpressionStatement(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,
@@ -5153,7 +5153,7 @@ func TestToAST_ExpressionStatement(t *testing.T) {
 							Line:   1,
 							CharAt: 5,
 						},
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "b",
 								Line:   1,
@@ -5247,7 +5247,7 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
-						core.VariableDeclarator{
+						{
 							ID: core.Identifier{
 								Name:   "a",
 								Line:   1,

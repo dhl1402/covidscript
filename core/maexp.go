@@ -27,7 +27,7 @@ func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, err
 		}
 		lexp, ok := tmpExp.(*LiteralExpression)
 		if !ok || (lexp.Type != "string" && lexp.Type != "number") {
-			return nil, fmt.Errorf("Property key of type %s is not supported. [%d,%d]", tmpExp.GetType(), lexp.Line, lexp.GetCharAt())
+			return nil, fmt.Errorf("Property key of type %s is not supported. [%d,%d]", tmpExp.GetType(), tmpExp.GetLine(), tmpExp.GetCharAt())
 		}
 		pexp = lexp
 	}
@@ -37,12 +37,14 @@ func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, err
 			if p.Computed {
 				kexp, ok := p.KeyExpression.(*LiteralExpression)
 				if ok && (e.PropertyIdentifier.Name == kexp.Value || e.Compute && kexp.Type == pexp.Type && kexp.Value == pexp.Value) {
-					p.Line = e.Line
-					p.CharAt = e.CharAt
-					return p.Value, nil // TODO: line and char should be set to e.Line, e.Char
+					p.Value.SetLine(e.Line)
+					p.Value.SetCharAt(e.CharAt)
+					return p.Value, nil
 				}
-			} else if p.KeyIdentifier.Name == e.PropertyIdentifier.Name || p.KeyIdentifier.Name == pexp.Value {
-				return p.Value, nil // TODO: line and char should be set to e.Line, e.Char
+			} else if p.KeyIdentifier.Name == e.PropertyIdentifier.Name || (pexp != nil && p.KeyIdentifier.Name == pexp.Value) {
+				p.Value.SetLine(e.Line)
+				p.Value.SetCharAt(e.CharAt)
+				return p.Value, nil
 			}
 		}
 		return &LiteralExpression{

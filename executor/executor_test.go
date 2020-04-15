@@ -145,7 +145,7 @@ func TestExecute(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "execute variable declaration #5",
+			name: "execute variable declaration #6",
 			in: `var a = {
 				   b: {
 				     c: 1,
@@ -159,7 +159,7 @@ func TestExecute(t *testing.T) {
 				return &core.ExecutionContext{
 					Variables: map[string]core.Expression{
 						"a": &core.ObjectExpression{
-							Properties: []core.ObjectProperty{
+							Properties: []*core.ObjectProperty{
 								{
 									KeyIdentifier: core.Identifier{
 										Name:   "b",
@@ -167,7 +167,7 @@ func TestExecute(t *testing.T) {
 										CharAt: 1,
 									},
 									Value: &core.ObjectExpression{
-										Properties: []core.ObjectProperty{
+										Properties: []*core.ObjectProperty{
 											{
 												KeyIdentifier: core.Identifier{
 													Name:   "c",
@@ -177,15 +177,15 @@ func TestExecute(t *testing.T) {
 												Value: &core.LiteralExpression{
 													Type:   "number",
 													Value:  "1",
-													Line:   3,
-													CharAt: 4,
+													Line:   6,
+													CharAt: 9,
 												},
 												Line:   3,
 												CharAt: 1,
 											},
 										},
-										Line:   2,
-										CharAt: 4,
+										Line:   6,
+										CharAt: 9,
 									},
 									Line:   2,
 									CharAt: 1,
@@ -197,8 +197,8 @@ func TestExecute(t *testing.T) {
 						"d": &core.LiteralExpression{
 							Type:   "number",
 							Value:  "1",
-							Line:   3,
-							CharAt: 4,
+							Line:   6,
+							CharAt: 9,
 						},
 					},
 				}
@@ -206,7 +206,7 @@ func TestExecute(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "execute variable declaration #6",
+			name: "execute variable declaration #7",
 			in: `var a = [
 				   "1"+"2",
 				   1+2,
@@ -248,7 +248,7 @@ func TestExecute(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "execute variable declaration #7",
+			name: "execute variable declaration #8",
 			in:   `var a = func(){}`,
 			inEC: &core.ExecutionContext{
 				Variables: map[string]core.Expression{},
@@ -272,7 +272,7 @@ func TestExecute(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "execute variable declaration #8",
+			name: "execute variable declaration #9",
 			in: `
 			var a = func(b,c){
 			  return b+c
@@ -346,7 +346,7 @@ func TestExecute(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "execute variable declaration #1",
+			name: "execute function declaration #1",
 			in:   `func a(){}`,
 			inEC: &core.ExecutionContext{
 				Variables: map[string]core.Expression{},
@@ -443,12 +443,426 @@ func TestExecute(t *testing.T) {
 			},
 			err: nil,
 		},
+		{
+			name: "execute assignment statement #1",
+			in: `
+				var a
+				a=1
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   3,
+							CharAt: 3,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute assignment statement #2",
+			in: `
+				var a
+				a=1
+				b=a+1
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   4,
+							CharAt: 3,
+						},
+						"b": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   4,
+							CharAt: 3,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute assignment statement #3",
+			in: `
+				var a=[1,2]
+				a[0]="xxx"
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.ArrayExpression{
+							Elements: []core.Expression{
+								&core.LiteralExpression{
+									Type:   "string",
+									Value:  "xxx",
+									Line:   3,
+									CharAt: 6,
+								},
+								&core.LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   2,
+									CharAt: 10,
+								},
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute assignment statement #4",
+			in: `
+				var a=[1,[2,3]]
+				a[1][1]="xxx"
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.ArrayExpression{
+							Elements: []core.Expression{
+								&core.LiteralExpression{
+									Type:   "number",
+									Value:  "1",
+									Line:   2,
+									CharAt: 8,
+								},
+								&core.ArrayExpression{
+									Elements: []core.Expression{
+										&core.LiteralExpression{
+											Type:   "number",
+											Value:  "2",
+											Line:   2,
+											CharAt: 11,
+										},
+										&core.LiteralExpression{
+											Type:   "string",
+											Value:  "xxx",
+											Line:   3,
+											CharAt: 9,
+										},
+									},
+									Line:   3,
+									CharAt: 1,
+								},
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute assignment statement #5",
+			in: `
+				var a=[1,[2,3]]
+				var b=[0,1]
+				a[b[1]][1]="xxx"
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.ArrayExpression{
+							Elements: []core.Expression{
+								&core.LiteralExpression{
+									Type:   "number",
+									Value:  "1",
+									Line:   2,
+									CharAt: 8,
+								},
+								&core.ArrayExpression{
+									Elements: []core.Expression{
+										&core.LiteralExpression{
+											Type:   "number",
+											Value:  "2",
+											Line:   2,
+											CharAt: 11,
+										},
+										&core.LiteralExpression{
+											Type:   "string",
+											Value:  "xxx",
+											Line:   4,
+											CharAt: 12,
+										},
+									},
+									Line:   4,
+									CharAt: 1,
+								},
+							},
+							Line:   4,
+							CharAt: 1,
+						},
+						"b": &core.ArrayExpression{
+							Elements: []core.Expression{
+								&core.LiteralExpression{
+									Type:   "number",
+									Value:  "0",
+									Line:   3,
+									CharAt: 8,
+								},
+								&core.LiteralExpression{
+									Type:   "number",
+									Value:  "1",
+									Line:   4,
+									CharAt: 3,
+								},
+							},
+							Line:   4,
+							CharAt: 3,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute assignment statement #7",
+			in: `
+				var a={b:1}
+				a.b=2
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "b",
+										Line:   2,
+										CharAt: 8,
+									},
+									Value: &core.LiteralExpression{
+										Type:   "number",
+										Value:  "2",
+										Line:   3,
+										CharAt: 5,
+									},
+									Line:   2,
+									CharAt: 8,
+								},
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute assignment statement #8",
+			in: `
+				var a={b:1}
+				a.c=2
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "b",
+										Line:   2,
+										CharAt: 8,
+									},
+									Value: &core.LiteralExpression{
+										Type:   "number",
+										Value:  "1",
+										Line:   2,
+										CharAt: 10,
+									},
+									Line:   2,
+									CharAt: 8,
+								},
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "c",
+										Line:   3,
+										CharAt: 3,
+									},
+									Value: &core.LiteralExpression{
+										Type:   "number",
+										Value:  "2",
+										Line:   3,
+										CharAt: 5,
+									},
+									Line:   3,
+									CharAt: 5,
+								},
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute assignment statement #8",
+			in: `
+				var a={b:1}
+				a["c"]=2
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "b",
+										Line:   2,
+										CharAt: 8,
+									},
+									Value: &core.LiteralExpression{
+										Type:   "number",
+										Value:  "1",
+										Line:   2,
+										CharAt: 10,
+									},
+									Line:   2,
+									CharAt: 8,
+								},
+								{
+									KeyExpression: &core.LiteralExpression{
+										Type:   "string",
+										Value:  "c",
+										Line:   3,
+										CharAt: 3,
+									},
+									Value: &core.LiteralExpression{
+										Type:   "number",
+										Value:  "2",
+										Line:   3,
+										CharAt: 8,
+									},
+									Computed: true,
+									Line:     3,
+									CharAt:   8,
+								},
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute assignment statement #9",
+			in: `
+				var a={b:1,c:[2,3]}
+				a.c[1]="xxx"
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "b",
+										Line:   2,
+										CharAt: 8,
+									},
+									Value: &core.LiteralExpression{
+										Type:   "number",
+										Value:  "1",
+										Line:   2,
+										CharAt: 10,
+									},
+									Line:   2,
+									CharAt: 8,
+								},
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "c",
+										Line:   2,
+										CharAt: 12,
+									},
+									Value: &core.ArrayExpression{
+										Elements: []core.Expression{
+											&core.LiteralExpression{
+												Type:   "number",
+												Value:  "2",
+												Line:   2,
+												CharAt: 15,
+											},
+											&core.LiteralExpression{
+												Type:   "string",
+												Value:  "xxx",
+												Line:   3,
+												CharAt: 8,
+											},
+										},
+										Line:   3,
+										CharAt: 1,
+									},
+									Line:   2,
+									CharAt: 12,
+								},
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			stmts, _ := parser.ToAST(lexer.Lex(tt.in))
 			require.Equal(t, tt.err, Execute(tt.inEC, stmts))
-			require.Equal(t, tt.wantEC(), tt.inEC)
+			if tt.err == nil {
+				require.Equal(t, tt.wantEC(), tt.inEC)
+			}
 		})
 	}
 }
@@ -462,76 +876,67 @@ func TestTMP(t *testing.T) {
 		err    error
 	}{
 		{
-			name: "execute variable declaration #8",
+			name: "execute assignment statement #6",
 			in: `
-			var a = func(b,c){
-			  return b+c
-			}
-			var d = a(1,2)`,
+				var a={b:1,c:[2,3]}
+				a.c[1]="xxx"
+			`,
 			inEC: &core.ExecutionContext{
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
-				gec := &core.ExecutionContext{
-					Variables: map[string]core.Expression{},
-				}
-				gec.Variables["a"] = &core.FunctionExpression{
-					Params: []core.Identifier{
-						{Name: "b", Line: 2, CharAt: 14},
-						{Name: "c", Line: 2, CharAt: 16},
-					},
-					Body: []core.Statement{
-						core.ReturnStatement{
-							Argument: &core.BinaryExpression{
-								Left: &core.VariableExpression{
-									Name:   "b",
-									Line:   3,
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "b",
+										Line:   2,
+										CharAt: 8,
+									},
+									Value: &core.LiteralExpression{
+										Type:   "number",
+										Value:  "1",
+										Line:   2,
+										CharAt: 10,
+									},
+									Line:   2,
 									CharAt: 8,
 								},
-								Right: &core.VariableExpression{
-									Name:   "c",
-									Line:   3,
-									CharAt: 10,
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "c",
+										Line:   2,
+										CharAt: 12,
+									},
+									Value: &core.ArrayExpression{
+										Elements: []core.Expression{
+											&core.LiteralExpression{
+												Type:   "number",
+												Value:  "2",
+												Line:   2,
+												CharAt: 15,
+											},
+											&core.LiteralExpression{
+												Type:   "string",
+												Value:  "xxx",
+												Line:   3,
+												CharAt: 8,
+											},
+										},
+										Line:   3,
+										CharAt: 1,
+									},
+									Line:   2,
+									CharAt: 12,
 								},
-								Operator: core.Operator{
-									Symbol: "+",
-									Line:   3,
-									CharAt: 9,
-								},
-								Line:   3,
-								CharAt: 8,
 							},
 							Line:   3,
 							CharAt: 1,
 						},
 					},
-					EC: &core.ExecutionContext{
-						Outer: gec,
-						Variables: map[string]core.Expression{
-							"b": &core.LiteralExpression{
-								Type:   "number",
-								Value:  "1",
-								Line:   3,
-								CharAt: 8,
-							},
-							"c": &core.LiteralExpression{
-								Type:   "number",
-								Value:  "2",
-								Line:   3,
-								CharAt: 10,
-							},
-						},
-					},
-					Line:   5,
-					CharAt: 9,
 				}
-				gec.Variables["d"] = &core.LiteralExpression{
-					Type:   "number",
-					Value:  "3",
-					Line:   3,
-					CharAt: 8,
-				}
-				return gec
 			},
 			err: nil,
 		},
