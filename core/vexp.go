@@ -42,3 +42,7 @@ func (e *VariableExpression) SetCharAt(i int) {
 func (e *VariableExpression) GetType() string {
 	return "variable"
 }
+
+func (e *VariableExpression) ToString() string {
+	return e.Name
+}

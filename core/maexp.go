@@ -26,7 +26,7 @@ func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, err
 			return nil, err
 		}
 		lexp, ok := tmpExp.(*LiteralExpression)
-		if !ok || (lexp.Type != "string" && lexp.Type != "number") {
+		if !ok || (lexp.Type != LiteralTypeString && lexp.Type != LiteralTypeNumber) {
 			return nil, fmt.Errorf("Property key of type %s is not supported. [%d,%d]", tmpExp.GetType(), tmpExp.GetLine(), tmpExp.GetCharAt())
 		}
 		pexp = lexp
@@ -48,7 +48,7 @@ func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, err
 			}
 		}
 		return &LiteralExpression{
-			Type:   "undefined",
+			Type:   LiteralTypeUndefined,
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
@@ -56,12 +56,12 @@ func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, err
 		if !e.Compute {
 			// TODO: support built-in property
 			return &LiteralExpression{
-				Type:   "undefined",
+				Type:   LiteralTypeUndefined,
 				Line:   e.Line,
 				CharAt: e.CharAt,
 			}, nil
 		}
-		if pexp.Type != "number" {
+		if pexp.Type != LiteralTypeNumber {
 			return nil, fmt.Errorf("Index must be number. [%d,%d]", pexp.Line, pexp.GetCharAt())
 		}
 		if i, err := strconv.Atoi(pexp.Value); err == nil {
@@ -95,4 +95,8 @@ func (e *MemberAccessExpression) SetCharAt(i int) {
 
 func (e *MemberAccessExpression) GetType() string {
 	return "member access expression"
+}
+
+func (e *MemberAccessExpression) ToString() string {
+	return ""
 }

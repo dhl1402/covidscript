@@ -1,5 +1,7 @@
 package core
 
+import "fmt"
+
 type (
 	ObjectProperty struct {
 		KeyExpression Expression
@@ -61,4 +63,19 @@ func (e *ObjectExpression) SetCharAt(i int) {
 
 func (e *ObjectExpression) GetType() string {
 	return "object"
+}
+
+func (e *ObjectExpression) ToString() string {
+	s := "{"
+	for _, p := range e.Properties {
+		if p.Computed {
+			s = s + fmt.Sprintf("%s: %s, ", p.KeyExpression.ToString(), p.Value.ToString())
+		} else {
+			s = s + fmt.Sprintf("%s: %s, ", p.KeyIdentifier.Name, p.Value.ToString())
+		}
+	}
+	if len(s) > 1 {
+		s = s[:len(s)-2]
+	}
+	return s + "]"
 }

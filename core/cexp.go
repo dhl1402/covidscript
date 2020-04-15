@@ -18,14 +18,19 @@ func (e *CallExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	if !ok {
 		return nil, fmt.Errorf("a is not a function. [%d,%d]", e.Line, e.CharAt) // TODO: e.Callee.ToString()
 	}
-	for i, p := range f.Params {
-		if i < len(e.Arguments) {
-			arg, err := e.Arguments[i].Evaluate(ec)
-			if err != nil {
-				return nil, err
-			}
-			f.EC.Set(p.Name, arg)
+
+	for i, argexp := range e.Arguments {
+		arg, err := argexp.Evaluate(ec)
+		if err != nil {
+			return nil, err
 		}
+		if i < len(f.Params) {
+			f.EC.Set(f.Params[i].Name, arg)
+		}
+		f.EC.Set(fmt.Sprintf("_args%d_", i), arg)
+	}
+	if f.NativeFunction != nil {
+		return f.NativeFunction(f.EC)
 	}
 	for _, stmt := range f.Body {
 		rexp, err := stmt.Execute(f.EC)
@@ -34,7 +39,7 @@ func (e *CallExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		}
 	}
 	return &LiteralExpression{
-		Type:   "undefined",
+		Type:   LiteralTypeUndefined,
 		Line:   e.Line,
 		CharAt: e.CharAt,
 	}, nil
@@ -58,4 +63,8 @@ func (e *CallExpression) SetCharAt(i int) {
 
 func (e *CallExpression) GetType() string {
 	return "call expression"
+}
+
+func (e *CallExpression) ToString() string {
+	return ""
 }

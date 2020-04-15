@@ -19,11 +19,11 @@ func TestEvaluate_LiteralExpression(t *testing.T) {
 			name: "evaluate literal expression",
 			ec:   &ExecutionContext{},
 			exp: &LiteralExpression{
-				Type:  "number",
+				Type:  LiteralTypeNumber,
 				Value: "1",
 			},
 			want: &LiteralExpression{
-				Type:  "number",
+				Type:  LiteralTypeNumber,
 				Value: "1",
 			},
 			err: nil,
@@ -51,7 +51,7 @@ func TestEvaluate_VariableExpression(t *testing.T) {
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &LiteralExpression{
-						Type:   "number",
+						Type:   LiteralTypeNumber,
 						Value:  "3",
 						Line:   1,
 						CharAt: 1,
@@ -64,7 +64,7 @@ func TestEvaluate_VariableExpression(t *testing.T) {
 				CharAt: 1,
 			},
 			want: &LiteralExpression{
-				Type:   "number",
+				Type:   LiteralTypeNumber,
 				Value:  "3",
 				Line:   2,
 				CharAt: 1,
@@ -107,11 +107,11 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			},
 			exp: &BinaryExpression{
 				Left: &LiteralExpression{
-					Type:  "number",
+					Type:  LiteralTypeNumber,
 					Value: "1",
 				},
 				Right: &LiteralExpression{
-					Type:  "number",
+					Type:  LiteralTypeNumber,
 					Value: "2",
 				},
 				Operator: Operator{
@@ -119,7 +119,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 				},
 			},
 			want: &LiteralExpression{
-				Type:  "number",
+				Type:  LiteralTypeNumber,
 				Value: "3",
 			},
 			err: nil,
@@ -129,19 +129,19 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "3",
 					},
 				},
 			},
 			exp: &BinaryExpression{
 				Left: &LiteralExpression{
-					Type:  "number",
+					Type:  LiteralTypeNumber,
 					Value: "1",
 				},
 				Right: &BinaryExpression{
 					Left: &LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "2",
 					},
 					Right: &VariableExpression{
@@ -156,7 +156,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 				},
 			},
 			want: &LiteralExpression{
-				Type:  "number",
+				Type:  LiteralTypeNumber,
 				Value: "6",
 			},
 			err: nil,
@@ -168,11 +168,11 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			},
 			exp: &BinaryExpression{
 				Left: &LiteralExpression{
-					Type:  "number",
+					Type:  LiteralTypeNumber,
 					Value: "1",
 				},
 				Right: &LiteralExpression{
-					Type:  "string",
+					Type:  LiteralTypeString,
 					Value: "2",
 				},
 				Operator: Operator{
@@ -180,7 +180,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 				},
 			},
 			want: &LiteralExpression{
-				Type:  "string",
+				Type:  LiteralTypeString,
 				Value: "12",
 			},
 			err: nil,
@@ -192,11 +192,11 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			},
 			exp: &BinaryExpression{
 				Left: &LiteralExpression{
-					Type:  "string",
+					Type:  LiteralTypeString,
 					Value: "abc",
 				},
 				Right: &LiteralExpression{
-					Type:  "string",
+					Type:  LiteralTypeString,
 					Value: "xyz",
 				},
 				Operator: Operator{
@@ -204,7 +204,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 				},
 			},
 			want: &LiteralExpression{
-				Type:  "string",
+				Type:  LiteralTypeString,
 				Value: "abcxyz",
 			},
 			err: nil,
@@ -216,11 +216,11 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			},
 			exp: &BinaryExpression{
 				Left: &LiteralExpression{
-					Type:  "number",
+					Type:  LiteralTypeNumber,
 					Value: "1",
 				},
 				Right: &LiteralExpression{
-					Type:  "string",
+					Type:  LiteralTypeString,
 					Value: "xyz",
 				},
 				Operator: Operator{
@@ -239,13 +239,13 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			},
 			exp: &BinaryExpression{
 				Left: &LiteralExpression{
-					Type:  "number",
+					Type:  LiteralTypeNumber,
 					Value: "1",
 				},
 				Right: &ArrayExpression{
 					Elements: []Expression{
 						&LiteralExpression{
-							Type:  "number",
+							Type:  LiteralTypeNumber,
 							Value: "1",
 						},
 					},
@@ -264,7 +264,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &LiteralExpression{
-						Type:   "number",
+						Type:   LiteralTypeNumber,
 						Value:  "0",
 						Line:   1,
 						CharAt: 1,
@@ -273,7 +273,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			},
 			exp: &BinaryExpression{
 				Left: &LiteralExpression{
-					Type:  "number",
+					Type:  LiteralTypeNumber,
 					Value: "1",
 				},
 				Right: &VariableExpression{
@@ -314,7 +314,7 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 			exp: &ArrayExpression{
 				Elements: []Expression{
 					&LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "1",
 					},
 				},
@@ -322,7 +322,7 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 			want: &ArrayExpression{
 				Elements: []Expression{
 					&LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "1",
 					},
 				},
@@ -338,11 +338,11 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 				Elements: []Expression{
 					&BinaryExpression{
 						Left: &LiteralExpression{
-							Type:  "number",
+							Type:  LiteralTypeNumber,
 							Value: "1",
 						},
 						Right: &LiteralExpression{
-							Type:  "number",
+							Type:  LiteralTypeNumber,
 							Value: "1",
 						},
 						Operator: Operator{
@@ -354,7 +354,7 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 			want: &ArrayExpression{
 				Elements: []Expression{
 					&LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "2",
 					},
 				},
@@ -366,7 +366,7 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "3",
 					},
 				},
@@ -375,12 +375,12 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 				Elements: []Expression{
 					&BinaryExpression{
 						Left: &LiteralExpression{
-							Type:  "number",
+							Type:  LiteralTypeNumber,
 							Value: "1",
 						},
 						Right: &BinaryExpression{
 							Left: &LiteralExpression{
-								Type:  "number",
+								Type:  LiteralTypeNumber,
 								Value: "2",
 							},
 							Right: &VariableExpression{
@@ -402,11 +402,11 @@ func TestEvaluate_ArrayExpression(t *testing.T) {
 			want: &ArrayExpression{
 				Elements: []Expression{
 					&LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "6",
 					},
 					&LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "3",
 					},
 				},
@@ -443,7 +443,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 							Name: "a",
 						},
 						Value: &LiteralExpression{
-							Type:  "string",
+							Type:  LiteralTypeString,
 							Value: "xxx",
 						},
 					},
@@ -456,7 +456,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 							Name: "a",
 						},
 						Value: &LiteralExpression{
-							Type:  "string",
+							Type:  LiteralTypeString,
 							Value: "xxx",
 						},
 					},
@@ -469,7 +469,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "3",
 					},
 				},
@@ -479,11 +479,11 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 					{
 						KeyExpression: &BinaryExpression{
 							Left: &LiteralExpression{
-								Type:  "string",
+								Type:  LiteralTypeString,
 								Value: "a",
 							},
 							Right: &LiteralExpression{
-								Type:  "string",
+								Type:  LiteralTypeString,
 								Value: "b",
 							},
 							Operator: Operator{
@@ -492,7 +492,7 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 						},
 						Value: &BinaryExpression{
 							Left: &LiteralExpression{
-								Type:  "number",
+								Type:  LiteralTypeNumber,
 								Value: "2",
 							},
 							Right: &VariableExpression{
@@ -510,11 +510,11 @@ func TestEvaluate_ObjectExpression(t *testing.T) {
 				Properties: []*ObjectProperty{
 					{
 						KeyExpression: &LiteralExpression{
-							Type:  "string",
+							Type:  LiteralTypeString,
 							Value: "ab",
 						},
 						Value: &LiteralExpression{
-							Type:  "number",
+							Type:  LiteralTypeNumber,
 							Value: "5",
 						},
 						Computed: true,
@@ -549,11 +549,11 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 						Properties: []*ObjectProperty{
 							{
 								KeyExpression: &LiteralExpression{
-									Type:  "string",
+									Type:  LiteralTypeString,
 									Value: "b",
 								},
 								Value: &LiteralExpression{
-									Type:  "boolean",
+									Type:  LiteralTypeBoolean,
 									Value: "true",
 								},
 								Computed: true,
@@ -571,7 +571,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				},
 			},
 			want: &LiteralExpression{
-				Type:  "boolean",
+				Type:  LiteralTypeBoolean,
 				Value: "true",
 			},
 			err: nil,
@@ -584,11 +584,11 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 						Properties: []*ObjectProperty{
 							{
 								KeyExpression: &LiteralExpression{
-									Type:  "string",
+									Type:  LiteralTypeString,
 									Value: "b",
 								},
 								Value: &LiteralExpression{
-									Type:  "boolean",
+									Type:  LiteralTypeBoolean,
 									Value: "true",
 								},
 								Computed: true,
@@ -602,13 +602,13 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					Name: "a",
 				},
 				PropertyExpression: &LiteralExpression{
-					Type:  "string",
+					Type:  LiteralTypeString,
 					Value: "b",
 				},
 				Compute: true,
 			},
 			want: &LiteralExpression{
-				Type:  "boolean",
+				Type:  LiteralTypeBoolean,
 				Value: "true",
 			},
 			err: nil,
@@ -624,7 +624,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 									Name: "b",
 								},
 								Value: &LiteralExpression{
-									Type:  "boolean",
+									Type:  LiteralTypeBoolean,
 									Value: "true",
 								},
 							},
@@ -637,13 +637,13 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					Name: "a",
 				},
 				PropertyExpression: &LiteralExpression{
-					Type:  "string",
+					Type:  LiteralTypeString,
 					Value: "b",
 				},
 				Compute: true,
 			},
 			want: &LiteralExpression{
-				Type:  "boolean",
+				Type:  LiteralTypeBoolean,
 				Value: "true",
 			},
 			err: nil,
@@ -664,7 +664,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				},
 			},
 			want: &LiteralExpression{
-				Type: "undefined",
+				Type: LiteralTypeUndefined,
 			},
 			err: nil,
 		},
@@ -680,7 +680,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					Name: "a",
 				},
 				PropertyExpression: &LiteralExpression{
-					Type:   "boolean",
+					Type:   LiteralTypeBoolean,
 					Value:  "true",
 					Line:   1,
 					CharAt: 4,
@@ -697,7 +697,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					"a": &ArrayExpression{
 						Elements: []Expression{
 							&LiteralExpression{
-								Type:  "number",
+								Type:  LiteralTypeNumber,
 								Value: "1",
 							},
 						},
@@ -709,7 +709,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					Name: "a",
 				},
 				PropertyExpression: &LiteralExpression{
-					Type:  "number",
+					Type:  LiteralTypeNumber,
 					Value: "0",
 				},
 				Compute: true,
@@ -717,7 +717,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				CharAt:  1,
 			},
 			want: &LiteralExpression{
-				Type:   "number",
+				Type:   LiteralTypeNumber,
 				Value:  "1",
 				Line:   1,
 				CharAt: 1,
@@ -731,7 +731,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					"a": &ArrayExpression{
 						Elements: []Expression{
 							&LiteralExpression{
-								Type:  "number",
+								Type:  LiteralTypeNumber,
 								Value: "1",
 							},
 						},
@@ -749,7 +749,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				CharAt: 1,
 			},
 			want: &LiteralExpression{
-				Type:   "undefined",
+				Type:   LiteralTypeUndefined,
 				Line:   1,
 				CharAt: 1,
 			},
@@ -762,7 +762,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					"a": &ArrayExpression{
 						Elements: []Expression{
 							&LiteralExpression{
-								Type:  "number",
+								Type:  LiteralTypeNumber,
 								Value: "1",
 							},
 						},
@@ -774,7 +774,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					Name: "a",
 				},
 				PropertyExpression: &LiteralExpression{
-					Type:   "number",
+					Type:   LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 3,
@@ -793,7 +793,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					"a": &ArrayExpression{
 						Elements: []Expression{
 							&LiteralExpression{
-								Type:  "number",
+								Type:  LiteralTypeNumber,
 								Value: "1",
 							},
 						},
@@ -805,7 +805,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					Name: "a",
 				},
 				PropertyExpression: &LiteralExpression{
-					Type:   "string",
+					Type:   LiteralTypeString,
 					Value:  "1",
 					Line:   1,
 					CharAt: 3,
@@ -824,7 +824,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 					"a": &ArrayExpression{
 						Elements: []Expression{
 							&LiteralExpression{
-								Type:  "number",
+								Type:  LiteralTypeNumber,
 								Value: "1",
 							},
 						},
@@ -833,11 +833,11 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 			},
 			exp: &MemberAccessExpression{
 				Object: &LiteralExpression{
-					Type:  "number",
+					Type:  LiteralTypeNumber,
 					Value: "0",
 				},
 				PropertyExpression: &LiteralExpression{
-					Type:   "string",
+					Type:   LiteralTypeString,
 					Value:  "1",
 					Line:   1,
 					CharAt: 3,
@@ -895,10 +895,10 @@ func TestEvaluate_FunctionExpression(t *testing.T) {
 				EC: &ExecutionContext{
 					Variables: map[string]Expression{
 						"a": &LiteralExpression{
-							Type: "undefined",
+							Type: LiteralTypeUndefined,
 						},
 						"b": &LiteralExpression{
-							Type: "undefined",
+							Type: LiteralTypeUndefined,
 						},
 					},
 				},
@@ -948,7 +948,7 @@ func TestEvaluate_CallExpression(t *testing.T) {
 				Arguments: []Expression{},
 			},
 			want: &LiteralExpression{
-				Type: "undefined",
+				Type: LiteralTypeUndefined,
 			},
 			err: nil,
 		},
@@ -990,17 +990,17 @@ func TestEvaluate_CallExpression(t *testing.T) {
 				},
 				Arguments: []Expression{
 					&LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "1",
 					},
 					&LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "2",
 					},
 				},
 			},
 			want: &LiteralExpression{
-				Type:  "number",
+				Type:  LiteralTypeNumber,
 				Value: "3",
 			},
 			err: nil,
@@ -1010,7 +1010,7 @@ func TestEvaluate_CallExpression(t *testing.T) {
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &LiteralExpression{
-						Type:  "number",
+						Type:  LiteralTypeNumber,
 						Value: "1",
 					},
 				},
@@ -1051,7 +1051,7 @@ func TestEvaluate_TMP(t *testing.T) {
 					"a": &ArrayExpression{
 						Elements: []Expression{
 							&LiteralExpression{
-								Type:  "number",
+								Type:  LiteralTypeNumber,
 								Value: "1",
 							},
 						},
@@ -1063,7 +1063,7 @@ func TestEvaluate_TMP(t *testing.T) {
 					Name: "a",
 				},
 				PropertyExpression: &LiteralExpression{
-					Type:  "number",
+					Type:  LiteralTypeNumber,
 					Value: "0",
 				},
 				Compute: true,
@@ -1071,7 +1071,7 @@ func TestEvaluate_TMP(t *testing.T) {
 				CharAt:  1,
 			},
 			want: &LiteralExpression{
-				Type:   "number",
+				Type:   LiteralTypeNumber,
 				Value:  "1",
 				Line:   1,
 				CharAt: 1,

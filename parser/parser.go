@@ -406,7 +406,7 @@ func parseTempExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	t := tokens[0]
 	if ptype, ok := t.ParsePrimitiveType(); ok {
 		v := t.Value
-		if ptype == "string" {
+		if ptype == core.LiteralTypeString {
 			v = t.Value[1 : len(t.Value)-1]
 		}
 		return &core.LiteralExpression{

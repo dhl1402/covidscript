@@ -40,3 +40,14 @@ func (e *ArrayExpression) SetCharAt(i int) {
 func (e *ArrayExpression) GetType() string {
 	return "array"
 }
+
+func (e *ArrayExpression) ToString() string {
+	s := "["
+	for _, elm := range e.Elements {
+		s = s + elm.ToString() + ", "
+	}
+	if len(s) > 1 {
+		s = s[:len(s)-2]
+	}
+	return s + "]"
+}

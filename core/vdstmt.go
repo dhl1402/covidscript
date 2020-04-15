@@ -24,7 +24,7 @@ func (stmt VariableDeclaration) Execute(ec *ExecutionContext) (Expression, error
 			ec.Set(d.ID.Name, value)
 		} else {
 			ec.Set(d.ID.Name, &LiteralExpression{
-				Type:   "undefined",
+				Type:   LiteralTypeUndefined,
 				Line:   d.ID.Line,
 				CharAt: d.ID.CharAt,
 			})

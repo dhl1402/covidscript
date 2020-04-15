@@ -1,6 +1,14 @@
 package core
 
+type ecType string
+
+const (
+	TypeGlobalEC   ecType = "GlobalEC"
+	TypeFunctionEC ecType = "FunctionEC"
+)
+
 type ExecutionContext struct {
+	Type      ecType
 	Outer     *ExecutionContext
 	Variables map[string]Expression
 }

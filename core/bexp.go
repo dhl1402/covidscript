@@ -32,11 +32,11 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, right.GetType(), e.Operator.Line, e.Operator.CharAt)
 	}
 	if e.Operator.Symbol == "-" || e.Operator.Symbol == "*" || e.Operator.Symbol == "/" || e.Operator.Symbol == "%" {
-		if lle.Type != "number" {
-			return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, lle.Type, e.Operator.Line, e.Operator.CharAt)
+		if lle.Type != LiteralTypeNumber {
+			return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, lle.GetType(), e.Operator.Line, e.Operator.CharAt)
 		}
-		if rle.Type != "number" {
-			return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, rle.Type, e.Operator.Line, e.Operator.CharAt)
+		if rle.Type != LiteralTypeNumber {
+			return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, rle.GetType(), e.Operator.Line, e.Operator.CharAt)
 		}
 	}
 	// TODO: handle float
@@ -44,31 +44,37 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	ri, _ := strconv.Atoi(rle.Value)
 	switch e.Operator.Symbol {
 	case "+":
-		if lle.Type == "number" && rle.Type == "number" {
+		if lle.Type == LiteralTypeUndefined || lle.Type == LiteralTypeNull {
+			return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, lle.GetType(), e.Operator.Line, e.Operator.CharAt)
+		}
+		if rle.Type == LiteralTypeUndefined || rle.Type == LiteralTypeNull {
+			return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, rle.GetType(), e.Operator.Line, e.Operator.CharAt)
+		}
+		if lle.Type == LiteralTypeNumber && rle.Type == LiteralTypeNumber {
 			// TODO: handle float
 			return &LiteralExpression{
-				Type:   "number",
+				Type:   LiteralTypeNumber,
 				Value:  fmt.Sprintf("%d", li+ri),
 				Line:   e.Line,
 				CharAt: e.CharAt,
 			}, nil
 		}
 		return &LiteralExpression{
-			Type:   "string",
+			Type:   LiteralTypeString,
 			Value:  lle.Value + rle.Value,
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
 	case "-":
 		return &LiteralExpression{
-			Type:   "number",
+			Type:   LiteralTypeNumber,
 			Value:  fmt.Sprintf("%d", li-ri),
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
 	case "*":
 		return &LiteralExpression{
-			Type:   "number",
+			Type:   LiteralTypeNumber,
 			Value:  fmt.Sprintf("%d", li*ri),
 			Line:   e.Line,
 			CharAt: e.CharAt,
@@ -78,14 +84,14 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 			return nil, fmt.Errorf("Cannot divide by zero. [%d,%d]", rle.Line, rle.CharAt)
 		}
 		return &LiteralExpression{
-			Type:   "number",
+			Type:   LiteralTypeNumber,
 			Value:  fmt.Sprintf("%d", li/ri),
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
 	case "%":
 		return &LiteralExpression{
-			Type:   "number",
+			Type:   LiteralTypeNumber,
 			Value:  fmt.Sprintf("%d", li%ri),
 			Line:   e.Line,
 			CharAt: e.CharAt,
@@ -113,4 +119,8 @@ func (e *BinaryExpression) SetCharAt(i int) {
 
 func (e *BinaryExpression) GetType() string {
 	return "expression"
+}
+
+func (e *BinaryExpression) ToString() string {
+	return fmt.Sprintf("%s %s %s", e.Left.ToString(), e.Operator.Symbol, e.Right.ToString())
 }

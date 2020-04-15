@@ -43,7 +43,7 @@ func (t Token) IsPrimitiveValue() bool {
 	return t.IsBoolean() || t.IsNumber() || t.IsString()
 }
 
-func (t Token) ParsePrimitiveType() (string, bool) {
+func (t Token) ParsePrimitiveType() (core.PrimitiveType, bool) {
 	if t.Value == "undefined" {
 		return "undefined", true
 	}

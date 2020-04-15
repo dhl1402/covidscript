@@ -7,4 +7,5 @@ type Expression interface {
 	SetLine(int)
 	SetCharAt(int)
 	GetType() string
+	ToString() string
 }

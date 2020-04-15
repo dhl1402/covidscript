@@ -19,7 +19,7 @@ func TestParseExpression(t *testing.T) {
 			name: "parse number expression",
 			in:   "1",
 			want: &core.LiteralExpression{
-				Type:   "number",
+				Type:   core.LiteralTypeNumber,
 				Value:  "1",
 				Line:   1,
 				CharAt: 1,
@@ -29,7 +29,7 @@ func TestParseExpression(t *testing.T) {
 			name: "parse number expression",
 			in:   "1 1",
 			want: &core.LiteralExpression{
-				Type:   "number",
+				Type:   core.LiteralTypeNumber,
 				Value:  "1",
 				Line:   1,
 				CharAt: 1,
@@ -39,7 +39,7 @@ func TestParseExpression(t *testing.T) {
 			name: "parse string expression",
 			in:   `"1"`,
 			want: &core.LiteralExpression{
-				Type:   "string",
+				Type:   core.LiteralTypeString,
 				Value:  "1",
 				Line:   1,
 				CharAt: 1,
@@ -49,7 +49,7 @@ func TestParseExpression(t *testing.T) {
 			name: "parse boolean expression",
 			in:   "false",
 			want: &core.LiteralExpression{
-				Type:   "boolean",
+				Type:   core.LiteralTypeBoolean,
 				Value:  `false`,
 				Line:   1,
 				CharAt: 1,
@@ -60,13 +60,13 @@ func TestParseExpression(t *testing.T) {
 			in:   "1+1",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 3,
@@ -99,7 +99,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			name: "parse literal expression (1)",
 			in:   "(1)",
 			want: &core.LiteralExpression{
-				Type:   "number",
+				Type:   core.LiteralTypeNumber,
 				Value:  "1",
 				Line:   1,
 				CharAt: 2,
@@ -109,7 +109,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			name: "parse literal expression (((1)))",
 			in:   "(((1)))",
 			want: &core.LiteralExpression{
-				Type:   "number",
+				Type:   core.LiteralTypeNumber,
 				Value:  "1",
 				Line:   1,
 				CharAt: 4,
@@ -120,13 +120,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "(1)+2",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 2,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "2",
 					Line:   1,
 					CharAt: 5,
@@ -146,13 +146,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 3,
@@ -166,7 +166,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "3",
 					Line:   1,
 					CharAt: 5,
@@ -185,7 +185,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+2*3/4",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -193,13 +193,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 				Right: &core.BinaryExpression{
 					Left: &core.BinaryExpression{
 						Left: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 3,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "3",
 							Line:   1,
 							CharAt: 5,
@@ -213,7 +213,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 3,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "4",
 						Line:   1,
 						CharAt: 7,
@@ -242,13 +242,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 				Left: &core.BinaryExpression{
 					Left: &core.BinaryExpression{
 						Left: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "1",
 							Line:   1,
 							CharAt: 1,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 3,
@@ -262,7 +262,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 1,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "3",
 						Line:   1,
 						CharAt: 5,
@@ -276,7 +276,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "4",
 					Line:   1,
 					CharAt: 7,
@@ -298,13 +298,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 					Left: &core.BinaryExpression{
 						Left: &core.BinaryExpression{
 							Left: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "1",
 								Line:   1,
 								CharAt: 1,
 							},
 							Right: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   1,
 								CharAt: 3,
@@ -318,7 +318,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							CharAt: 1,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "3",
 							Line:   1,
 							CharAt: 5,
@@ -332,7 +332,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 1,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "4",
 						Line:   1,
 						CharAt: 7,
@@ -346,7 +346,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "5",
 					Line:   1,
 					CharAt: 9,
@@ -366,13 +366,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 1,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "3",
 						Line:   1,
 						CharAt: 3,
@@ -386,7 +386,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "4",
 					Line:   1,
 					CharAt: 5,
@@ -406,13 +406,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 2,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 4,
@@ -427,7 +427,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 2,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "3",
 					Line:   1,
 					CharAt: 7,
@@ -448,13 +448,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 				Left: &core.BinaryExpression{
 					Left: &core.BinaryExpression{
 						Left: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "1",
 							Line:   1,
 							CharAt: 2,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 4,
@@ -468,7 +468,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 2,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "3",
 						Line:   1,
 						CharAt: 6,
@@ -483,7 +483,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 2,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "4",
 					Line:   1,
 					CharAt: 9,
@@ -502,20 +502,20 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+(2+3)",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
 				},
 				Right: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 4,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "3",
 						Line:   1,
 						CharAt: 6,
@@ -543,20 +543,20 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+(2*3)",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
 				},
 				Right: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 4,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "3",
 						Line:   1,
 						CharAt: 6,
@@ -585,20 +585,20 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
 					},
 					Right: &core.BinaryExpression{
 						Left: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 4,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "3",
 							Line:   1,
 							CharAt: 6,
@@ -621,7 +621,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "4",
 					Line:   1,
 					CharAt: 9,
@@ -640,7 +640,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+(2+3)*4",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -648,13 +648,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 				Right: &core.BinaryExpression{
 					Left: &core.BinaryExpression{
 						Left: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 4,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "3",
 							Line:   1,
 							CharAt: 6,
@@ -669,7 +669,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 4,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "4",
 						Line:   1,
 						CharAt: 9,
@@ -696,7 +696,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+(2+3+4)*5",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -705,13 +705,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 					Left: &core.BinaryExpression{
 						Left: &core.BinaryExpression{
 							Left: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   1,
 								CharAt: 4,
 							},
 							Right: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "3",
 								Line:   1,
 								CharAt: 6,
@@ -725,7 +725,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							CharAt: 4,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "4",
 							Line:   1,
 							CharAt: 8,
@@ -740,7 +740,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 4,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "5",
 						Line:   1,
 						CharAt: 11,
@@ -768,7 +768,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
@@ -776,13 +776,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 					Right: &core.BinaryExpression{
 						Left: &core.BinaryExpression{
 							Left: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   1,
 								CharAt: 5,
 							},
 							Right: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "3",
 								Line:   1,
 								CharAt: 7,
@@ -797,7 +797,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							CharAt: 5,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "4",
 							Line:   1,
 							CharAt: 10,
@@ -820,7 +820,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "5",
 					Line:   1,
 					CharAt: 13,
@@ -840,7 +840,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
@@ -848,13 +848,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 					Right: &core.BinaryExpression{
 						Left: &core.BinaryExpression{
 							Left: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   1,
 								CharAt: 5,
 							},
 							Right: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "3",
 								Line:   1,
 								CharAt: 7,
@@ -869,7 +869,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							CharAt: 5,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "4",
 							Line:   1,
 							CharAt: 10,
@@ -892,7 +892,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "5",
 					Line:   1,
 					CharAt: 13,
@@ -912,7 +912,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
@@ -920,20 +920,20 @@ func TestParseExpression_Precedence(t *testing.T) {
 					Right: &core.BinaryExpression{
 						Left: &core.BinaryExpression{
 							Left: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   1,
 								CharAt: 4,
 							},
 							Right: &core.BinaryExpression{
 								Left: &core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "3",
 									Line:   1,
 									CharAt: 7,
 								},
 								Right: &core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "4",
 									Line:   1,
 									CharAt: 9,
@@ -956,7 +956,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							CharAt: 4,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "5",
 							Line:   1,
 							CharAt: 12,
@@ -979,7 +979,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "6",
 					Line:   1,
 					CharAt: 15,
@@ -998,7 +998,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+(2+(3/4)+5)*6",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -1007,20 +1007,20 @@ func TestParseExpression_Precedence(t *testing.T) {
 					Left: &core.BinaryExpression{
 						Left: &core.BinaryExpression{
 							Left: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   1,
 								CharAt: 4,
 							},
 							Right: &core.BinaryExpression{
 								Left: &core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "3",
 									Line:   1,
 									CharAt: 7,
 								},
 								Right: &core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "4",
 									Line:   1,
 									CharAt: 9,
@@ -1043,7 +1043,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							CharAt: 4,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "5",
 							Line:   1,
 							CharAt: 12,
@@ -1058,7 +1058,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 4,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "6",
 						Line:   1,
 						CharAt: 15,
@@ -1154,7 +1154,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 3,
@@ -1174,7 +1174,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
@@ -1193,7 +1193,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 7,
@@ -1298,7 +1298,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 5,
@@ -1340,7 +1340,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 3,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 11,
@@ -1383,13 +1383,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 				},
 				Right: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 11,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 13,
@@ -1440,13 +1440,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 				},
 				Right: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 12,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 14,
@@ -1474,7 +1474,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+a.b*2",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -1495,7 +1495,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 3,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 7,
@@ -1523,7 +1523,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
@@ -1560,7 +1560,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "2",
 					Line:   1,
 					CharAt: 13,
@@ -1579,7 +1579,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+((a).b).c*2",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -1609,7 +1609,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 5,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 13,
@@ -1637,13 +1637,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 3,
@@ -1681,7 +1681,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 7,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 15,
@@ -1708,7 +1708,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+2*(((a).b).c)*3",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -1716,7 +1716,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 				Right: &core.BinaryExpression{
 					Left: &core.BinaryExpression{
 						Left: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 3,
@@ -1753,7 +1753,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 						CharAt: 3,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "3",
 						Line:   1,
 						CharAt: 17,
@@ -1780,7 +1780,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+a.b",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -1813,7 +1813,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+((a).b).c",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -1855,7 +1855,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+(((a).b).c)",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -1897,14 +1897,14 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+2*(((a).b).c)",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
 				},
 				Right: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 3,
@@ -1955,13 +1955,13 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 3,
@@ -2012,7 +2012,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 2,
@@ -2050,7 +2050,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 2,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "2",
 					Line:   1,
 					CharAt: 15,
@@ -2069,14 +2069,14 @@ func TestParseExpression_Precedence(t *testing.T) {
 			in:   "1+(2+((a).b).c)",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
 				},
 				Right: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 4,
@@ -2128,14 +2128,14 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
 					},
 					Right: &core.BinaryExpression{
 						Left: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 4,
@@ -2181,7 +2181,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "3",
 					Line:   1,
 					CharAt: 19,
@@ -2201,7 +2201,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
@@ -2231,7 +2231,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							CharAt: 7,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 16,
@@ -2254,7 +2254,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "3",
 					Line:   1,
 					CharAt: 19,
@@ -2357,7 +2357,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 				Left: &core.BinaryExpression{
 					Left: &core.BinaryExpression{
 						Left: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "1",
 							Line:   1,
 							CharAt: 1,
@@ -2378,7 +2378,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 								CharAt: 3,
 							},
 							Right: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   1,
 								CharAt: 7,
@@ -2422,7 +2422,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "3",
 					Line:   1,
 					CharAt: 13,
@@ -2442,7 +2442,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
@@ -2467,20 +2467,20 @@ func TestParseExpression_Precedence(t *testing.T) {
 								Arguments: []core.Expression{
 									&core.BinaryExpression{
 										Left: &core.LiteralExpression{
-											Type:   "number",
+											Type:   core.LiteralTypeNumber,
 											Value:  "4",
 											Line:   1,
 											CharAt: 12,
 										},
 										Right: &core.BinaryExpression{
 											Left: &core.LiteralExpression{
-												Type:   "number",
+												Type:   core.LiteralTypeNumber,
 												Value:  "5",
 												Line:   1,
 												CharAt: 15,
 											},
 											Right: &core.LiteralExpression{
-												Type:   "number",
+												Type:   core.LiteralTypeNumber,
 												Value:  "6",
 												Line:   1,
 												CharAt: 17,
@@ -2522,7 +2522,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 							CharAt:  7,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 37,
@@ -2545,7 +2545,7 @@ func TestParseExpression_Precedence(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "3",
 					Line:   1,
 					CharAt: 40,
@@ -2595,7 +2595,7 @@ func TestParseExpression_Object(t *testing.T) {
 							CharAt: 2,
 						},
 						Value: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "1",
 							Line:   1,
 							CharAt: 4,
@@ -2610,7 +2610,7 @@ func TestParseExpression_Object(t *testing.T) {
 							CharAt: 6,
 						},
 						Value: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 8,
@@ -2649,7 +2649,7 @@ func TestParseExpression_Object(t *testing.T) {
 							CharAt: 3,
 						},
 						Value: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "1",
 							Line:   1,
 							CharAt: 8,
@@ -2665,7 +2665,7 @@ func TestParseExpression_Object(t *testing.T) {
 							CharAt: 10,
 						},
 						Value: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 12,
@@ -2698,7 +2698,7 @@ func TestParseExpression_Object(t *testing.T) {
 										CharAt: 5,
 									},
 									Value: &core.LiteralExpression{
-										Type:   "number",
+										Type:   core.LiteralTypeNumber,
 										Value:  "1",
 										Line:   1,
 										CharAt: 7,
@@ -2720,7 +2720,7 @@ func TestParseExpression_Object(t *testing.T) {
 							CharAt: 10,
 						},
 						Value: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 12,
@@ -2753,7 +2753,7 @@ func TestParseExpression_Object(t *testing.T) {
 										CharAt: 5,
 									},
 									Value: &core.LiteralExpression{
-										Type:   "number",
+										Type:   core.LiteralTypeNumber,
 										Value:  "1",
 										Line:   1,
 										CharAt: 7,
@@ -2783,7 +2783,7 @@ func TestParseExpression_Object(t *testing.T) {
 										CharAt: 13,
 									},
 									Value: &core.LiteralExpression{
-										Type:   "number",
+										Type:   core.LiteralTypeNumber,
 										Value:  "2",
 										Line:   1,
 										CharAt: 15,
@@ -2829,7 +2829,7 @@ func TestParseExpression_Object(t *testing.T) {
 										Left: &core.BinaryExpression{
 											Left: &core.BinaryExpression{
 												Left: &core.LiteralExpression{
-													Type:   "number",
+													Type:   core.LiteralTypeNumber,
 													Value:  "1",
 													Line:   2,
 													CharAt: 6,
@@ -2850,7 +2850,7 @@ func TestParseExpression_Object(t *testing.T) {
 														CharAt: 8,
 													},
 													Right: &core.LiteralExpression{
-														Type:   "number",
+														Type:   core.LiteralTypeNumber,
 														Value:  "2",
 														Line:   2,
 														CharAt: 12,
@@ -2894,7 +2894,7 @@ func TestParseExpression_Object(t *testing.T) {
 											CharAt: 6,
 										},
 										Right: &core.LiteralExpression{
-											Type:   "number",
+											Type:   core.LiteralTypeNumber,
 											Value:  "3",
 											Line:   2,
 											CharAt: 18,
@@ -2932,7 +2932,7 @@ func TestParseExpression_Object(t *testing.T) {
 										CharAt: 4,
 									},
 									Value: &core.LiteralExpression{
-										Type:   "number",
+										Type:   core.LiteralTypeNumber,
 										Value:  "2",
 										Line:   3,
 										CharAt: 6,
@@ -2972,7 +2972,7 @@ func TestParseExpression_Object(t *testing.T) {
 										CharAt: 5,
 									},
 									Value: &core.LiteralExpression{
-										Type:   "number",
+										Type:   core.LiteralTypeNumber,
 										Value:  "1",
 										Line:   1,
 										CharAt: 7,
@@ -2996,13 +2996,13 @@ func TestParseExpression_Object(t *testing.T) {
 						Value: &core.ArrayExpression{
 							Elements: []core.Expression{
 								&core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "2",
 									Line:   1,
 									CharAt: 13,
 								},
 								&core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "3",
 									Line:   1,
 									CharAt: 15,
@@ -3024,7 +3024,7 @@ func TestParseExpression_Object(t *testing.T) {
 			in:   "1+({a:1,b:2})",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -3038,7 +3038,7 @@ func TestParseExpression_Object(t *testing.T) {
 								CharAt: 5,
 							},
 							Value: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "1",
 								Line:   1,
 								CharAt: 7,
@@ -3053,7 +3053,7 @@ func TestParseExpression_Object(t *testing.T) {
 								CharAt: 9,
 							},
 							Value: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   1,
 								CharAt: 11,
@@ -3104,7 +3104,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			want: &core.ArrayExpression{
 				Elements: []core.Expression{
 					&core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 2,
@@ -3125,7 +3125,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			want: &core.ArrayExpression{
 				Elements: []core.Expression{
 					&core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 2,
@@ -3157,7 +3157,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			want: &core.ArrayExpression{
 				Elements: []core.Expression{
 					&core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 2,
@@ -3171,7 +3171,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 									CharAt: 5,
 								},
 								Value: &core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "1",
 									Line:   1,
 									CharAt: 7,
@@ -3186,7 +3186,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 									CharAt: 9,
 								},
 								Value: &core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "2",
 									Line:   1,
 									CharAt: 11,
@@ -3209,7 +3209,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			want: &core.ArrayExpression{
 				Elements: []core.Expression{
 					&core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 2,
@@ -3225,7 +3225,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 								Left: &core.BinaryExpression{
 									Left: &core.BinaryExpression{
 										Left: &core.LiteralExpression{
-											Type:   "number",
+											Type:   core.LiteralTypeNumber,
 											Value:  "1",
 											Line:   1,
 											CharAt: 7,
@@ -3246,7 +3246,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 												CharAt: 9,
 											},
 											Right: &core.LiteralExpression{
-												Type:   "number",
+												Type:   core.LiteralTypeNumber,
 												Value:  "2",
 												Line:   1,
 												CharAt: 13,
@@ -3290,7 +3290,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 									CharAt: 7,
 								},
 								Right: &core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "3",
 									Line:   1,
 									CharAt: 19,
@@ -3533,7 +3533,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 					CharAt:  1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 9,
@@ -3552,7 +3552,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			in:   "1+a[b[c]]",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -3597,7 +3597,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			want: &core.BinaryExpression{
 				Left: &core.BinaryExpression{
 					Left: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 1,
@@ -3636,7 +3636,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 					CharAt: 1,
 				},
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "2",
 					Line:   1,
 					CharAt: 11,
@@ -3655,14 +3655,14 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			in:   "1+a[b[c]]*2",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
 				},
 				Right: &core.BinaryExpression{
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 11,
@@ -3714,14 +3714,14 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			in:   "1+((a[b[c]])+2)",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
 				},
 				Right: &core.BinaryExpression{
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 14,
@@ -3774,7 +3774,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			in:   "1+((a[b[c]])+2)*3",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -3782,7 +3782,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 				Right: &core.BinaryExpression{
 					Left: &core.BinaryExpression{
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 14,
@@ -3822,7 +3822,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 						CharAt: 5,
 					},
 					Right: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "3",
 						Line:   1,
 						CharAt: 17,
@@ -3849,7 +3849,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			in:   `1+(func (){})`,
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 1,
@@ -3874,7 +3874,7 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			in:   `(func (){})+1`,
 			want: &core.BinaryExpression{
 				Right: &core.LiteralExpression{
-					Type:   "number",
+					Type:   core.LiteralTypeNumber,
 					Value:  "1",
 					Line:   1,
 					CharAt: 13,
@@ -4002,7 +4002,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 								CharAt: 5,
 							},
 							Init: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "1",
 								Line:   1,
 								CharAt: 7,
@@ -4029,7 +4029,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 								CharAt: 5,
 							},
 							Init: &core.LiteralExpression{
-								Type:   "string",
+								Type:   core.LiteralTypeString,
 								Value:  "xxx",
 								Line:   1,
 								CharAt: 7,
@@ -4056,7 +4056,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 								CharAt: 5,
 							},
 							Init: &core.LiteralExpression{
-								Type:   "boolean",
+								Type:   core.LiteralTypeBoolean,
 								Value:  "false",
 								Line:   1,
 								CharAt: 7,
@@ -4089,26 +4089,26 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 							Init: &core.ArrayExpression{
 								Elements: []core.Expression{
 									&core.LiteralExpression{
-										Type:   "number",
+										Type:   core.LiteralTypeNumber,
 										Value:  "123",
 										Line:   2,
 										CharAt: 1,
 									},
 									&core.LiteralExpression{
-										Type:   "string",
+										Type:   core.LiteralTypeString,
 										Value:  "456",
 										Line:   3,
 										CharAt: 1,
 									},
 									&core.BinaryExpression{
 										Left: &core.LiteralExpression{
-											Type:   "number",
+											Type:   core.LiteralTypeNumber,
 											Value:  "1",
 											Line:   4,
 											CharAt: 1,
 										},
 										Right: &core.LiteralExpression{
-											Type:   "number",
+											Type:   core.LiteralTypeNumber,
 											Value:  "1",
 											Line:   4,
 											CharAt: 3,
@@ -4155,7 +4155,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 											CharAt: 8,
 										},
 										Value: &core.LiteralExpression{
-											Type:   "number",
+											Type:   core.LiteralTypeNumber,
 											Value:  "1",
 											Line:   1,
 											CharAt: 10,
@@ -4170,7 +4170,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 											CharAt: 12,
 										},
 										Value: &core.LiteralExpression{
-											Type:   "number",
+											Type:   core.LiteralTypeNumber,
 											Value:  "2",
 											Line:   1,
 											CharAt: 14,
@@ -4205,7 +4205,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 								CharAt: 5,
 							},
 							Init: &core.LiteralExpression{
-								Type:   "boolean",
+								Type:   core.LiteralTypeBoolean,
 								Value:  "false",
 								Line:   1,
 								CharAt: 7,
@@ -4252,7 +4252,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 								CharAt: 5,
 							},
 							Init: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "1",
 								Line:   1,
 								CharAt: 9,
@@ -4267,7 +4267,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 								CharAt: 7,
 							},
 							Init: &core.LiteralExpression{
-								Type:   "string",
+								Type:   core.LiteralTypeString,
 								Value:  "2",
 								Line:   1,
 								CharAt: 11,
@@ -4295,7 +4295,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 								CharAt: 5,
 							},
 							Init: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "1",
 								Line:   1,
 								CharAt: 9,
@@ -4326,7 +4326,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 								CharAt: 5,
 							},
 							Init: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   2,
 								CharAt: 7,
@@ -4435,7 +4435,7 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 										CharAt: 5,
 									},
 									Init: &core.LiteralExpression{
-										Type:   "number",
+										Type:   core.LiteralTypeNumber,
 										Value:  "1",
 										Line:   2,
 										CharAt: 9,
@@ -4466,7 +4466,7 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 										CharAt: 5,
 									},
 									Init: &core.LiteralExpression{
-										Type:   "number",
+										Type:   core.LiteralTypeNumber,
 										Value:  "2",
 										Line:   3,
 										CharAt: 7,
@@ -4520,7 +4520,7 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 										CharAt: 5,
 									},
 									Init: &core.LiteralExpression{
-										Type:   "number",
+										Type:   core.LiteralTypeNumber,
 										Value:  "1",
 										Line:   2,
 										CharAt: 9,
@@ -4551,7 +4551,7 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 										CharAt: 5,
 									},
 									Init: &core.LiteralExpression{
-										Type:   "number",
+										Type:   core.LiteralTypeNumber,
 										Value:  "2",
 										Line:   3,
 										CharAt: 7,
@@ -4658,7 +4658,7 @@ func TestParseExpression_Function(t *testing.T) {
 									CharAt: 5,
 								},
 								Init: &core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "1",
 									Line:   2,
 									CharAt: 9,
@@ -4689,7 +4689,7 @@ func TestParseExpression_Function(t *testing.T) {
 									CharAt: 5,
 								},
 								Init: &core.LiteralExpression{
-									Type:   "number",
+									Type:   core.LiteralTypeNumber,
 									Value:  "2",
 									Line:   3,
 									CharAt: 7,
@@ -4769,7 +4769,7 @@ func TestParseExpression_CallExpression(t *testing.T) {
 				},
 				Arguments: []core.Expression{
 					&core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 7,
@@ -4790,20 +4790,20 @@ func TestParseExpression_CallExpression(t *testing.T) {
 				},
 				Arguments: []core.Expression{
 					&core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 7,
 					},
 					&core.BinaryExpression{
 						Left: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "2",
 							Line:   1,
 							CharAt: 10,
 						},
 						Right: &core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "3",
 							Line:   1,
 							CharAt: 12,
@@ -4834,20 +4834,20 @@ func TestParseExpression_CallExpression(t *testing.T) {
 					},
 					Arguments: []core.Expression{
 						&core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "1",
 							Line:   1,
 							CharAt: 7,
 						},
 						&core.BinaryExpression{
 							Left: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   1,
 								CharAt: 10,
 							},
 							Right: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "3",
 								Line:   1,
 								CharAt: 12,
@@ -4867,7 +4867,7 @@ func TestParseExpression_CallExpression(t *testing.T) {
 				},
 				Arguments: []core.Expression{
 					&core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "4",
 						Line:   1,
 						CharAt: 16,
@@ -4889,20 +4889,20 @@ func TestParseExpression_CallExpression(t *testing.T) {
 					},
 					Arguments: []core.Expression{
 						&core.LiteralExpression{
-							Type:   "number",
+							Type:   core.LiteralTypeNumber,
 							Value:  "1",
 							Line:   1,
 							CharAt: 5,
 						},
 						&core.BinaryExpression{
 							Left: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "2",
 								Line:   1,
 								CharAt: 8,
 							},
 							Right: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "3",
 								Line:   1,
 								CharAt: 10,
@@ -4922,7 +4922,7 @@ func TestParseExpression_CallExpression(t *testing.T) {
 				},
 				Arguments: []core.Expression{
 					&core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "4",
 						Line:   1,
 						CharAt: 16,
@@ -4943,7 +4943,7 @@ func TestParseExpression_CallExpression(t *testing.T) {
 						CharAt: 1,
 					},
 					PropertyExpression: &core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "1",
 						Line:   1,
 						CharAt: 3,
@@ -4954,7 +4954,7 @@ func TestParseExpression_CallExpression(t *testing.T) {
 				},
 				Arguments: []core.Expression{
 					&core.LiteralExpression{
-						Type:   "number",
+						Type:   core.LiteralTypeNumber,
 						Value:  "2",
 						Line:   1,
 						CharAt: 6,
@@ -5145,7 +5145,7 @@ func TestToAST_ExpressionStatement(t *testing.T) {
 								CharAt: 5,
 							},
 							Init: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "1",
 								Line:   1,
 								CharAt: 9,
@@ -5254,7 +5254,7 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 								CharAt: 5,
 							},
 							Init: &core.LiteralExpression{
-								Type:   "number",
+								Type:   core.LiteralTypeNumber,
 								Value:  "1",
 								Line:   1,
 								CharAt: 7,

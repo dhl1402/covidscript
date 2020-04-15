@@ -1,7 +1,17 @@
 package core
 
+type PrimitiveType string
+
+const (
+	LiteralTypeNumber    PrimitiveType = "number"
+	LiteralTypeString    PrimitiveType = "string"
+	LiteralTypeBoolean   PrimitiveType = "boolean"
+	LiteralTypeNull      PrimitiveType = "null"
+	LiteralTypeUndefined PrimitiveType = "undefined"
+)
+
 type LiteralExpression struct {
-	Type   string
+	Type   PrimitiveType
 	Value  string
 	Line   int
 	CharAt int
@@ -28,5 +38,9 @@ func (e *LiteralExpression) SetCharAt(i int) {
 }
 
 func (e *LiteralExpression) GetType() string {
-	return e.Type
+	return string(e.Type)
+}
+
+func (e *LiteralExpression) ToString() string {
+	return e.Value
 }

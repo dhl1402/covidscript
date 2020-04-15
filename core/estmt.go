@@ -7,5 +7,6 @@ type ExpressionStatement struct {
 }
 
 func (stmt ExpressionStatement) Execute(ec *ExecutionContext) (Expression, error) {
-	return nil, nil
+	_, err := stmt.Expression.Evaluate(ec)
+	return nil, err
 }

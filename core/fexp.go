@@ -1,11 +1,14 @@
 package core
 
+import "fmt"
+
 type FunctionExpression struct {
-	Params []Identifier
-	Body   []Statement
-	EC     *ExecutionContext
-	Line   int
-	CharAt int
+	Params         []Identifier
+	Body           []Statement
+	NativeFunction func(*ExecutionContext) (Expression, error)
+	EC             *ExecutionContext
+	Line           int
+	CharAt         int
 }
 
 func (e *FunctionExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
@@ -14,12 +17,12 @@ func (e *FunctionExpression) Evaluate(ec *ExecutionContext) (Expression, error) 
 			Outer:     ec,
 			Variables: map[string]Expression{},
 		}
-	} else {
+	} else if e.EC.Type != TypeGlobalEC {
 		e.EC.Variables = map[string]Expression{}
 	}
 	for _, p := range e.Params {
 		e.EC.Set(p.Name, &LiteralExpression{
-			Type:   "undefined",
+			Type:   LiteralTypeUndefined,
 			Line:   p.Line,
 			CharAt: p.CharAt,
 		})
@@ -45,4 +48,16 @@ func (e *FunctionExpression) SetCharAt(i int) {
 
 func (e *FunctionExpression) GetType() string {
 	return "function"
+}
+
+func (e *FunctionExpression) ToString() string {
+	params := ""
+	for _, p := range e.Params {
+		params = params + p.Name + ", "
+	}
+	if len(params) > 1 {
+		params = params[:len(params)-2]
+		return fmt.Sprintf("func(%s)", params)
+	}
+	return "func()"
 }
