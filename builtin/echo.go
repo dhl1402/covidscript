@@ -8,9 +8,9 @@ import (
 	"github.com/dhl1402/covidscript/core"
 )
 
-var w *io.Writer = os.Stdout
+var w io.Writer = os.Stdout
 
-func SetWriter(ww *io.Writer) {
+func SetWriter(ww io.Writer) {
 	w = ww
 }
 
