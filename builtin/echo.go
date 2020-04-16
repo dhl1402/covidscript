@@ -2,9 +2,17 @@ package builtin
 
 import (
 	"fmt"
+	"io"
+	"os"
 
 	"github.com/dhl1402/covidscript/core"
 )
+
+var w *io.Writer = os.Stdout
+
+func SetWriter(ww *io.Writer) {
+	w = ww
+}
 
 func Echo() *core.FunctionExpression {
 	return &core.FunctionExpression{
@@ -17,7 +25,7 @@ func Echo() *core.FunctionExpression {
 					break
 				}
 			}
-			fmt.Println(s)
+			fmt.Fprintln(w, s)
 			return nil, nil
 		},
 	}
