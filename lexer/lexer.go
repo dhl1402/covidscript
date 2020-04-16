@@ -6,7 +6,6 @@ import (
 	"github.com/dhl1402/covidscript/utils"
 )
 
-// todo: lex float, :=
 // Lex source code into tokens
 func Lex(sc string) ([]Token, error) {
 	tokens := []Token{}
@@ -29,7 +28,15 @@ func Lex(sc string) ([]Token, error) {
 			charAt = charAt + len(str)
 			continue
 		}
-		if utils.IsReservedKeyword(c) || utils.IsSpecialChars(c) {
+		if op := lexMultipleCharOperator(sc); op != "" {
+			if tmp != "" {
+				tokens = append(tokens, Token{Value: tmp, Line: line, CharAt: charAt - len(tmp)})
+				tmp = ""
+			}
+			tokens = append(tokens, Token{Value: op, Line: line, CharAt: charAt})
+			charAt = charAt + len(op) - 1
+			sc = sc[len(op)-1:]
+		} else if utils.IsReservedKeyword(c) || utils.IsSpecialChars(c) {
 			if tmp != "" {
 				tokens = append(tokens, Token{Value: tmp, Line: line, CharAt: charAt - len(tmp)})
 				tmp = ""
@@ -75,6 +82,22 @@ func Lex(sc string) ([]Token, error) {
 		}
 	}
 	return tokens, nil
+}
+
+func lexMultipleCharOperator(sc string) string {
+	operators := []string{"<=", ">=", "===", "==", "!==", "!=", "&&", "||"} // order matter
+	for _, op := range operators {
+		for i, r := range sc {
+			s := string(r)
+			if i >= len(op) {
+				return op
+			}
+			if s != string(op[i]) {
+				break
+			}
+		}
+	}
+	return ""
 }
 
 func lexString(sc string) (string, error) {

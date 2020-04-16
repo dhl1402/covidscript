@@ -259,6 +259,78 @@ func TestLex_Token(t *testing.T) {
 				{Value: "b", Line: 1, CharAt: 4},
 			},
 		},
+		{
+			name: "lex multi char operator ||",
+			in:   `a||b`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: "||", Line: 1, CharAt: 2},
+				{Value: "b", Line: 1, CharAt: 4},
+			},
+		},
+		{
+			name: "lex multi char operator &&",
+			in:   `a&&b`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: "&&", Line: 1, CharAt: 2},
+				{Value: "b", Line: 1, CharAt: 4},
+			},
+		},
+		{
+			name: "lex multi char operator >=",
+			in:   `a>=b`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: ">=", Line: 1, CharAt: 2},
+				{Value: "b", Line: 1, CharAt: 4},
+			},
+		},
+		{
+			name: "lex multi char operator <=",
+			in:   `a<=b`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: "<=", Line: 1, CharAt: 2},
+				{Value: "b", Line: 1, CharAt: 4},
+			},
+		},
+		{
+			name: "lex multi char operator ==",
+			in:   `a==b`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: "==", Line: 1, CharAt: 2},
+				{Value: "b", Line: 1, CharAt: 4},
+			},
+		},
+		{
+			name: "lex multi char operator !=",
+			in:   `a!=b`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: "!=", Line: 1, CharAt: 2},
+				{Value: "b", Line: 1, CharAt: 4},
+			},
+		},
+		{
+			name: "lex multi char operator ===",
+			in:   `a===b`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: "===", Line: 1, CharAt: 2},
+				{Value: "b", Line: 1, CharAt: 5},
+			},
+		},
+		{
+			name: "lex multi char operator !==",
+			in:   `a!==b`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: "!==", Line: 1, CharAt: 2},
+				{Value: "b", Line: 1, CharAt: 5},
+			},
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
@@ -276,10 +348,12 @@ func TestLex_TMP(t *testing.T) {
 		want []Token
 	}{
 		{
-			name: "lex float number",
-			in:   `123.123`,
+			name: "lex multi char operator ||",
+			in:   `a||b`,
 			want: []Token{
-				{Value: "123.123", Line: 1, CharAt: 1},
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: "||", Line: 1, CharAt: 2},
+				{Value: "b", Line: 1, CharAt: 4},
 			},
 		},
 	}
