@@ -57,9 +57,22 @@ func Lex(sc string) ([]Token, error) {
 		} else if !utils.IsWhiteSpace(c) || charAt != 1 {
 			charAt++
 		}
-	}
-	if tmp != "" {
-		tokens = append(tokens, Token{Value: tmp, Line: line, CharAt: charAt - len(tmp)})
+		if sc == "" && tmp != "" {
+			tokens = append(tokens, Token{Value: tmp, Line: line, CharAt: charAt - len(tmp)})
+		}
+		if len(tokens) >= 3 {
+			t1 := tokens[len(tokens)-3]
+			t2 := tokens[len(tokens)-2]
+			t3 := tokens[len(tokens)-1]
+			if t2.Value == "." && utils.IsInteger(t1.Value) && utils.IsInteger(t3.Value) {
+				tokens = tokens[:len(tokens)-3]
+				tokens = append(tokens, Token{
+					Value:  fmt.Sprintf("%s.%s", t1.Value, t3.Value),
+					CharAt: t1.CharAt,
+					Line:   t1.Line,
+				})
+			}
+		}
 	}
 	return tokens, nil
 }

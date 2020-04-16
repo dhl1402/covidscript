@@ -1,5 +1,7 @@
 package utils
 
+import "strconv"
+
 func IsReservedKeyword(s string) bool {
 	ss := []string{"var", "func", "return", "true", "false", "null", "undefined"}
 	return IncludeStr(ss, s)
@@ -8,6 +10,11 @@ func IsReservedKeyword(s string) bool {
 func IsSpecialChars(s string) bool {
 	ss := []string{"=", ":", ",", ".", "(", ")", "{", "}", "[", "]", "\"", "'", "`", "+", "-", "*", "/", "%", ";"}
 	return IncludeStr(ss, s)
+}
+
+func IsInteger(s string) bool {
+	_, err := strconv.Atoi(s)
+	return err == nil
 }
 
 func IsStringBoundary(s string) bool {

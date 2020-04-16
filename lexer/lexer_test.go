@@ -244,12 +244,42 @@ func TestLex_Token(t *testing.T) {
 			},
 		},
 		{
+			name: "lex float number",
+			in:   `123.123`,
+			want: []Token{
+				{Value: "123.123", Line: 1, CharAt: 1},
+			},
+		},
+		{
 			name: "lex variable declaration with :=",
 			in:   `a:=b`,
 			want: []Token{
 				{Value: "a", Line: 1, CharAt: 1},
 				{Value: ":=", Line: 1, CharAt: 2},
 				{Value: "b", Line: 1, CharAt: 4},
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens, err := Lex(tt.in)
+			require.Equal(t, err, nil)
+			require.Equal(t, tt.want, tokens)
+		})
+	}
+}
+
+func TestLex_TMP(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want []Token
+	}{
+		{
+			name: "lex float number",
+			in:   `123.123`,
+			want: []Token{
+				{Value: "123.123", Line: 1, CharAt: 1},
 			},
 		},
 	}
