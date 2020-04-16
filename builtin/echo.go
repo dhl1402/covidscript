@@ -2,19 +2,11 @@ package builtin
 
 import (
 	"fmt"
-	"io"
-	"os"
 
 	"github.com/dhl1402/covidscript/core"
 )
 
-var w io.Writer = os.Stdout
-
-func SetWriter(ww io.Writer) {
-	w = ww
-}
-
-func Echo() *core.FunctionExpression {
+func Echo(conf Config) *core.FunctionExpression {
 	return &core.FunctionExpression{
 		NativeFunction: func(ec *core.ExecutionContext) (core.Expression, error) {
 			s := ""
@@ -25,7 +17,7 @@ func Echo() *core.FunctionExpression {
 					break
 				}
 			}
-			fmt.Fprintln(w, s)
+			fmt.Fprintln(conf.Writer, s)
 			return nil, nil
 		},
 	}

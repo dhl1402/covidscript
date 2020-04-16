@@ -7,13 +7,13 @@ import (
 	"github.com/dhl1402/covidscript/parser"
 )
 
-func Interpret(script string) error {
+func Interpret(script string, conf builtin.Config) error {
 	tokens := lexer.Lex(script)
 	ast, err := parser.ToAST(tokens)
 	if err != nil {
 		return err
 	}
-	gec := builtin.CreateGlobalEC()
+	gec := builtin.CreateGlobalEC(conf)
 	if err = Execute(gec, ast); err != nil {
 		return err
 	}
