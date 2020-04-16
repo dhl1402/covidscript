@@ -6,10 +6,11 @@ import (
 )
 
 type AssignmentStatement struct {
-	Left   Expression
-	Right  Expression
-	Line   int
-	CharAt int
+	Left                 Expression
+	Right                Expression
+	DeclarationShorthand bool
+	Line                 int
+	CharAt               int
 }
 
 func (stmt AssignmentStatement) Execute(ec *ExecutionContext) (Expression, error) {
@@ -19,6 +20,9 @@ func (stmt AssignmentStatement) Execute(ec *ExecutionContext) (Expression, error
 	}
 	switch left := stmt.Left.(type) {
 	case (*VariableExpression):
+		if ec.Variables[left.Name] == nil && !stmt.DeclarationShorthand {
+			return nil, fmt.Errorf("%s is not defined. [%d,%d]", left.Name, stmt.Line, stmt.CharAt)
+		}
 		ec.Set(left.Name, right)
 	case (*MemberAccessExpression):
 		// do not need to handle error in this case because error have been already handled in the following `left.Evaluate(ec)``

@@ -358,6 +358,26 @@ func TestExecute(t *testing.T) {
 			err: nil,
 		},
 		{
+			name: "execute variable declaration #10",
+			in:   `a:=1`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 4,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
 			name: "execute function declaration #1",
 			in:   `func a(){}`,
 			inEC: &core.ExecutionContext{
@@ -493,7 +513,7 @@ func TestExecute(t *testing.T) {
 		{
 			name: "execute assignment statement #2",
 			in: `
-				var a
+				var a,b
 				a=1
 				b=a+1
 			`,
@@ -1016,32 +1036,92 @@ func TestTMP(t *testing.T) {
 		wantEC func() *core.ExecutionContext
 		err    error
 	}{
-		// {
-		// 	name: "tmp",
-		// 	in:   `"asdad`,
-		// 	inEC: &core.ExecutionContext{
-		// 		Type: core.TypeGlobalEC,
-		// 		Variables: map[string]core.Expression{
-		// 			"echo": &core.FunctionExpression{
-		// 				Params: []core.Identifier{
-		// 					{Name: "s"},
-		// 				},
-		// 				NativeFunction: func(ec *core.ExecutionContext) (core.Expression, error) {
-		// 					exp, err := ec.Variables["s"].Evaluate(ec)
-		// 					if err != nil {
-		// 						return nil, err
-		// 					}
-		// 					fmt.Println(exp.ToString())
-		// 					return nil, nil
-		// 				},
-		// 			},
-		// 		},
-		// 	},
-		// 	wantEC: func() *core.ExecutionContext {
-		// 		return nil
-		// 	},
-		// 	err: nil,
-		// },
+		{
+			name: "execute function declaration #2",
+			in: `
+			func a(b,c){
+			  return b+c
+			}
+			var d = a(1,2)`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				gec := &core.ExecutionContext{
+					Variables: map[string]core.Expression{},
+				}
+				gec.Variables["a"] = &core.FunctionExpression{
+					Params: []core.Identifier{
+						{Name: "b", Line: 2, CharAt: 8},
+						{Name: "c", Line: 2, CharAt: 10},
+					},
+					Body: []core.Statement{
+						core.ReturnStatement{
+							Argument: &core.BinaryExpression{
+								Left: &core.VariableExpression{
+									Name:   "b",
+									Line:   3,
+									CharAt: 8,
+								},
+								Right: &core.VariableExpression{
+									Name:   "c",
+									Line:   3,
+									CharAt: 10,
+								},
+								Operator: core.Operator{
+									Symbol: "+",
+									Line:   3,
+									CharAt: 9,
+								},
+								Line:   3,
+								CharAt: 8,
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+					},
+					EC: &core.ExecutionContext{
+						Outer: gec,
+						Variables: map[string]core.Expression{
+							"b": &core.LiteralExpression{
+								Type:   core.LiteralTypeNumber,
+								Value:  "1",
+								Line:   3,
+								CharAt: 8,
+							},
+							"c": &core.LiteralExpression{
+								Type:   core.LiteralTypeNumber,
+								Value:  "2",
+								Line:   3,
+								CharAt: 10,
+							},
+							"_args0_": &core.LiteralExpression{
+								Type:   core.LiteralTypeNumber,
+								Value:  "1",
+								Line:   3,
+								CharAt: 8,
+							},
+							"_args1_": &core.LiteralExpression{
+								Type:   core.LiteralTypeNumber,
+								Value:  "2",
+								Line:   3,
+								CharAt: 10,
+							},
+						},
+					},
+					Line:   5,
+					CharAt: 9,
+				}
+				gec.Variables["d"] = &core.LiteralExpression{
+					Type:   core.LiteralTypeNumber,
+					Value:  "3",
+					Line:   3,
+					CharAt: 8,
+				}
+				return gec
+			},
+			err: nil,
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
