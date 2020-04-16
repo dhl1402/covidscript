@@ -5259,7 +5259,27 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 			},
 		},
 		{
-			name: "parse call expression #2",
+			name: "parse assignment statement #2",
+			in:   "a:=b",
+			want: []core.Statement{
+				core.AssignmentStatement{
+					Left: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &core.VariableExpression{
+						Name:   "b",
+						Line:   1,
+						CharAt: 4,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse call expression #3",
 			in: `var a=1
 			     a=(b)`,
 			want: []core.Statement{
@@ -5301,7 +5321,7 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 			},
 		},
 		{
-			name: "parse assignment statement #3",
+			name: "parse assignment statement #4",
 			in:   "a.b=c",
 			want: []core.Statement{
 				core.AssignmentStatement{
@@ -5329,6 +5349,35 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "parse assignment statement #5g",
+			in:   "a.b:=c",
+			want: []core.Statement{
+				core.AssignmentStatement{
+					Left: &core.MemberAccessExpression{
+						Object: &core.VariableExpression{
+							Name:   "a",
+							Line:   1,
+							CharAt: 1,
+						},
+						PropertyIdentifier: core.Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 3,
+						},
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &core.VariableExpression{
+						Name:   "c",
+						Line:   1,
+						CharAt: 6,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
@@ -5344,34 +5393,27 @@ func Test_TMP(t *testing.T) {
 	cases := []struct {
 		name string
 		in   string
-		want core.Expression
-		// want []core.Statement
+		// want core.Expression
+		want []core.Statement
 	}{
 		{
-			name: "parse member access expression a.b.c",
-			in:   "a.b.c",
-			want: &core.MemberAccessExpression{
-				Object: &core.MemberAccessExpression{
-					Object: &core.VariableExpression{
+			name: "parse assignment statement #1",
+			in:   "a:=b",
+			want: []core.Statement{
+				core.AssignmentStatement{
+					Left: &core.VariableExpression{
 						Name:   "a",
 						Line:   1,
 						CharAt: 1,
 					},
-					PropertyIdentifier: core.Identifier{
+					Right: &core.VariableExpression{
 						Name:   "b",
 						Line:   1,
-						CharAt: 3,
+						CharAt: 4,
 					},
 					Line:   1,
 					CharAt: 1,
 				},
-				PropertyIdentifier: core.Identifier{
-					Name:   "c",
-					Line:   1,
-					CharAt: 5,
-				},
-				Line:   1,
-				CharAt: 1,
 			},
 		},
 	}
@@ -5379,10 +5421,10 @@ func Test_TMP(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tokens, err := lexer.Lex(tt.in)
 			require.Equal(t, err, nil)
-			exp, _, _ := parseExpression(tokens)
-			require.Equal(t, tt.want, exp)
-			// ast, _ := ToAST(lexer.Lex(tt.in))
-			// require.Equal(t, tt.want, ast)
+			// exp, _, _ := parseExpression(tokens)
+			// require.Equal(t, tt.want, exp)
+			ast, _ := ToAST(tokens)
+			require.Equal(t, tt.want, ast)
 		})
 	}
 }

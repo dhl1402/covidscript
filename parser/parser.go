@@ -46,7 +46,7 @@ func parseStatements(tokens []lexer.Token) ([]core.Statement, int, error) {
 			if err != nil {
 				return nil, 0, err
 			}
-			if i+processed < len(tokens) && tokens[i+processed].Value == "=" && e != nil {
+			if i+processed < len(tokens) && (tokens[i+processed].Value == "=" || tokens[i+processed].Value == ":=") && e != nil {
 				// parse AssignmentStatement
 				i = i + processed + 1 // handle '=' -> +1
 				switch e.(type) {

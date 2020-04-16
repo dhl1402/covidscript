@@ -15,6 +15,10 @@ func Lex(sc string) ([]Token, error) {
 	charAt := 1
 	for len(sc) > 0 {
 		c := string(sc[0])
+		var nc string
+		if len(sc) > 2 {
+			nc = string(sc[1])
+		}
 		if utils.IsStringBoundary(c) {
 			str, err := lexString(sc)
 			if err != nil {
@@ -30,7 +34,13 @@ func Lex(sc string) ([]Token, error) {
 				tokens = append(tokens, Token{Value: tmp, Line: line, CharAt: charAt - len(tmp)})
 				tmp = ""
 			}
-			tokens = append(tokens, Token{Value: c, Line: line, CharAt: charAt})
+			if c == ":" && nc == "=" {
+				tokens = append(tokens, Token{Value: ":=", Line: line, CharAt: charAt})
+				charAt++
+				sc = sc[1:] // skip ':'
+			} else {
+				tokens = append(tokens, Token{Value: c, Line: line, CharAt: charAt})
+			}
 		} else if utils.IsWhiteSpace(c) || utils.IsNewLine(c) {
 			if tmp != "" {
 				tokens = append(tokens, Token{Value: tmp, Line: line, CharAt: charAt - len(tmp)})

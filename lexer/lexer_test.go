@@ -51,7 +51,7 @@ func TestLex_Value(t *testing.T) {
 			a,b:=1,2
 			var a
 			var a,b`,
-			want: []string{"var", "a", "=", "123", "b", ":", "=", "a", "var", "a", ",", "b", "=", "1", ",", "2", "a", ",", "b", ":", "=", "1", ",", "2", "var", "a", "var", "a", ",", "b"},
+			want: []string{"var", "a", "=", "123", "b", ":=", "a", "var", "a", ",", "b", "=", "1", ",", "2", "a", ",", "b", ":=", "1", ",", "2", "var", "a", "var", "a", ",", "b"},
 		},
 		{
 			name: "lex function declaration",
@@ -241,6 +241,15 @@ func TestLex_Token(t *testing.T) {
 				{Value: "1", Line: 1, CharAt: 7},
 				{Value: "+", Line: 2, CharAt: 1},
 				{Value: "2", Line: 3, CharAt: 1},
+			},
+		},
+		{
+			name: "lex variable declaration with :=",
+			in:   `a:=b`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: ":=", Line: 1, CharAt: 2},
+				{Value: "b", Line: 1, CharAt: 4},
 			},
 		},
 	}
