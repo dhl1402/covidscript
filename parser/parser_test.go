@@ -83,7 +83,9 @@ func TestParseExpression(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
 			require.Equal(t, tt.want, exp)
 		})
 	}
@@ -2562,7 +2564,9 @@ func TestParseExpression_Precedence(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
 			require.Equal(t, tt.want, exp)
 		})
 	}
@@ -3077,7 +3081,9 @@ func TestParseExpression_Object(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
 			require.Equal(t, tt.want, exp)
 		})
 	}
@@ -3916,7 +3922,9 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
 			require.Equal(t, tt.want, exp)
 		})
 	}
@@ -4343,7 +4351,9 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			ast, _ := ToAST(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			ast, _ := ToAST(tokens)
 			require.Equal(t, tt.want, ast)
 		})
 	}
@@ -4595,7 +4605,9 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			ast, _ := ToAST(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			ast, _ := ToAST(tokens)
 			require.Equal(t, tt.want, ast)
 		})
 	}
@@ -4732,7 +4744,9 @@ func TestParseExpression_Function(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
 			require.Equal(t, tt.want, exp)
 		})
 	}
@@ -5074,7 +5088,9 @@ func TestParseExpression_CallExpression(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
 			require.Equal(t, tt.want, exp)
 		})
 	}
@@ -5208,7 +5224,9 @@ func TestToAST_ExpressionStatement(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			ast, _ := ToAST(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			ast, _ := ToAST(tokens)
 			require.Equal(t, tt.want, ast)
 		})
 	}
@@ -5314,7 +5332,9 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			ast, _ := ToAST(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			ast, _ := ToAST(tokens)
 			require.Equal(t, tt.want, ast)
 		})
 	}
@@ -5357,7 +5377,9 @@ func Test_TMP(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			exp, _, _ := parseExpression(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
 			require.Equal(t, tt.want, exp)
 			// ast, _ := ToAST(lexer.Lex(tt.in))
 			// require.Equal(t, tt.want, ast)

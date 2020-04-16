@@ -997,7 +997,9 @@ func TestExecute(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			stmts, _ := parser.ToAST(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			stmts, _ := parser.ToAST(tokens)
 			require.Equal(t, tt.err, Execute(tt.inEC, stmts))
 			if tt.err == nil {
 				require.Equal(t, tt.wantEC(), tt.inEC)
@@ -1016,10 +1018,7 @@ func TestTMP(t *testing.T) {
 	}{
 		// {
 		// 	name: "tmp",
-		// 	in: `var a = func(b,c){
-		// 		return b+c
-		// 	}
-		// 	echo(a())`,
+		// 	in:   `"asdad`,
 		// 	inEC: &core.ExecutionContext{
 		// 		Type: core.TypeGlobalEC,
 		// 		Variables: map[string]core.Expression{
@@ -1046,7 +1045,9 @@ func TestTMP(t *testing.T) {
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			stmts, _ := parser.ToAST(lexer.Lex(tt.in))
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			stmts, _ := parser.ToAST(tokens)
 			require.Equal(t, tt.err, Execute(tt.inEC, stmts))
 			require.Equal(t, tt.wantEC(), tt.inEC)
 		})

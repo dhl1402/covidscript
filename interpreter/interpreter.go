@@ -8,7 +8,10 @@ import (
 )
 
 func Interpret(script string, conf builtin.Config) error {
-	tokens := lexer.Lex(script)
+	tokens, err := lexer.Lex(script)
+	if err != nil {
+		return err
+	}
 	ast, err := parser.ToAST(tokens)
 	if err != nil {
 		return err

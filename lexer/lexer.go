@@ -1,17 +1,25 @@
 package lexer
 
-import "github.com/dhl1402/covidscript/utils"
+import (
+	"fmt"
+
+	"github.com/dhl1402/covidscript/utils"
+)
 
 // todo: lex float, :=
 // Lex source code into tokens
-func Lex(sc string) (tokens []Token) {
+func Lex(sc string) ([]Token, error) {
+	tokens := []Token{}
 	tmp := ""
 	line := 1
 	charAt := 1
 	for len(sc) > 0 {
 		c := string(sc[0])
 		if utils.IsStringBoundary(c) {
-			str := lexString(sc)
+			str, err := lexString(sc)
+			if err != nil {
+				return nil, err
+			}
 			tokens = append(tokens, Token{Value: str, Line: line, CharAt: charAt})
 			sc = sc[len(str):]
 			charAt = charAt + len(str)
@@ -43,10 +51,11 @@ func Lex(sc string) (tokens []Token) {
 	if tmp != "" {
 		tokens = append(tokens, Token{Value: tmp, Line: line, CharAt: charAt - len(tmp)})
 	}
-	return
+	return tokens, nil
 }
 
-func lexString(sc string) (result string) {
+func lexString(sc string) (string, error) {
+	result := ""
 	openStrChar := ""
 	for _, s := range sc {
 		c := string(s)
@@ -55,11 +64,10 @@ func lexString(sc string) (result string) {
 			result = result + c
 		} else if openStrChar != "" {
 			if c == openStrChar {
-				return result + c
+				return result + c, nil
 			}
 			result = result + c
 		}
 	}
-	// TODO: handle missing close string character
-	return ""
+	return result, fmt.Errorf("Missing closing quote.")
 }
