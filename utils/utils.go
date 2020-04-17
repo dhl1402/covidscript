@@ -2,15 +2,13 @@ package utils
 
 import "strconv"
 
-// []string{"*", "/", "%", "+", "-", "<", ">=", "==", "===", "!=", "==", "&&", "||"}
-
 func IsReservedKeyword(s string) bool {
-	ss := []string{"var", "func", "return", "true", "false", "null", "undefined"}
+	ss := []string{"var", "func", "return", "if", "else", "elif", "#t", "#f", "null", "undefined"}
 	return IncludeStr(ss, s)
 }
 
 func IsSpecialChars(s string) bool {
-	ss := []string{"=", ":", ",", ".", "(", ")", "{", "}", "[", "]", "\"", "'", "`", "+", "-", "*", "/", "%", "<", ">", ";"}
+	ss := []string{"=", ":", ",", ".", "(", ")", "{", "}", "[", "]", "\"", "'", "`", "+", "-", "*", "/", "%", "<", ">", ";", "!"}
 	return IncludeStr(ss, s)
 }
 

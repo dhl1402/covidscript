@@ -45,6 +45,10 @@ func (e *ObjectExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	return e, nil
 }
 
+func (e *ObjectExpression) IsTruthy() bool {
+	return len(e.Properties) > 0
+}
+
 func (e *ObjectExpression) GetCharAt() int {
 	return e.CharAt
 }

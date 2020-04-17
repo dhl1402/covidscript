@@ -30,6 +30,10 @@ func (e *FunctionExpression) Evaluate(ec *ExecutionContext) (Expression, error) 
 	return e, nil
 }
 
+func (e *FunctionExpression) IsTruthy() bool {
+	return true
+}
+
 func (e *FunctionExpression) GetCharAt() int {
 	return e.CharAt
 }

@@ -16,7 +16,7 @@ type Token struct {
 func (t Token) IsIdentifier() bool {
 	// TODO: regex to test identifier
 	s := t.Value
-	return s != "" && !utils.IsReservedKeyword(s) && !utils.IsSpecialChars(s) && !utils.IsStringBoundary(s) && !utils.IsWhiteSpace(s) && !utils.IsNewLine(s)
+	return s != "" && !t.IsOperatorSymbol() && !utils.IsReservedKeyword(s) && !utils.IsSpecialChars(s) && !utils.IsStringBoundary(s) && !utils.IsWhiteSpace(s) && !utils.IsNewLine(s)
 }
 
 func (t Token) IsNumber() bool {
@@ -33,7 +33,7 @@ func (t Token) IsString() bool {
 }
 
 func (t Token) IsBoolean() bool {
-	return t.Value == "false" || t.Value == "true"
+	return t.Value == "#f" || t.Value == "#t"
 }
 
 func (t Token) IsOperatorSymbol() bool {

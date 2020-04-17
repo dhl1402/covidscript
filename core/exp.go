@@ -2,6 +2,7 @@ package core
 
 type Expression interface {
 	Evaluate(*ExecutionContext) (Expression, error)
+	IsTruthy() bool
 	GetLine() int
 	GetCharAt() int
 	SetLine(int)

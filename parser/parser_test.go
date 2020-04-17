@@ -9,7 +9,7 @@ import (
 	"github.com/dhl1402/covidscript/lexer"
 )
 
-func TestParseExpression(t *testing.T) {
+func TestParseExpression_Literal(t *testing.T) {
 	cases := []struct {
 		name string
 		in   string
@@ -47,16 +47,33 @@ func TestParseExpression(t *testing.T) {
 		},
 		{
 			name: "parse boolean expression",
-			in:   "false",
+			in:   "#f",
 			want: &core.LiteralExpression{
 				Type:   core.LiteralTypeBoolean,
-				Value:  `false`,
+				Value:  `#f`,
 				Line:   1,
 				CharAt: 1,
 			},
 		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
+			require.Equal(t, tt.want, exp)
+		})
+	}
+}
+
+func TestParseExpression_BinaryExpression(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want core.Expression
+	}{
 		{
-			name: "parse binary expression",
+			name: "parse binary expression #1",
 			in:   "1+1",
 			want: &core.BinaryExpression{
 				Left: &core.LiteralExpression{
@@ -75,6 +92,2112 @@ func TestParseExpression(t *testing.T) {
 					Symbol: "+",
 					Line:   1,
 					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression #2",
+			in:   "1.1==1.2",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.2",
+					Line:   1,
+					CharAt: 6,
+				},
+				Operator: core.Operator{
+					Symbol: "==",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression #3",
+			in:   "1.1>=1.2",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.2",
+					Line:   1,
+					CharAt: 6,
+				},
+				Operator: core.Operator{
+					Symbol: ">=",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression #4",
+			in:   "1.1<=1.2",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.2",
+					Line:   1,
+					CharAt: 6,
+				},
+				Operator: core.Operator{
+					Symbol: "<=",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression #5",
+			in:   "1.1!=1.2",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.2",
+					Line:   1,
+					CharAt: 6,
+				},
+				Operator: core.Operator{
+					Symbol: "!=",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression #6",
+			in:   "1.1>1.2",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.2",
+					Line:   1,
+					CharAt: 5,
+				},
+				Operator: core.Operator{
+					Symbol: ">",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression #7",
+			in:   "1.1<1.2",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.2",
+					Line:   1,
+					CharAt: 5,
+				},
+				Operator: core.Operator{
+					Symbol: "<",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression #8",
+			in:   "1.1||1.2",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.2",
+					Line:   1,
+					CharAt: 6,
+				},
+				Operator: core.Operator{
+					Symbol: "||",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression #9",
+			in:   "1.1&&1.2",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.2",
+					Line:   1,
+					CharAt: 6,
+				},
+				Operator: core.Operator{
+					Symbol: "&&",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression #10",
+			in:   "1.1*1.2&&1.3",
+			want: &core.BinaryExpression{
+				Left: &core.BinaryExpression{
+					Left: &core.LiteralExpression{
+						Type:   "number",
+						Value:  "1.1",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &core.LiteralExpression{
+						Type:   "number",
+						Value:  "1.2",
+						Line:   1,
+						CharAt: 5,
+					},
+					Operator: core.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 4,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.3",
+					Line:   1,
+					CharAt: 10,
+				},
+				Operator: core.Operator{
+					Symbol: "&&",
+					Line:   1,
+					CharAt: 8,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression #11",
+			in:   "1.1&&1.2",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1.2",
+					Line:   1,
+					CharAt: 6,
+				},
+				Operator: core.Operator{
+					Symbol: "&&",
+					Line:   1,
+					CharAt: 4,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
+			require.Equal(t, tt.want, exp)
+		})
+	}
+}
+
+func TestParseExpression_Object(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want core.Expression
+	}{
+		{
+			name: "parse object expression {}",
+			in:   "{}",
+			want: &core.ObjectExpression{
+				Properties: []*core.ObjectProperty{},
+				Line:       1,
+				CharAt:     1,
+			},
+		},
+		{
+			name: "parse object expression {a:1,b:2}",
+			in:   "{a:1,b:2}",
+			want: &core.ObjectExpression{
+				Properties: []*core.ObjectProperty{
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "a",
+							Line:   1,
+							CharAt: 2,
+						},
+						Value: &core.LiteralExpression{
+							Type:   core.LiteralTypeNumber,
+							Value:  "1",
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 6,
+						},
+						Value: &core.LiteralExpression{
+							Type:   core.LiteralTypeNumber,
+							Value:  "2",
+							Line:   1,
+							CharAt: 8,
+						},
+						Line:   1,
+						CharAt: 6,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression {[a+b]:1,c:2}",
+			in:   "{[a+b]:1,c:2}",
+			want: &core.ObjectExpression{
+				Properties: []*core.ObjectProperty{
+					{
+						KeyExpression: &core.BinaryExpression{
+							Left: &core.VariableExpression{
+								Name:   "a",
+								Line:   1,
+								CharAt: 3,
+							},
+							Right: &core.VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 5,
+							},
+							Operator: core.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 4,
+							},
+							Line:   1,
+							CharAt: 3,
+						},
+						Value: &core.LiteralExpression{
+							Type:   core.LiteralTypeNumber,
+							Value:  "1",
+							Line:   1,
+							CharAt: 8,
+						},
+						Computed: true,
+						Line:     1,
+						CharAt:   2,
+					},
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "c",
+							Line:   1,
+							CharAt: 10,
+						},
+						Value: &core.LiteralExpression{
+							Type:   core.LiteralTypeNumber,
+							Value:  "2",
+							Line:   1,
+							CharAt: 12,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression {a:{c:1},b:2}",
+			in:   "{a:{c:1},b:2}",
+			want: &core.ObjectExpression{
+				Properties: []*core.ObjectProperty{
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "a",
+							Line:   1,
+							CharAt: 2,
+						},
+						Value: &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "c",
+										Line:   1,
+										CharAt: 5,
+									},
+									Value: &core.LiteralExpression{
+										Type:   core.LiteralTypeNumber,
+										Value:  "1",
+										Line:   1,
+										CharAt: 7,
+									},
+									Line:   1,
+									CharAt: 5,
+								},
+							},
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 10,
+						},
+						Value: &core.LiteralExpression{
+							Type:   core.LiteralTypeNumber,
+							Value:  "2",
+							Line:   1,
+							CharAt: 12,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression {a:{c:1},b:{d:2}}",
+			in:   "{a:{c:1},b:{d:2}}",
+			want: &core.ObjectExpression{
+				Properties: []*core.ObjectProperty{
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "a",
+							Line:   1,
+							CharAt: 2,
+						},
+						Value: &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "c",
+										Line:   1,
+										CharAt: 5,
+									},
+									Value: &core.LiteralExpression{
+										Type:   core.LiteralTypeNumber,
+										Value:  "1",
+										Line:   1,
+										CharAt: 7,
+									},
+									Line:   1,
+									CharAt: 5,
+								},
+							},
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 10,
+						},
+						Value: &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "d",
+										Line:   1,
+										CharAt: 13,
+									},
+									Value: &core.LiteralExpression{
+										Type:   core.LiteralTypeNumber,
+										Value:  "2",
+										Line:   1,
+										CharAt: 15,
+									},
+									Line:   1,
+									CharAt: 13,
+								},
+							},
+							Line:   1,
+							CharAt: 12,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression {a:{c:1},b:{d:2}}",
+			in: `{
+				    a:{c:1+a.b*2+c.d+3},
+					b:{d:2}
+				 }`,
+			want: &core.ObjectExpression{
+				Properties: []*core.ObjectProperty{
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "a",
+							Line:   2,
+							CharAt: 1,
+						},
+						Value: &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "c",
+										Line:   2,
+										CharAt: 4,
+									},
+									Value: &core.BinaryExpression{
+										Left: &core.BinaryExpression{
+											Left: &core.BinaryExpression{
+												Left: &core.LiteralExpression{
+													Type:   core.LiteralTypeNumber,
+													Value:  "1",
+													Line:   2,
+													CharAt: 6,
+												},
+												Right: &core.BinaryExpression{
+													Left: &core.MemberAccessExpression{
+														Object: &core.VariableExpression{
+															Name:   "a",
+															Line:   2,
+															CharAt: 8,
+														},
+														PropertyIdentifier: core.Identifier{
+															Name:   "b",
+															Line:   2,
+															CharAt: 10,
+														},
+														Line:   2,
+														CharAt: 8,
+													},
+													Right: &core.LiteralExpression{
+														Type:   core.LiteralTypeNumber,
+														Value:  "2",
+														Line:   2,
+														CharAt: 12,
+													},
+													Operator: core.Operator{
+														Symbol: "*",
+														Line:   2,
+														CharAt: 11,
+													},
+													Line:   2,
+													CharAt: 8,
+												},
+												Operator: core.Operator{
+													Symbol: "+",
+													Line:   2,
+													CharAt: 7,
+												},
+												Line:   2,
+												CharAt: 6,
+											},
+											Right: &core.MemberAccessExpression{
+												Object: &core.VariableExpression{
+													Name:   "c",
+													Line:   2,
+													CharAt: 14,
+												},
+												PropertyIdentifier: core.Identifier{
+													Name:   "d",
+													Line:   2,
+													CharAt: 16,
+												},
+												Line:   2,
+												CharAt: 14,
+											},
+											Operator: core.Operator{
+												Symbol: "+",
+												Line:   2,
+												CharAt: 13,
+											},
+											Line:   2,
+											CharAt: 6,
+										},
+										Right: &core.LiteralExpression{
+											Type:   core.LiteralTypeNumber,
+											Value:  "3",
+											Line:   2,
+											CharAt: 18,
+										},
+										Operator: core.Operator{
+											Symbol: "+",
+											Line:   2,
+											CharAt: 17,
+										},
+										Line:   2,
+										CharAt: 6,
+									},
+									Line:   2,
+									CharAt: 4,
+								},
+							},
+							Line:   2,
+							CharAt: 3,
+						},
+						Line:   2,
+						CharAt: 1,
+					},
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "b",
+							Line:   3,
+							CharAt: 1,
+						},
+						Value: &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "d",
+										Line:   3,
+										CharAt: 4,
+									},
+									Value: &core.LiteralExpression{
+										Type:   core.LiteralTypeNumber,
+										Value:  "2",
+										Line:   3,
+										CharAt: 6,
+									},
+									Line:   3,
+									CharAt: 4,
+								},
+							},
+							Line:   3,
+							CharAt: 3,
+						},
+						Line:   3,
+						CharAt: 1,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse object expression {a:{c:1},b:[2,3]}",
+			in:   "{a:{c:1},b:[2,3]}",
+			want: &core.ObjectExpression{
+				Properties: []*core.ObjectProperty{
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "a",
+							Line:   1,
+							CharAt: 2,
+						},
+						Value: &core.ObjectExpression{
+							Properties: []*core.ObjectProperty{
+								{
+									KeyIdentifier: core.Identifier{
+										Name:   "c",
+										Line:   1,
+										CharAt: 5,
+									},
+									Value: &core.LiteralExpression{
+										Type:   core.LiteralTypeNumber,
+										Value:  "1",
+										Line:   1,
+										CharAt: 7,
+									},
+									Line:   1,
+									CharAt: 5,
+								},
+							},
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "b",
+							Line:   1,
+							CharAt: 10,
+						},
+						Value: &core.ArrayExpression{
+							Elements: []core.Expression{
+								&core.LiteralExpression{
+									Type:   core.LiteralTypeNumber,
+									Value:  "2",
+									Line:   1,
+									CharAt: 13,
+								},
+								&core.LiteralExpression{
+									Type:   core.LiteralTypeNumber,
+									Value:  "3",
+									Line:   1,
+									CharAt: 15,
+								},
+							},
+							Line:   1,
+							CharAt: 12,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+({a:1,b:2})",
+			in:   "1+({a:1,b:2})",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   core.LiteralTypeNumber,
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.ObjectExpression{
+					Properties: []*core.ObjectProperty{
+						{
+							KeyIdentifier: core.Identifier{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							Value: &core.LiteralExpression{
+								Type:   core.LiteralTypeNumber,
+								Value:  "1",
+								Line:   1,
+								CharAt: 7,
+							},
+							Line:   1,
+							CharAt: 5,
+						},
+						{
+							KeyIdentifier: core.Identifier{
+								Name:   "b",
+								Line:   1,
+								CharAt: 9,
+							},
+							Value: &core.LiteralExpression{
+								Type:   core.LiteralTypeNumber,
+								Value:  "2",
+								Line:   1,
+								CharAt: 11,
+							},
+							Line:   1,
+							CharAt: 9,
+						},
+					},
+					Line:   1,
+					CharAt: 4,
+				},
+				Operator: core.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
+			require.Equal(t, tt.want, exp)
+		})
+	}
+}
+
+func TestParseExpression_ArrayExpression(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want core.Expression
+	}{
+		{
+			name: "parse array expression []",
+			in:   "[]",
+			want: &core.ArrayExpression{
+				Elements: []core.Expression{},
+				Line:     1,
+				CharAt:   1,
+			},
+		},
+		{
+			name: "parse array expression [1,a]",
+			in:   "[1,a]",
+			want: &core.ArrayExpression{
+				Elements: []core.Expression{
+					&core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "1",
+						Line:   1,
+						CharAt: 2,
+					},
+					&core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 4,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse array expression [1,[a,b]]",
+			in:   "[1,[a,b]]",
+			want: &core.ArrayExpression{
+				Elements: []core.Expression{
+					&core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "1",
+						Line:   1,
+						CharAt: 2,
+					},
+					&core.ArrayExpression{
+						Elements: []core.Expression{
+							&core.VariableExpression{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							&core.VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 7,
+							},
+						},
+						Line:   1,
+						CharAt: 4,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse array expression [1,[a,b]]",
+			in:   "[1,{a:1,b:2}]",
+			want: &core.ArrayExpression{
+				Elements: []core.Expression{
+					&core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "1",
+						Line:   1,
+						CharAt: 2,
+					},
+					&core.ObjectExpression{
+						Properties: []*core.ObjectProperty{
+							{
+								KeyIdentifier: core.Identifier{
+									Name:   "a",
+									Line:   1,
+									CharAt: 5,
+								},
+								Value: &core.LiteralExpression{
+									Type:   core.LiteralTypeNumber,
+									Value:  "1",
+									Line:   1,
+									CharAt: 7,
+								},
+								Line:   1,
+								CharAt: 5,
+							},
+							{
+								KeyIdentifier: core.Identifier{
+									Name:   "b",
+									Line:   1,
+									CharAt: 9,
+								},
+								Value: &core.LiteralExpression{
+									Type:   core.LiteralTypeNumber,
+									Value:  "2",
+									Line:   1,
+									CharAt: 11,
+								},
+								Line:   1,
+								CharAt: 9,
+							},
+						},
+						Line:   1,
+						CharAt: 4,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse array expression [1,[a,1+a.b*2+c.d+3]]",
+			in:   "[1,[a,1+a.b*2+c.d+3]]",
+			want: &core.ArrayExpression{
+				Elements: []core.Expression{
+					&core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "1",
+						Line:   1,
+						CharAt: 2,
+					},
+					&core.ArrayExpression{
+						Elements: []core.Expression{
+							&core.VariableExpression{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							&core.BinaryExpression{
+								Left: &core.BinaryExpression{
+									Left: &core.BinaryExpression{
+										Left: &core.LiteralExpression{
+											Type:   core.LiteralTypeNumber,
+											Value:  "1",
+											Line:   1,
+											CharAt: 7,
+										},
+										Right: &core.BinaryExpression{
+											Left: &core.MemberAccessExpression{
+												Object: &core.VariableExpression{
+													Name:   "a",
+													Line:   1,
+													CharAt: 9,
+												},
+												PropertyIdentifier: core.Identifier{
+													Name:   "b",
+													Line:   1,
+													CharAt: 11,
+												},
+												Line:   1,
+												CharAt: 9,
+											},
+											Right: &core.LiteralExpression{
+												Type:   core.LiteralTypeNumber,
+												Value:  "2",
+												Line:   1,
+												CharAt: 13,
+											},
+											Operator: core.Operator{
+												Symbol: "*",
+												Line:   1,
+												CharAt: 12,
+											},
+											Line:   1,
+											CharAt: 9,
+										},
+										Operator: core.Operator{
+											Symbol: "+",
+											Line:   1,
+											CharAt: 8,
+										},
+										Line:   1,
+										CharAt: 7,
+									},
+									Right: &core.MemberAccessExpression{
+										Object: &core.VariableExpression{
+											Name:   "c",
+											Line:   1,
+											CharAt: 15,
+										},
+										PropertyIdentifier: core.Identifier{
+											Name:   "d",
+											Line:   1,
+											CharAt: 17,
+										},
+										Line:   1,
+										CharAt: 15,
+									},
+									Operator: core.Operator{
+										Symbol: "+",
+										Line:   1,
+										CharAt: 14,
+									},
+									Line:   1,
+									CharAt: 7,
+								},
+								Right: &core.LiteralExpression{
+									Type:   core.LiteralTypeNumber,
+									Value:  "3",
+									Line:   1,
+									CharAt: 19,
+								},
+								Operator: core.Operator{
+									Symbol: "+",
+									Line:   1,
+									CharAt: 18,
+								},
+								Line:   1,
+								CharAt: 7,
+							},
+						},
+						Line:   1,
+						CharAt: 4,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse array expression a+([b])",
+			in:   "a+([b])",
+			want: &core.BinaryExpression{
+				Left: &core.VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.ArrayExpression{
+					Elements: []core.Expression{
+						&core.VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 5,
+						},
+					},
+					Line:   1,
+					CharAt: 4,
+				},
+				Operator: core.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse member access expression a[b]",
+			in:   "a[b]",
+			want: &core.MemberAccessExpression{
+				Object: &core.VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				PropertyExpression: &core.VariableExpression{
+					Name:   "b",
+					Line:   1,
+					CharAt: 3,
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
+			},
+		},
+		{
+			name: "parse member access expression a[b][c]",
+			in:   "a[b][c]",
+			want: &core.MemberAccessExpression{
+				Object: &core.MemberAccessExpression{
+					Object: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					PropertyExpression: &core.VariableExpression{
+						Name:   "b",
+						Line:   1,
+						CharAt: 3,
+					},
+					Compute: true,
+					Line:    1,
+					CharAt:  1,
+				},
+				PropertyExpression: &core.VariableExpression{
+					Name:   "c",
+					Line:   1,
+					CharAt: 6,
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
+			},
+		},
+		{
+			name: "parse member access expression ((a[b]))[c]",
+			in:   "((a[b]))[c]",
+			want: &core.MemberAccessExpression{
+				Object: &core.MemberAccessExpression{
+					Object: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 3,
+					},
+					PropertyExpression: &core.VariableExpression{
+						Name:   "b",
+						Line:   1,
+						CharAt: 5,
+					},
+					Compute: true,
+					Line:    1,
+					CharAt:  3,
+				},
+				PropertyExpression: &core.VariableExpression{
+					Name:   "c",
+					Line:   1,
+					CharAt: 10,
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  3,
+			},
+		},
+		{
+			name: "parse member access expression a.b[c]",
+			in:   "a.b[c]",
+			want: &core.MemberAccessExpression{
+				Object: &core.MemberAccessExpression{
+					Object: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					PropertyIdentifier: core.Identifier{
+						Name:   "b",
+						Line:   1,
+						CharAt: 3,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				PropertyExpression: &core.VariableExpression{
+					Name:   "c",
+					Line:   1,
+					CharAt: 5,
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
+			},
+		},
+		{
+			name: "parse member access expression (a.b)[c]",
+			in:   "(a.b)[c]",
+			want: &core.MemberAccessExpression{
+				Object: &core.MemberAccessExpression{
+					Object: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 2,
+					},
+					PropertyIdentifier: core.Identifier{
+						Name:   "b",
+						Line:   1,
+						CharAt: 4,
+					},
+					Line:   1,
+					CharAt: 2,
+				},
+				PropertyExpression: &core.VariableExpression{
+					Name:   "c",
+					Line:   1,
+					CharAt: 7,
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  2,
+			},
+		},
+		{
+			name: "parse member access expression a[b[c]]",
+			in:   "a[b[c]]",
+			want: &core.MemberAccessExpression{
+				Object: &core.VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				PropertyExpression: &core.MemberAccessExpression{
+					Object: &core.VariableExpression{
+						Name:   "b",
+						Line:   1,
+						CharAt: 3,
+					},
+					PropertyExpression: &core.VariableExpression{
+						Name:   "c",
+						Line:   1,
+						CharAt: 5,
+					},
+					Compute: true,
+					Line:    1,
+					CharAt:  3,
+				},
+				Compute: true,
+				Line:    1,
+				CharAt:  1,
+			},
+		},
+		{
+			name: "parse binary expression a[b[c]]+1",
+			in:   "a[b[c]]+1",
+			want: &core.BinaryExpression{
+				Left: &core.MemberAccessExpression{
+					Object: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					PropertyExpression: &core.MemberAccessExpression{
+						Object: &core.VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 3,
+						},
+						PropertyExpression: &core.VariableExpression{
+							Name:   "c",
+							Line:   1,
+							CharAt: 5,
+						},
+						Compute: true,
+						Line:    1,
+						CharAt:  3,
+					},
+					Compute: true,
+					Line:    1,
+					CharAt:  1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   core.LiteralTypeNumber,
+					Value:  "1",
+					Line:   1,
+					CharAt: 9,
+				},
+				Operator: core.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 8,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+a[b[c]]",
+			in:   "1+a[b[c]]",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   core.LiteralTypeNumber,
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.MemberAccessExpression{
+					Object: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 3,
+					},
+					PropertyExpression: &core.MemberAccessExpression{
+						Object: &core.VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 5,
+						},
+						PropertyExpression: &core.VariableExpression{
+							Name:   "c",
+							Line:   1,
+							CharAt: 7,
+						},
+						Compute: true,
+						Line:    1,
+						CharAt:  5,
+					},
+					Compute: true,
+					Line:    1,
+					CharAt:  3,
+				},
+				Operator: core.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+a[b[c]]+2",
+			in:   "1+a[b[c]]+2",
+			want: &core.BinaryExpression{
+				Left: &core.BinaryExpression{
+					Left: &core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "1",
+						Line:   1,
+						CharAt: 1,
+					},
+					Right: &core.MemberAccessExpression{
+						Object: &core.VariableExpression{
+							Name:   "a",
+							Line:   1,
+							CharAt: 3,
+						},
+						PropertyExpression: &core.MemberAccessExpression{
+							Object: &core.VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 5,
+							},
+							PropertyExpression: &core.VariableExpression{
+								Name:   "c",
+								Line:   1,
+								CharAt: 7,
+							},
+							Compute: true,
+							Line:    1,
+							CharAt:  5,
+						},
+						Compute: true,
+						Line:    1,
+						CharAt:  3,
+					},
+					Operator: core.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 2,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.LiteralExpression{
+					Type:   core.LiteralTypeNumber,
+					Value:  "2",
+					Line:   1,
+					CharAt: 11,
+				},
+				Operator: core.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 10,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+a[b[c]]*2",
+			in:   "1+a[b[c]]*2",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   core.LiteralTypeNumber,
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.BinaryExpression{
+					Right: &core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "2",
+						Line:   1,
+						CharAt: 11,
+					},
+					Left: &core.MemberAccessExpression{
+						Object: &core.VariableExpression{
+							Name:   "a",
+							Line:   1,
+							CharAt: 3,
+						},
+						PropertyExpression: &core.MemberAccessExpression{
+							Object: &core.VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 5,
+							},
+							PropertyExpression: &core.VariableExpression{
+								Name:   "c",
+								Line:   1,
+								CharAt: 7,
+							},
+							Compute: true,
+							Line:    1,
+							CharAt:  5,
+						},
+						Compute: true,
+						Line:    1,
+						CharAt:  3,
+					},
+					Operator: core.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 10,
+					},
+					Line:   1,
+					CharAt: 3,
+				},
+				Operator: core.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+((a[b[c]])+2)",
+			in:   "1+((a[b[c]])+2)",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   core.LiteralTypeNumber,
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.BinaryExpression{
+					Right: &core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "2",
+						Line:   1,
+						CharAt: 14,
+					},
+					Left: &core.MemberAccessExpression{
+						Object: &core.VariableExpression{
+							Name:   "a",
+							Line:   1,
+							CharAt: 5,
+						},
+						PropertyExpression: &core.MemberAccessExpression{
+							Object: &core.VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 7,
+							},
+							PropertyExpression: &core.VariableExpression{
+								Name:   "c",
+								Line:   1,
+								CharAt: 9,
+							},
+							Compute: true,
+							Line:    1,
+							CharAt:  7,
+						},
+						Compute: true,
+						Line:    1,
+						CharAt:  5,
+					},
+					Operator: core.Operator{
+						Symbol: "+",
+						Line:   1,
+						CharAt: 13,
+					},
+					Group:  true,
+					Line:   1,
+					CharAt: 5,
+				},
+				Operator: core.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+((a[b[c]])+2)*3",
+			in:   "1+((a[b[c]])+2)*3",
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   core.LiteralTypeNumber,
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.BinaryExpression{
+					Left: &core.BinaryExpression{
+						Right: &core.LiteralExpression{
+							Type:   core.LiteralTypeNumber,
+							Value:  "2",
+							Line:   1,
+							CharAt: 14,
+						},
+						Left: &core.MemberAccessExpression{
+							Object: &core.VariableExpression{
+								Name:   "a",
+								Line:   1,
+								CharAt: 5,
+							},
+							PropertyExpression: &core.MemberAccessExpression{
+								Object: &core.VariableExpression{
+									Name:   "b",
+									Line:   1,
+									CharAt: 7,
+								},
+								PropertyExpression: &core.VariableExpression{
+									Name:   "c",
+									Line:   1,
+									CharAt: 9,
+								},
+								Compute: true,
+								Line:    1,
+								CharAt:  7,
+							},
+							Compute: true,
+							Line:    1,
+							CharAt:  5,
+						},
+						Operator: core.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 13,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 5,
+					},
+					Right: &core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "3",
+						Line:   1,
+						CharAt: 17,
+					},
+					Operator: core.Operator{
+						Symbol: "*",
+						Line:   1,
+						CharAt: 16,
+					},
+					Line:   1,
+					CharAt: 5,
+				},
+				Operator: core.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression 1+(func (){})",
+			in:   `1+(func (){})`,
+			want: &core.BinaryExpression{
+				Left: &core.LiteralExpression{
+					Type:   core.LiteralTypeNumber,
+					Value:  "1",
+					Line:   1,
+					CharAt: 1,
+				},
+				Right: &core.FunctionExpression{
+					Params: []core.Identifier{},
+					Body:   []core.Statement{},
+					Line:   1,
+					CharAt: 4,
+				},
+				Operator: core.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 2,
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse binary expression (func (){})+1",
+			in:   `(func (){})+1`,
+			want: &core.BinaryExpression{
+				Right: &core.LiteralExpression{
+					Type:   core.LiteralTypeNumber,
+					Value:  "1",
+					Line:   1,
+					CharAt: 13,
+				},
+				Left: &core.FunctionExpression{
+					Params: []core.Identifier{},
+					Body:   []core.Statement{},
+					Line:   1,
+					CharAt: 2,
+				},
+				Operator: core.Operator{
+					Symbol: "+",
+					Line:   1,
+					CharAt: 12,
+				},
+				Line:   1,
+				CharAt: 2,
+			},
+		},
+		{
+			name: "parse member access expression (func (){}).abc",
+			in:   `(func (){}).abc`,
+			want: &core.MemberAccessExpression{
+				Object: &core.FunctionExpression{
+					Params: []core.Identifier{},
+					Body:   []core.Statement{},
+					Line:   1,
+					CharAt: 2,
+				},
+				PropertyIdentifier: core.Identifier{
+					Name:   "abc",
+					Line:   1,
+					CharAt: 13,
+				},
+				Line:   1,
+				CharAt: 2,
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
+			require.Equal(t, tt.want, exp)
+		})
+	}
+}
+
+func TestParseExpression_Function(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want core.Expression
+	}{
+		{
+			name: "parse function expression #1",
+			in:   `func (b,c){}`,
+			want: &core.FunctionExpression{
+				Params: []core.Identifier{
+					{
+						Name:   "b",
+						Line:   1,
+						CharAt: 7,
+					},
+					{
+						Name:   "c",
+						Line:   1,
+						CharAt: 9,
+					},
+				},
+				Body:   []core.Statement{},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse function expression #2",
+			in: `func (b,c){
+					var a,b=1
+					var c=2
+					return a+b
+				 }`,
+			want: &core.FunctionExpression{
+				Params: []core.Identifier{
+					{
+						Name:   "b",
+						Line:   1,
+						CharAt: 7,
+					},
+					{
+						Name:   "c",
+						Line:   1,
+						CharAt: 9,
+					},
+				},
+				Body: []core.Statement{
+					core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "a",
+									Line:   2,
+									CharAt: 5,
+								},
+								Init: &core.LiteralExpression{
+									Type:   core.LiteralTypeNumber,
+									Value:  "1",
+									Line:   2,
+									CharAt: 9,
+								},
+								Line:   2,
+								CharAt: 5,
+							},
+							{
+								ID: core.Identifier{
+									Name:   "b",
+									Line:   2,
+									CharAt: 7,
+								},
+								Init:   nil,
+								Line:   2,
+								CharAt: 7,
+							},
+						},
+						Line:   2,
+						CharAt: 1,
+					},
+					core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "c",
+									Line:   3,
+									CharAt: 5,
+								},
+								Init: &core.LiteralExpression{
+									Type:   core.LiteralTypeNumber,
+									Value:  "2",
+									Line:   3,
+									CharAt: 7,
+								},
+								Line:   3,
+								CharAt: 5,
+							},
+						},
+						Line:   3,
+						CharAt: 1,
+					},
+					core.ReturnStatement{
+						Argument: &core.BinaryExpression{
+							Left: &core.VariableExpression{
+								Name:   "a",
+								Line:   4,
+								CharAt: 8,
+							},
+							Right: &core.VariableExpression{
+								Name:   "b",
+								Line:   4,
+								CharAt: 10,
+							},
+							Operator: core.Operator{
+								Symbol: "+",
+								Line:   4,
+								CharAt: 9,
+							},
+							Line:   4,
+							CharAt: 8,
+						},
+						Line:   4,
+						CharAt: 1,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			exp, _, _ := parseExpression(tokens)
+			require.Equal(t, tt.want, exp)
+		})
+	}
+}
+
+func TestParseExpression_CallExpression(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want core.Expression
+	}{
+		{
+			name: "parse call expression #1",
+			in:   "a()",
+			want: &core.CallExpression{
+				Callee: &core.VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				Arguments: []core.Expression{},
+				Line:      1,
+				CharAt:    1,
+			},
+		},
+		{
+			name: "parse call expression #2",
+			in:   "((a))(1)",
+			want: &core.CallExpression{
+				Callee: &core.VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 3,
+				},
+				Arguments: []core.Expression{
+					&core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "1",
+						Line:   1,
+						CharAt: 7,
+					},
+				},
+				Line:   1,
+				CharAt: 3,
+			},
+		},
+		{
+			name: "parse call expression #3",
+			in:   "((a))(1,(2+3))",
+			want: &core.CallExpression{
+				Callee: &core.VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 3,
+				},
+				Arguments: []core.Expression{
+					&core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "1",
+						Line:   1,
+						CharAt: 7,
+					},
+					&core.BinaryExpression{
+						Left: &core.LiteralExpression{
+							Type:   core.LiteralTypeNumber,
+							Value:  "2",
+							Line:   1,
+							CharAt: 10,
+						},
+						Right: &core.LiteralExpression{
+							Type:   core.LiteralTypeNumber,
+							Value:  "3",
+							Line:   1,
+							CharAt: 12,
+						},
+						Operator: core.Operator{
+							Symbol: "+",
+							Line:   1,
+							CharAt: 11,
+						},
+						Group:  true,
+						Line:   1,
+						CharAt: 10,
+					},
+				},
+				Line:   1,
+				CharAt: 3,
+			},
+		},
+		{
+			name: "parse call expression #4",
+			in:   "((a))(1,(2+3))(4)",
+			want: &core.CallExpression{
+				Callee: &core.CallExpression{
+					Callee: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 3,
+					},
+					Arguments: []core.Expression{
+						&core.LiteralExpression{
+							Type:   core.LiteralTypeNumber,
+							Value:  "1",
+							Line:   1,
+							CharAt: 7,
+						},
+						&core.BinaryExpression{
+							Left: &core.LiteralExpression{
+								Type:   core.LiteralTypeNumber,
+								Value:  "2",
+								Line:   1,
+								CharAt: 10,
+							},
+							Right: &core.LiteralExpression{
+								Type:   core.LiteralTypeNumber,
+								Value:  "3",
+								Line:   1,
+								CharAt: 12,
+							},
+							Operator: core.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 11,
+							},
+							Group:  true,
+							Line:   1,
+							CharAt: 10,
+						},
+					},
+					Line:   1,
+					CharAt: 3,
+				},
+				Arguments: []core.Expression{
+					&core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "4",
+						Line:   1,
+						CharAt: 16,
+					},
+				},
+				Line:   1,
+				CharAt: 3,
+			},
+		},
+		{
+			name: "parse call expression #5",
+			in:   "((a(1,(2+3))))(4)",
+			want: &core.CallExpression{
+				Callee: &core.CallExpression{
+					Callee: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 3,
+					},
+					Arguments: []core.Expression{
+						&core.LiteralExpression{
+							Type:   core.LiteralTypeNumber,
+							Value:  "1",
+							Line:   1,
+							CharAt: 5,
+						},
+						&core.BinaryExpression{
+							Left: &core.LiteralExpression{
+								Type:   core.LiteralTypeNumber,
+								Value:  "2",
+								Line:   1,
+								CharAt: 8,
+							},
+							Right: &core.LiteralExpression{
+								Type:   core.LiteralTypeNumber,
+								Value:  "3",
+								Line:   1,
+								CharAt: 10,
+							},
+							Operator: core.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 9,
+							},
+							Group:  true,
+							Line:   1,
+							CharAt: 8,
+						},
+					},
+					Line:   1,
+					CharAt: 3,
+				},
+				Arguments: []core.Expression{
+					&core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "4",
+						Line:   1,
+						CharAt: 16,
+					},
+				},
+				Line:   1,
+				CharAt: 3,
+			},
+		},
+		{
+			name: "parse call expression #6",
+			in:   "a[1](2)",
+			want: &core.CallExpression{
+				Callee: &core.MemberAccessExpression{
+					Object: &core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 1,
+					},
+					PropertyExpression: &core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "1",
+						Line:   1,
+						CharAt: 3,
+					},
+					Compute: true,
+					Line:    1,
+					CharAt:  1,
+				},
+				Arguments: []core.Expression{
+					&core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "2",
+						Line:   1,
+						CharAt: 6,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse call expression #7",
+			in:   "[a,b(a),c]",
+			want: &core.ArrayExpression{
+				Elements: []core.Expression{
+					&core.VariableExpression{
+						Name:   "a",
+						Line:   1,
+						CharAt: 2,
+					},
+					&core.CallExpression{
+						Callee: &core.VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 4,
+						},
+						Arguments: []core.Expression{
+							&core.VariableExpression{
+								Name:   "a",
+								Line:   1,
+								CharAt: 6,
+							},
+						},
+						Line:   1,
+						CharAt: 4,
+					},
+					&core.VariableExpression{
+						Name:   "c",
+						Line:   1,
+						CharAt: 9,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse call expression #8",
+			in:   "{a:b(a)}",
+			want: &core.ObjectExpression{
+				Properties: []*core.ObjectProperty{
+					{
+						KeyIdentifier: core.Identifier{
+							Name:   "a",
+							Line:   1,
+							CharAt: 2,
+						},
+						Value: &core.CallExpression{
+							Callee: &core.VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 4,
+							},
+							Arguments: []core.Expression{
+								&core.VariableExpression{
+									Name:   "a",
+									Line:   1,
+									CharAt: 6,
+								},
+							},
+							Line:   1,
+							CharAt: 4,
+						},
+						Line:   1,
+						CharAt: 2,
+					},
+				},
+				Line:   1,
+				CharAt: 1,
+			},
+		},
+		{
+			name: "parse call expression #9",
+			in:   "a(b(c()))",
+			want: &core.CallExpression{
+				Callee: &core.VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				Arguments: []core.Expression{
+					&core.CallExpression{
+						Callee: &core.VariableExpression{
+							Name:   "b",
+							Line:   1,
+							CharAt: 3,
+						},
+						Arguments: []core.Expression{
+							&core.CallExpression{
+								Callee: &core.VariableExpression{
+									Name:   "c",
+									Line:   1,
+									CharAt: 5,
+								},
+								Arguments: []core.Expression{},
+								Line:      1,
+								CharAt:    5,
+							},
+						},
+						Line:   1,
+						CharAt: 3,
+					},
 				},
 				Line:   1,
 				CharAt: 1,
@@ -2572,1364 +4695,6 @@ func TestParseExpression_Precedence(t *testing.T) {
 	}
 }
 
-func TestParseExpression_Object(t *testing.T) {
-	cases := []struct {
-		name string
-		in   string
-		want core.Expression
-	}{
-		{
-			name: "parse object expression {}",
-			in:   "{}",
-			want: &core.ObjectExpression{
-				Properties: []*core.ObjectProperty{},
-				Line:       1,
-				CharAt:     1,
-			},
-		},
-		{
-			name: "parse object expression {a:1,b:2}",
-			in:   "{a:1,b:2}",
-			want: &core.ObjectExpression{
-				Properties: []*core.ObjectProperty{
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "a",
-							Line:   1,
-							CharAt: 2,
-						},
-						Value: &core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "1",
-							Line:   1,
-							CharAt: 4,
-						},
-						Line:   1,
-						CharAt: 2,
-					},
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "b",
-							Line:   1,
-							CharAt: 6,
-						},
-						Value: &core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "2",
-							Line:   1,
-							CharAt: 8,
-						},
-						Line:   1,
-						CharAt: 6,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse object expression {[a+b]:1,c:2}",
-			in:   "{[a+b]:1,c:2}",
-			want: &core.ObjectExpression{
-				Properties: []*core.ObjectProperty{
-					{
-						KeyExpression: &core.BinaryExpression{
-							Left: &core.VariableExpression{
-								Name:   "a",
-								Line:   1,
-								CharAt: 3,
-							},
-							Right: &core.VariableExpression{
-								Name:   "b",
-								Line:   1,
-								CharAt: 5,
-							},
-							Operator: core.Operator{
-								Symbol: "+",
-								Line:   1,
-								CharAt: 4,
-							},
-							Line:   1,
-							CharAt: 3,
-						},
-						Value: &core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "1",
-							Line:   1,
-							CharAt: 8,
-						},
-						Computed: true,
-						Line:     1,
-						CharAt:   2,
-					},
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "c",
-							Line:   1,
-							CharAt: 10,
-						},
-						Value: &core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "2",
-							Line:   1,
-							CharAt: 12,
-						},
-						Line:   1,
-						CharAt: 10,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse object expression {a:{c:1},b:2}",
-			in:   "{a:{c:1},b:2}",
-			want: &core.ObjectExpression{
-				Properties: []*core.ObjectProperty{
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "a",
-							Line:   1,
-							CharAt: 2,
-						},
-						Value: &core.ObjectExpression{
-							Properties: []*core.ObjectProperty{
-								{
-									KeyIdentifier: core.Identifier{
-										Name:   "c",
-										Line:   1,
-										CharAt: 5,
-									},
-									Value: &core.LiteralExpression{
-										Type:   core.LiteralTypeNumber,
-										Value:  "1",
-										Line:   1,
-										CharAt: 7,
-									},
-									Line:   1,
-									CharAt: 5,
-								},
-							},
-							Line:   1,
-							CharAt: 4,
-						},
-						Line:   1,
-						CharAt: 2,
-					},
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "b",
-							Line:   1,
-							CharAt: 10,
-						},
-						Value: &core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "2",
-							Line:   1,
-							CharAt: 12,
-						},
-						Line:   1,
-						CharAt: 10,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse object expression {a:{c:1},b:{d:2}}",
-			in:   "{a:{c:1},b:{d:2}}",
-			want: &core.ObjectExpression{
-				Properties: []*core.ObjectProperty{
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "a",
-							Line:   1,
-							CharAt: 2,
-						},
-						Value: &core.ObjectExpression{
-							Properties: []*core.ObjectProperty{
-								{
-									KeyIdentifier: core.Identifier{
-										Name:   "c",
-										Line:   1,
-										CharAt: 5,
-									},
-									Value: &core.LiteralExpression{
-										Type:   core.LiteralTypeNumber,
-										Value:  "1",
-										Line:   1,
-										CharAt: 7,
-									},
-									Line:   1,
-									CharAt: 5,
-								},
-							},
-							Line:   1,
-							CharAt: 4,
-						},
-						Line:   1,
-						CharAt: 2,
-					},
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "b",
-							Line:   1,
-							CharAt: 10,
-						},
-						Value: &core.ObjectExpression{
-							Properties: []*core.ObjectProperty{
-								{
-									KeyIdentifier: core.Identifier{
-										Name:   "d",
-										Line:   1,
-										CharAt: 13,
-									},
-									Value: &core.LiteralExpression{
-										Type:   core.LiteralTypeNumber,
-										Value:  "2",
-										Line:   1,
-										CharAt: 15,
-									},
-									Line:   1,
-									CharAt: 13,
-								},
-							},
-							Line:   1,
-							CharAt: 12,
-						},
-						Line:   1,
-						CharAt: 10,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse object expression {a:{c:1},b:{d:2}}",
-			in: `{
-				    a:{c:1+a.b*2+c.d+3},
-					b:{d:2}
-				 }`,
-			want: &core.ObjectExpression{
-				Properties: []*core.ObjectProperty{
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "a",
-							Line:   2,
-							CharAt: 1,
-						},
-						Value: &core.ObjectExpression{
-							Properties: []*core.ObjectProperty{
-								{
-									KeyIdentifier: core.Identifier{
-										Name:   "c",
-										Line:   2,
-										CharAt: 4,
-									},
-									Value: &core.BinaryExpression{
-										Left: &core.BinaryExpression{
-											Left: &core.BinaryExpression{
-												Left: &core.LiteralExpression{
-													Type:   core.LiteralTypeNumber,
-													Value:  "1",
-													Line:   2,
-													CharAt: 6,
-												},
-												Right: &core.BinaryExpression{
-													Left: &core.MemberAccessExpression{
-														Object: &core.VariableExpression{
-															Name:   "a",
-															Line:   2,
-															CharAt: 8,
-														},
-														PropertyIdentifier: core.Identifier{
-															Name:   "b",
-															Line:   2,
-															CharAt: 10,
-														},
-														Line:   2,
-														CharAt: 8,
-													},
-													Right: &core.LiteralExpression{
-														Type:   core.LiteralTypeNumber,
-														Value:  "2",
-														Line:   2,
-														CharAt: 12,
-													},
-													Operator: core.Operator{
-														Symbol: "*",
-														Line:   2,
-														CharAt: 11,
-													},
-													Line:   2,
-													CharAt: 8,
-												},
-												Operator: core.Operator{
-													Symbol: "+",
-													Line:   2,
-													CharAt: 7,
-												},
-												Line:   2,
-												CharAt: 6,
-											},
-											Right: &core.MemberAccessExpression{
-												Object: &core.VariableExpression{
-													Name:   "c",
-													Line:   2,
-													CharAt: 14,
-												},
-												PropertyIdentifier: core.Identifier{
-													Name:   "d",
-													Line:   2,
-													CharAt: 16,
-												},
-												Line:   2,
-												CharAt: 14,
-											},
-											Operator: core.Operator{
-												Symbol: "+",
-												Line:   2,
-												CharAt: 13,
-											},
-											Line:   2,
-											CharAt: 6,
-										},
-										Right: &core.LiteralExpression{
-											Type:   core.LiteralTypeNumber,
-											Value:  "3",
-											Line:   2,
-											CharAt: 18,
-										},
-										Operator: core.Operator{
-											Symbol: "+",
-											Line:   2,
-											CharAt: 17,
-										},
-										Line:   2,
-										CharAt: 6,
-									},
-									Line:   2,
-									CharAt: 4,
-								},
-							},
-							Line:   2,
-							CharAt: 3,
-						},
-						Line:   2,
-						CharAt: 1,
-					},
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "b",
-							Line:   3,
-							CharAt: 1,
-						},
-						Value: &core.ObjectExpression{
-							Properties: []*core.ObjectProperty{
-								{
-									KeyIdentifier: core.Identifier{
-										Name:   "d",
-										Line:   3,
-										CharAt: 4,
-									},
-									Value: &core.LiteralExpression{
-										Type:   core.LiteralTypeNumber,
-										Value:  "2",
-										Line:   3,
-										CharAt: 6,
-									},
-									Line:   3,
-									CharAt: 4,
-								},
-							},
-							Line:   3,
-							CharAt: 3,
-						},
-						Line:   3,
-						CharAt: 1,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse object expression {a:{c:1},b:[2,3]}",
-			in:   "{a:{c:1},b:[2,3]}",
-			want: &core.ObjectExpression{
-				Properties: []*core.ObjectProperty{
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "a",
-							Line:   1,
-							CharAt: 2,
-						},
-						Value: &core.ObjectExpression{
-							Properties: []*core.ObjectProperty{
-								{
-									KeyIdentifier: core.Identifier{
-										Name:   "c",
-										Line:   1,
-										CharAt: 5,
-									},
-									Value: &core.LiteralExpression{
-										Type:   core.LiteralTypeNumber,
-										Value:  "1",
-										Line:   1,
-										CharAt: 7,
-									},
-									Line:   1,
-									CharAt: 5,
-								},
-							},
-							Line:   1,
-							CharAt: 4,
-						},
-						Line:   1,
-						CharAt: 2,
-					},
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "b",
-							Line:   1,
-							CharAt: 10,
-						},
-						Value: &core.ArrayExpression{
-							Elements: []core.Expression{
-								&core.LiteralExpression{
-									Type:   core.LiteralTypeNumber,
-									Value:  "2",
-									Line:   1,
-									CharAt: 13,
-								},
-								&core.LiteralExpression{
-									Type:   core.LiteralTypeNumber,
-									Value:  "3",
-									Line:   1,
-									CharAt: 15,
-								},
-							},
-							Line:   1,
-							CharAt: 12,
-						},
-						Line:   1,
-						CharAt: 10,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse binary expression 1+({a:1,b:2})",
-			in:   "1+({a:1,b:2})",
-			want: &core.BinaryExpression{
-				Left: &core.LiteralExpression{
-					Type:   core.LiteralTypeNumber,
-					Value:  "1",
-					Line:   1,
-					CharAt: 1,
-				},
-				Right: &core.ObjectExpression{
-					Properties: []*core.ObjectProperty{
-						{
-							KeyIdentifier: core.Identifier{
-								Name:   "a",
-								Line:   1,
-								CharAt: 5,
-							},
-							Value: &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "1",
-								Line:   1,
-								CharAt: 7,
-							},
-							Line:   1,
-							CharAt: 5,
-						},
-						{
-							KeyIdentifier: core.Identifier{
-								Name:   "b",
-								Line:   1,
-								CharAt: 9,
-							},
-							Value: &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "2",
-								Line:   1,
-								CharAt: 11,
-							},
-							Line:   1,
-							CharAt: 9,
-						},
-					},
-					Line:   1,
-					CharAt: 4,
-				},
-				Operator: core.Operator{
-					Symbol: "+",
-					Line:   1,
-					CharAt: 2,
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-	}
-	for _, tt := range cases {
-		t.Run(tt.name, func(t *testing.T) {
-			tokens, err := lexer.Lex(tt.in)
-			require.Equal(t, err, nil)
-			exp, _, _ := parseExpression(tokens)
-			require.Equal(t, tt.want, exp)
-		})
-	}
-}
-
-func TestParseExpression_ArrayExpression(t *testing.T) {
-	cases := []struct {
-		name string
-		in   string
-		want core.Expression
-	}{
-		{
-			name: "parse array expression []",
-			in:   "[]",
-			want: &core.ArrayExpression{
-				Elements: []core.Expression{},
-				Line:     1,
-				CharAt:   1,
-			},
-		},
-		{
-			name: "parse array expression [1,a]",
-			in:   "[1,a]",
-			want: &core.ArrayExpression{
-				Elements: []core.Expression{
-					&core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "1",
-						Line:   1,
-						CharAt: 2,
-					},
-					&core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 4,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse array expression [1,[a,b]]",
-			in:   "[1,[a,b]]",
-			want: &core.ArrayExpression{
-				Elements: []core.Expression{
-					&core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "1",
-						Line:   1,
-						CharAt: 2,
-					},
-					&core.ArrayExpression{
-						Elements: []core.Expression{
-							&core.VariableExpression{
-								Name:   "a",
-								Line:   1,
-								CharAt: 5,
-							},
-							&core.VariableExpression{
-								Name:   "b",
-								Line:   1,
-								CharAt: 7,
-							},
-						},
-						Line:   1,
-						CharAt: 4,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse array expression [1,[a,b]]",
-			in:   "[1,{a:1,b:2}]",
-			want: &core.ArrayExpression{
-				Elements: []core.Expression{
-					&core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "1",
-						Line:   1,
-						CharAt: 2,
-					},
-					&core.ObjectExpression{
-						Properties: []*core.ObjectProperty{
-							{
-								KeyIdentifier: core.Identifier{
-									Name:   "a",
-									Line:   1,
-									CharAt: 5,
-								},
-								Value: &core.LiteralExpression{
-									Type:   core.LiteralTypeNumber,
-									Value:  "1",
-									Line:   1,
-									CharAt: 7,
-								},
-								Line:   1,
-								CharAt: 5,
-							},
-							{
-								KeyIdentifier: core.Identifier{
-									Name:   "b",
-									Line:   1,
-									CharAt: 9,
-								},
-								Value: &core.LiteralExpression{
-									Type:   core.LiteralTypeNumber,
-									Value:  "2",
-									Line:   1,
-									CharAt: 11,
-								},
-								Line:   1,
-								CharAt: 9,
-							},
-						},
-						Line:   1,
-						CharAt: 4,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse array expression [1,[a,1+a.b*2+c.d+3]]",
-			in:   "[1,[a,1+a.b*2+c.d+3]]",
-			want: &core.ArrayExpression{
-				Elements: []core.Expression{
-					&core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "1",
-						Line:   1,
-						CharAt: 2,
-					},
-					&core.ArrayExpression{
-						Elements: []core.Expression{
-							&core.VariableExpression{
-								Name:   "a",
-								Line:   1,
-								CharAt: 5,
-							},
-							&core.BinaryExpression{
-								Left: &core.BinaryExpression{
-									Left: &core.BinaryExpression{
-										Left: &core.LiteralExpression{
-											Type:   core.LiteralTypeNumber,
-											Value:  "1",
-											Line:   1,
-											CharAt: 7,
-										},
-										Right: &core.BinaryExpression{
-											Left: &core.MemberAccessExpression{
-												Object: &core.VariableExpression{
-													Name:   "a",
-													Line:   1,
-													CharAt: 9,
-												},
-												PropertyIdentifier: core.Identifier{
-													Name:   "b",
-													Line:   1,
-													CharAt: 11,
-												},
-												Line:   1,
-												CharAt: 9,
-											},
-											Right: &core.LiteralExpression{
-												Type:   core.LiteralTypeNumber,
-												Value:  "2",
-												Line:   1,
-												CharAt: 13,
-											},
-											Operator: core.Operator{
-												Symbol: "*",
-												Line:   1,
-												CharAt: 12,
-											},
-											Line:   1,
-											CharAt: 9,
-										},
-										Operator: core.Operator{
-											Symbol: "+",
-											Line:   1,
-											CharAt: 8,
-										},
-										Line:   1,
-										CharAt: 7,
-									},
-									Right: &core.MemberAccessExpression{
-										Object: &core.VariableExpression{
-											Name:   "c",
-											Line:   1,
-											CharAt: 15,
-										},
-										PropertyIdentifier: core.Identifier{
-											Name:   "d",
-											Line:   1,
-											CharAt: 17,
-										},
-										Line:   1,
-										CharAt: 15,
-									},
-									Operator: core.Operator{
-										Symbol: "+",
-										Line:   1,
-										CharAt: 14,
-									},
-									Line:   1,
-									CharAt: 7,
-								},
-								Right: &core.LiteralExpression{
-									Type:   core.LiteralTypeNumber,
-									Value:  "3",
-									Line:   1,
-									CharAt: 19,
-								},
-								Operator: core.Operator{
-									Symbol: "+",
-									Line:   1,
-									CharAt: 18,
-								},
-								Line:   1,
-								CharAt: 7,
-							},
-						},
-						Line:   1,
-						CharAt: 4,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse array expression a+([b])",
-			in:   "a+([b])",
-			want: &core.BinaryExpression{
-				Left: &core.VariableExpression{
-					Name:   "a",
-					Line:   1,
-					CharAt: 1,
-				},
-				Right: &core.ArrayExpression{
-					Elements: []core.Expression{
-						&core.VariableExpression{
-							Name:   "b",
-							Line:   1,
-							CharAt: 5,
-						},
-					},
-					Line:   1,
-					CharAt: 4,
-				},
-				Operator: core.Operator{
-					Symbol: "+",
-					Line:   1,
-					CharAt: 2,
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse member access expression a[b]",
-			in:   "a[b]",
-			want: &core.MemberAccessExpression{
-				Object: &core.VariableExpression{
-					Name:   "a",
-					Line:   1,
-					CharAt: 1,
-				},
-				PropertyExpression: &core.VariableExpression{
-					Name:   "b",
-					Line:   1,
-					CharAt: 3,
-				},
-				Compute: true,
-				Line:    1,
-				CharAt:  1,
-			},
-		},
-		{
-			name: "parse member access expression a[b][c]",
-			in:   "a[b][c]",
-			want: &core.MemberAccessExpression{
-				Object: &core.MemberAccessExpression{
-					Object: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 1,
-					},
-					PropertyExpression: &core.VariableExpression{
-						Name:   "b",
-						Line:   1,
-						CharAt: 3,
-					},
-					Compute: true,
-					Line:    1,
-					CharAt:  1,
-				},
-				PropertyExpression: &core.VariableExpression{
-					Name:   "c",
-					Line:   1,
-					CharAt: 6,
-				},
-				Compute: true,
-				Line:    1,
-				CharAt:  1,
-			},
-		},
-		{
-			name: "parse member access expression ((a[b]))[c]",
-			in:   "((a[b]))[c]",
-			want: &core.MemberAccessExpression{
-				Object: &core.MemberAccessExpression{
-					Object: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 3,
-					},
-					PropertyExpression: &core.VariableExpression{
-						Name:   "b",
-						Line:   1,
-						CharAt: 5,
-					},
-					Compute: true,
-					Line:    1,
-					CharAt:  3,
-				},
-				PropertyExpression: &core.VariableExpression{
-					Name:   "c",
-					Line:   1,
-					CharAt: 10,
-				},
-				Compute: true,
-				Line:    1,
-				CharAt:  3,
-			},
-		},
-		{
-			name: "parse member access expression a.b[c]",
-			in:   "a.b[c]",
-			want: &core.MemberAccessExpression{
-				Object: &core.MemberAccessExpression{
-					Object: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 1,
-					},
-					PropertyIdentifier: core.Identifier{
-						Name:   "b",
-						Line:   1,
-						CharAt: 3,
-					},
-					Line:   1,
-					CharAt: 1,
-				},
-				PropertyExpression: &core.VariableExpression{
-					Name:   "c",
-					Line:   1,
-					CharAt: 5,
-				},
-				Compute: true,
-				Line:    1,
-				CharAt:  1,
-			},
-		},
-		{
-			name: "parse member access expression (a.b)[c]",
-			in:   "(a.b)[c]",
-			want: &core.MemberAccessExpression{
-				Object: &core.MemberAccessExpression{
-					Object: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 2,
-					},
-					PropertyIdentifier: core.Identifier{
-						Name:   "b",
-						Line:   1,
-						CharAt: 4,
-					},
-					Line:   1,
-					CharAt: 2,
-				},
-				PropertyExpression: &core.VariableExpression{
-					Name:   "c",
-					Line:   1,
-					CharAt: 7,
-				},
-				Compute: true,
-				Line:    1,
-				CharAt:  2,
-			},
-		},
-		{
-			name: "parse member access expression a[b[c]]",
-			in:   "a[b[c]]",
-			want: &core.MemberAccessExpression{
-				Object: &core.VariableExpression{
-					Name:   "a",
-					Line:   1,
-					CharAt: 1,
-				},
-				PropertyExpression: &core.MemberAccessExpression{
-					Object: &core.VariableExpression{
-						Name:   "b",
-						Line:   1,
-						CharAt: 3,
-					},
-					PropertyExpression: &core.VariableExpression{
-						Name:   "c",
-						Line:   1,
-						CharAt: 5,
-					},
-					Compute: true,
-					Line:    1,
-					CharAt:  3,
-				},
-				Compute: true,
-				Line:    1,
-				CharAt:  1,
-			},
-		},
-		{
-			name: "parse binary expression a[b[c]]+1",
-			in:   "a[b[c]]+1",
-			want: &core.BinaryExpression{
-				Left: &core.MemberAccessExpression{
-					Object: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 1,
-					},
-					PropertyExpression: &core.MemberAccessExpression{
-						Object: &core.VariableExpression{
-							Name:   "b",
-							Line:   1,
-							CharAt: 3,
-						},
-						PropertyExpression: &core.VariableExpression{
-							Name:   "c",
-							Line:   1,
-							CharAt: 5,
-						},
-						Compute: true,
-						Line:    1,
-						CharAt:  3,
-					},
-					Compute: true,
-					Line:    1,
-					CharAt:  1,
-				},
-				Right: &core.LiteralExpression{
-					Type:   core.LiteralTypeNumber,
-					Value:  "1",
-					Line:   1,
-					CharAt: 9,
-				},
-				Operator: core.Operator{
-					Symbol: "+",
-					Line:   1,
-					CharAt: 8,
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse binary expression 1+a[b[c]]",
-			in:   "1+a[b[c]]",
-			want: &core.BinaryExpression{
-				Left: &core.LiteralExpression{
-					Type:   core.LiteralTypeNumber,
-					Value:  "1",
-					Line:   1,
-					CharAt: 1,
-				},
-				Right: &core.MemberAccessExpression{
-					Object: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 3,
-					},
-					PropertyExpression: &core.MemberAccessExpression{
-						Object: &core.VariableExpression{
-							Name:   "b",
-							Line:   1,
-							CharAt: 5,
-						},
-						PropertyExpression: &core.VariableExpression{
-							Name:   "c",
-							Line:   1,
-							CharAt: 7,
-						},
-						Compute: true,
-						Line:    1,
-						CharAt:  5,
-					},
-					Compute: true,
-					Line:    1,
-					CharAt:  3,
-				},
-				Operator: core.Operator{
-					Symbol: "+",
-					Line:   1,
-					CharAt: 2,
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse binary expression 1+a[b[c]]+2",
-			in:   "1+a[b[c]]+2",
-			want: &core.BinaryExpression{
-				Left: &core.BinaryExpression{
-					Left: &core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "1",
-						Line:   1,
-						CharAt: 1,
-					},
-					Right: &core.MemberAccessExpression{
-						Object: &core.VariableExpression{
-							Name:   "a",
-							Line:   1,
-							CharAt: 3,
-						},
-						PropertyExpression: &core.MemberAccessExpression{
-							Object: &core.VariableExpression{
-								Name:   "b",
-								Line:   1,
-								CharAt: 5,
-							},
-							PropertyExpression: &core.VariableExpression{
-								Name:   "c",
-								Line:   1,
-								CharAt: 7,
-							},
-							Compute: true,
-							Line:    1,
-							CharAt:  5,
-						},
-						Compute: true,
-						Line:    1,
-						CharAt:  3,
-					},
-					Operator: core.Operator{
-						Symbol: "+",
-						Line:   1,
-						CharAt: 2,
-					},
-					Line:   1,
-					CharAt: 1,
-				},
-				Right: &core.LiteralExpression{
-					Type:   core.LiteralTypeNumber,
-					Value:  "2",
-					Line:   1,
-					CharAt: 11,
-				},
-				Operator: core.Operator{
-					Symbol: "+",
-					Line:   1,
-					CharAt: 10,
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse binary expression 1+a[b[c]]*2",
-			in:   "1+a[b[c]]*2",
-			want: &core.BinaryExpression{
-				Left: &core.LiteralExpression{
-					Type:   core.LiteralTypeNumber,
-					Value:  "1",
-					Line:   1,
-					CharAt: 1,
-				},
-				Right: &core.BinaryExpression{
-					Right: &core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "2",
-						Line:   1,
-						CharAt: 11,
-					},
-					Left: &core.MemberAccessExpression{
-						Object: &core.VariableExpression{
-							Name:   "a",
-							Line:   1,
-							CharAt: 3,
-						},
-						PropertyExpression: &core.MemberAccessExpression{
-							Object: &core.VariableExpression{
-								Name:   "b",
-								Line:   1,
-								CharAt: 5,
-							},
-							PropertyExpression: &core.VariableExpression{
-								Name:   "c",
-								Line:   1,
-								CharAt: 7,
-							},
-							Compute: true,
-							Line:    1,
-							CharAt:  5,
-						},
-						Compute: true,
-						Line:    1,
-						CharAt:  3,
-					},
-					Operator: core.Operator{
-						Symbol: "*",
-						Line:   1,
-						CharAt: 10,
-					},
-					Line:   1,
-					CharAt: 3,
-				},
-				Operator: core.Operator{
-					Symbol: "+",
-					Line:   1,
-					CharAt: 2,
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse binary expression 1+((a[b[c]])+2)",
-			in:   "1+((a[b[c]])+2)",
-			want: &core.BinaryExpression{
-				Left: &core.LiteralExpression{
-					Type:   core.LiteralTypeNumber,
-					Value:  "1",
-					Line:   1,
-					CharAt: 1,
-				},
-				Right: &core.BinaryExpression{
-					Right: &core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "2",
-						Line:   1,
-						CharAt: 14,
-					},
-					Left: &core.MemberAccessExpression{
-						Object: &core.VariableExpression{
-							Name:   "a",
-							Line:   1,
-							CharAt: 5,
-						},
-						PropertyExpression: &core.MemberAccessExpression{
-							Object: &core.VariableExpression{
-								Name:   "b",
-								Line:   1,
-								CharAt: 7,
-							},
-							PropertyExpression: &core.VariableExpression{
-								Name:   "c",
-								Line:   1,
-								CharAt: 9,
-							},
-							Compute: true,
-							Line:    1,
-							CharAt:  7,
-						},
-						Compute: true,
-						Line:    1,
-						CharAt:  5,
-					},
-					Operator: core.Operator{
-						Symbol: "+",
-						Line:   1,
-						CharAt: 13,
-					},
-					Group:  true,
-					Line:   1,
-					CharAt: 5,
-				},
-				Operator: core.Operator{
-					Symbol: "+",
-					Line:   1,
-					CharAt: 2,
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse binary expression 1+((a[b[c]])+2)*3",
-			in:   "1+((a[b[c]])+2)*3",
-			want: &core.BinaryExpression{
-				Left: &core.LiteralExpression{
-					Type:   core.LiteralTypeNumber,
-					Value:  "1",
-					Line:   1,
-					CharAt: 1,
-				},
-				Right: &core.BinaryExpression{
-					Left: &core.BinaryExpression{
-						Right: &core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "2",
-							Line:   1,
-							CharAt: 14,
-						},
-						Left: &core.MemberAccessExpression{
-							Object: &core.VariableExpression{
-								Name:   "a",
-								Line:   1,
-								CharAt: 5,
-							},
-							PropertyExpression: &core.MemberAccessExpression{
-								Object: &core.VariableExpression{
-									Name:   "b",
-									Line:   1,
-									CharAt: 7,
-								},
-								PropertyExpression: &core.VariableExpression{
-									Name:   "c",
-									Line:   1,
-									CharAt: 9,
-								},
-								Compute: true,
-								Line:    1,
-								CharAt:  7,
-							},
-							Compute: true,
-							Line:    1,
-							CharAt:  5,
-						},
-						Operator: core.Operator{
-							Symbol: "+",
-							Line:   1,
-							CharAt: 13,
-						},
-						Group:  true,
-						Line:   1,
-						CharAt: 5,
-					},
-					Right: &core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "3",
-						Line:   1,
-						CharAt: 17,
-					},
-					Operator: core.Operator{
-						Symbol: "*",
-						Line:   1,
-						CharAt: 16,
-					},
-					Line:   1,
-					CharAt: 5,
-				},
-				Operator: core.Operator{
-					Symbol: "+",
-					Line:   1,
-					CharAt: 2,
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse binary expression 1+(func (){})",
-			in:   `1+(func (){})`,
-			want: &core.BinaryExpression{
-				Left: &core.LiteralExpression{
-					Type:   core.LiteralTypeNumber,
-					Value:  "1",
-					Line:   1,
-					CharAt: 1,
-				},
-				Right: &core.FunctionExpression{
-					Params: []core.Identifier{},
-					Body:   []core.Statement{},
-					Line:   1,
-					CharAt: 4,
-				},
-				Operator: core.Operator{
-					Symbol: "+",
-					Line:   1,
-					CharAt: 2,
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse binary expression (func (){})+1",
-			in:   `(func (){})+1`,
-			want: &core.BinaryExpression{
-				Right: &core.LiteralExpression{
-					Type:   core.LiteralTypeNumber,
-					Value:  "1",
-					Line:   1,
-					CharAt: 13,
-				},
-				Left: &core.FunctionExpression{
-					Params: []core.Identifier{},
-					Body:   []core.Statement{},
-					Line:   1,
-					CharAt: 2,
-				},
-				Operator: core.Operator{
-					Symbol: "+",
-					Line:   1,
-					CharAt: 12,
-				},
-				Line:   1,
-				CharAt: 2,
-			},
-		},
-		{
-			name: "parse member access expression (func (){}).abc",
-			in:   `(func (){}).abc`,
-			want: &core.MemberAccessExpression{
-				Object: &core.FunctionExpression{
-					Params: []core.Identifier{},
-					Body:   []core.Statement{},
-					Line:   1,
-					CharAt: 2,
-				},
-				PropertyIdentifier: core.Identifier{
-					Name:   "abc",
-					Line:   1,
-					CharAt: 13,
-				},
-				Line:   1,
-				CharAt: 2,
-			},
-		},
-	}
-	for _, tt := range cases {
-		t.Run(tt.name, func(t *testing.T) {
-			tokens, err := lexer.Lex(tt.in)
-			require.Equal(t, err, nil)
-			exp, _, _ := parseExpression(tokens)
-			require.Equal(t, tt.want, exp)
-		})
-	}
-}
-
 func TestToAST_VariableDeclaration(t *testing.T) {
 	cases := []struct {
 		name string
@@ -4053,7 +4818,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		},
 		{
 			name: "parse boolean declaration statement",
-			in:   "var a=false",
+			in:   "var a=#f",
 			want: []core.Statement{
 				core.VariableDeclaration{
 					Declarations: []core.VariableDeclarator{
@@ -4065,7 +4830,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 							},
 							Init: &core.LiteralExpression{
 								Type:   core.LiteralTypeBoolean,
-								Value:  "false",
+								Value:  "#f",
 								Line:   1,
 								CharAt: 7,
 							},
@@ -4201,7 +4966,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 		},
 		{
 			name: "parse variable expression",
-			in: `var a=false
+			in: `var a=#f
 		         var b=a`,
 			want: []core.Statement{
 				core.VariableDeclaration{
@@ -4214,7 +4979,7 @@ func TestToAST_VariableDeclaration(t *testing.T) {
 							},
 							Init: &core.LiteralExpression{
 								Type:   core.LiteralTypeBoolean,
-								Value:  "false",
+								Value:  "#f",
 								Line:   1,
 								CharAt: 7,
 							},
@@ -4613,489 +5378,6 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 	}
 }
 
-func TestParseExpression_Function(t *testing.T) {
-	cases := []struct {
-		name string
-		in   string
-		want core.Expression
-	}{
-		{
-			name: "parse function expression #1",
-			in:   `func (b,c){}`,
-			want: &core.FunctionExpression{
-				Params: []core.Identifier{
-					{
-						Name:   "b",
-						Line:   1,
-						CharAt: 7,
-					},
-					{
-						Name:   "c",
-						Line:   1,
-						CharAt: 9,
-					},
-				},
-				Body:   []core.Statement{},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse function expression #2",
-			in: `func (b,c){
-					var a,b=1
-					var c=2
-					return a+b
-				 }`,
-			want: &core.FunctionExpression{
-				Params: []core.Identifier{
-					{
-						Name:   "b",
-						Line:   1,
-						CharAt: 7,
-					},
-					{
-						Name:   "c",
-						Line:   1,
-						CharAt: 9,
-					},
-				},
-				Body: []core.Statement{
-					core.VariableDeclaration{
-						Declarations: []core.VariableDeclarator{
-							{
-								ID: core.Identifier{
-									Name:   "a",
-									Line:   2,
-									CharAt: 5,
-								},
-								Init: &core.LiteralExpression{
-									Type:   core.LiteralTypeNumber,
-									Value:  "1",
-									Line:   2,
-									CharAt: 9,
-								},
-								Line:   2,
-								CharAt: 5,
-							},
-							{
-								ID: core.Identifier{
-									Name:   "b",
-									Line:   2,
-									CharAt: 7,
-								},
-								Init:   nil,
-								Line:   2,
-								CharAt: 7,
-							},
-						},
-						Line:   2,
-						CharAt: 1,
-					},
-					core.VariableDeclaration{
-						Declarations: []core.VariableDeclarator{
-							{
-								ID: core.Identifier{
-									Name:   "c",
-									Line:   3,
-									CharAt: 5,
-								},
-								Init: &core.LiteralExpression{
-									Type:   core.LiteralTypeNumber,
-									Value:  "2",
-									Line:   3,
-									CharAt: 7,
-								},
-								Line:   3,
-								CharAt: 5,
-							},
-						},
-						Line:   3,
-						CharAt: 1,
-					},
-					core.ReturnStatement{
-						Argument: &core.BinaryExpression{
-							Left: &core.VariableExpression{
-								Name:   "a",
-								Line:   4,
-								CharAt: 8,
-							},
-							Right: &core.VariableExpression{
-								Name:   "b",
-								Line:   4,
-								CharAt: 10,
-							},
-							Operator: core.Operator{
-								Symbol: "+",
-								Line:   4,
-								CharAt: 9,
-							},
-							Line:   4,
-							CharAt: 8,
-						},
-						Line:   4,
-						CharAt: 1,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-	}
-	for _, tt := range cases {
-		t.Run(tt.name, func(t *testing.T) {
-			tokens, err := lexer.Lex(tt.in)
-			require.Equal(t, err, nil)
-			exp, _, _ := parseExpression(tokens)
-			require.Equal(t, tt.want, exp)
-		})
-	}
-}
-
-func TestParseExpression_CallExpression(t *testing.T) {
-	cases := []struct {
-		name string
-		in   string
-		want core.Expression
-	}{
-		{
-			name: "parse call expression #1",
-			in:   "a()",
-			want: &core.CallExpression{
-				Callee: &core.VariableExpression{
-					Name:   "a",
-					Line:   1,
-					CharAt: 1,
-				},
-				Arguments: []core.Expression{},
-				Line:      1,
-				CharAt:    1,
-			},
-		},
-		{
-			name: "parse call expression #2",
-			in:   "((a))(1)",
-			want: &core.CallExpression{
-				Callee: &core.VariableExpression{
-					Name:   "a",
-					Line:   1,
-					CharAt: 3,
-				},
-				Arguments: []core.Expression{
-					&core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "1",
-						Line:   1,
-						CharAt: 7,
-					},
-				},
-				Line:   1,
-				CharAt: 3,
-			},
-		},
-		{
-			name: "parse call expression #3",
-			in:   "((a))(1,(2+3))",
-			want: &core.CallExpression{
-				Callee: &core.VariableExpression{
-					Name:   "a",
-					Line:   1,
-					CharAt: 3,
-				},
-				Arguments: []core.Expression{
-					&core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "1",
-						Line:   1,
-						CharAt: 7,
-					},
-					&core.BinaryExpression{
-						Left: &core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "2",
-							Line:   1,
-							CharAt: 10,
-						},
-						Right: &core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "3",
-							Line:   1,
-							CharAt: 12,
-						},
-						Operator: core.Operator{
-							Symbol: "+",
-							Line:   1,
-							CharAt: 11,
-						},
-						Group:  true,
-						Line:   1,
-						CharAt: 10,
-					},
-				},
-				Line:   1,
-				CharAt: 3,
-			},
-		},
-		{
-			name: "parse call expression #4",
-			in:   "((a))(1,(2+3))(4)",
-			want: &core.CallExpression{
-				Callee: &core.CallExpression{
-					Callee: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 3,
-					},
-					Arguments: []core.Expression{
-						&core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "1",
-							Line:   1,
-							CharAt: 7,
-						},
-						&core.BinaryExpression{
-							Left: &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "2",
-								Line:   1,
-								CharAt: 10,
-							},
-							Right: &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "3",
-								Line:   1,
-								CharAt: 12,
-							},
-							Operator: core.Operator{
-								Symbol: "+",
-								Line:   1,
-								CharAt: 11,
-							},
-							Group:  true,
-							Line:   1,
-							CharAt: 10,
-						},
-					},
-					Line:   1,
-					CharAt: 3,
-				},
-				Arguments: []core.Expression{
-					&core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "4",
-						Line:   1,
-						CharAt: 16,
-					},
-				},
-				Line:   1,
-				CharAt: 3,
-			},
-		},
-		{
-			name: "parse call expression #5",
-			in:   "((a(1,(2+3))))(4)",
-			want: &core.CallExpression{
-				Callee: &core.CallExpression{
-					Callee: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 3,
-					},
-					Arguments: []core.Expression{
-						&core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "1",
-							Line:   1,
-							CharAt: 5,
-						},
-						&core.BinaryExpression{
-							Left: &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "2",
-								Line:   1,
-								CharAt: 8,
-							},
-							Right: &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "3",
-								Line:   1,
-								CharAt: 10,
-							},
-							Operator: core.Operator{
-								Symbol: "+",
-								Line:   1,
-								CharAt: 9,
-							},
-							Group:  true,
-							Line:   1,
-							CharAt: 8,
-						},
-					},
-					Line:   1,
-					CharAt: 3,
-				},
-				Arguments: []core.Expression{
-					&core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "4",
-						Line:   1,
-						CharAt: 16,
-					},
-				},
-				Line:   1,
-				CharAt: 3,
-			},
-		},
-		{
-			name: "parse call expression #6",
-			in:   "a[1](2)",
-			want: &core.CallExpression{
-				Callee: &core.MemberAccessExpression{
-					Object: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 1,
-					},
-					PropertyExpression: &core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "1",
-						Line:   1,
-						CharAt: 3,
-					},
-					Compute: true,
-					Line:    1,
-					CharAt:  1,
-				},
-				Arguments: []core.Expression{
-					&core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "2",
-						Line:   1,
-						CharAt: 6,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse call expression #7",
-			in:   "[a,b(a),c]",
-			want: &core.ArrayExpression{
-				Elements: []core.Expression{
-					&core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 2,
-					},
-					&core.CallExpression{
-						Callee: &core.VariableExpression{
-							Name:   "b",
-							Line:   1,
-							CharAt: 4,
-						},
-						Arguments: []core.Expression{
-							&core.VariableExpression{
-								Name:   "a",
-								Line:   1,
-								CharAt: 6,
-							},
-						},
-						Line:   1,
-						CharAt: 4,
-					},
-					&core.VariableExpression{
-						Name:   "c",
-						Line:   1,
-						CharAt: 9,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse call expression #8",
-			in:   "{a:b(a)}",
-			want: &core.ObjectExpression{
-				Properties: []*core.ObjectProperty{
-					{
-						KeyIdentifier: core.Identifier{
-							Name:   "a",
-							Line:   1,
-							CharAt: 2,
-						},
-						Value: &core.CallExpression{
-							Callee: &core.VariableExpression{
-								Name:   "b",
-								Line:   1,
-								CharAt: 4,
-							},
-							Arguments: []core.Expression{
-								&core.VariableExpression{
-									Name:   "a",
-									Line:   1,
-									CharAt: 6,
-								},
-							},
-							Line:   1,
-							CharAt: 4,
-						},
-						Line:   1,
-						CharAt: 2,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-		{
-			name: "parse call expression #9",
-			in:   "a(b(c()))",
-			want: &core.CallExpression{
-				Callee: &core.VariableExpression{
-					Name:   "a",
-					Line:   1,
-					CharAt: 1,
-				},
-				Arguments: []core.Expression{
-					&core.CallExpression{
-						Callee: &core.VariableExpression{
-							Name:   "b",
-							Line:   1,
-							CharAt: 3,
-						},
-						Arguments: []core.Expression{
-							&core.CallExpression{
-								Callee: &core.VariableExpression{
-									Name:   "c",
-									Line:   1,
-									CharAt: 5,
-								},
-								Arguments: []core.Expression{},
-								Line:      1,
-								CharAt:    5,
-							},
-						},
-						Line:   1,
-						CharAt: 3,
-					},
-				},
-				Line:   1,
-				CharAt: 1,
-			},
-		},
-	}
-	for _, tt := range cases {
-		t.Run(tt.name, func(t *testing.T) {
-			tokens, err := lexer.Lex(tt.in)
-			require.Equal(t, err, nil)
-			exp, _, _ := parseExpression(tokens)
-			require.Equal(t, tt.want, exp)
-		})
-	}
-}
-
 func TestToAST_ExpressionStatement(t *testing.T) {
 	cases := []struct {
 		name string
@@ -5398,36 +5680,25 @@ func Test_TMP(t *testing.T) {
 		// want core.Expression
 		want []core.Statement
 	}{
-		{
-			name: "parse assignment statement #1",
-			in:   "a:=b",
-			want: []core.Statement{
-				core.AssignmentStatement{
-					Left: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 1,
-					},
-					Right: &core.VariableExpression{
-						Name:   "b",
-						Line:   1,
-						CharAt: 4,
-					},
-					DeclarationShorthand: true,
-					Line:                 1,
-					CharAt:               1,
-				},
-			},
-		},
+		// {
+		// 	name: "parse if statement #1",
+		// 	in:   `if 1==2 {}`,
+		// 	want: []core.Statement{
+		// 		core.IfStatement{
+		// 			Test: &core.BinaryExpression{
+		// 				Left: &core.LiteralExpression{},
+		// 			},
+		// 		}
+		// 	},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			tokens, err := lexer.Lex(tt.in)
 			require.Equal(t, err, nil)
-			// exp, _, _ := parseExpression(tokens)
-			// require.Equal(t, tt.want, exp)
-			ast, _ := ToAST(tokens)
-			require.Equal(t, tt.want, ast)
+			exp, _, _ := parseExpression(tokens)
+			require.Equal(t, tt.want, exp)
+			// ast, _ := ToAST(tokens)
+			// require.Equal(t, tt.want, ast)
 		})
 	}
 }

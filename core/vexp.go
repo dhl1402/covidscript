@@ -23,6 +23,10 @@ func (e *VariableExpression) Evaluate(ec *ExecutionContext) (Expression, error) 
 	return nil, fmt.Errorf("%s is not defined. [%d,%d]", e.Name, e.Line, e.CharAt)
 }
 
+func (e *VariableExpression) IsTruthy() bool {
+	return true
+}
+
 func (e *VariableExpression) GetCharAt() int {
 	return e.CharAt
 }

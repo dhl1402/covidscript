@@ -29,8 +29,8 @@ func TestLex_Value(t *testing.T) {
 		},
 		{
 			name: "lex boolean variable declaration",
-			in:   `var a, b=false,true`,
-			want: []string{"var", "a", ",", "b", "=", "false", ",", "true"},
+			in:   `var a, b=#f,#t`,
+			want: []string{"var", "a", ",", "b", "=", "#f", ",", "#t"},
 		},
 		{
 			name: "lex array variable declaration",
@@ -244,13 +244,6 @@ func TestLex_Token(t *testing.T) {
 			},
 		},
 		{
-			name: "lex float number",
-			in:   `123.123`,
-			want: []Token{
-				{Value: "123.123", Line: 1, CharAt: 1},
-			},
-		},
-		{
 			name: "lex variable declaration with :=",
 			in:   `a:=b`,
 			want: []Token{
@@ -331,6 +324,33 @@ func TestLex_Token(t *testing.T) {
 				{Value: "b", Line: 1, CharAt: 5},
 			},
 		},
+		{
+			name: "lex float number #1",
+			in:   `123.123`,
+			want: []Token{
+				{Value: "123.123", Line: 1, CharAt: 1},
+			},
+		},
+		{
+			name: "lex float number #2",
+			in:   `1.1==1.2`,
+			want: []Token{
+				{Value: "1.1", Line: 1, CharAt: 1},
+				{Value: "==", Line: 1, CharAt: 4},
+				{Value: "1.2", Line: 1, CharAt: 6},
+			},
+		},
+		{
+			name: "lex float number #3",
+			in:   `1.1==1.2.3`,
+			want: []Token{
+				{Value: "1.1", Line: 1, CharAt: 1},
+				{Value: "==", Line: 1, CharAt: 4},
+				{Value: "1.2", Line: 1, CharAt: 6},
+				{Value: ".", Line: 1, CharAt: 9},
+				{Value: "3", Line: 1, CharAt: 10},
+			},
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
@@ -348,12 +368,14 @@ func TestLex_TMP(t *testing.T) {
 		want []Token
 	}{
 		{
-			name: "lex multi char operator ||",
-			in:   `a||b`,
+			name: "lex float number #3",
+			in:   `1.1==1.2.3`,
 			want: []Token{
-				{Value: "a", Line: 1, CharAt: 1},
-				{Value: "||", Line: 1, CharAt: 2},
-				{Value: "b", Line: 1, CharAt: 4},
+				{Value: "1.1", Line: 1, CharAt: 1},
+				{Value: "==", Line: 1, CharAt: 4},
+				{Value: "1.2", Line: 1, CharAt: 6},
+				{Value: ".", Line: 1, CharAt: 9},
+				{Value: "3", Line: 1, CharAt: 10},
 			},
 		},
 	}

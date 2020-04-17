@@ -77,6 +77,10 @@ func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, err
 	return nil, fmt.Errorf("Can't access property of type %s. [%d,%d]", obj.GetType(), e.Line, e.CharAt)
 }
 
+func (e *MemberAccessExpression) IsTruthy() bool {
+	return true
+}
+
 func (e *MemberAccessExpression) GetCharAt() int {
 	return e.CharAt
 }

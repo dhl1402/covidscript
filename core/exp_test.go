@@ -260,7 +260,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			err:  fmt.Errorf("Cannot use '+' operator with array. [1,2]"),
 		},
 		{
-			name: "evaluate binary expression #6",
+			name: "evaluate binary expression #7",
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &LiteralExpression{
@@ -288,10 +288,514 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 			want: nil,
 			err:  fmt.Errorf("Cannot divide by zero. [1,3]"),
 		},
+		{
+			name: "evaluate binary expression #8",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "1.2",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "2",
+				},
+				Operator: Operator{
+					Symbol: "+",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeNumber,
+				Value: "3.2",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #9",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "2",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "1.2",
+				},
+				Operator: Operator{
+					Symbol: "-",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeNumber,
+				Value: "0.8",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #10",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "3",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "2",
+				},
+				Operator: Operator{
+					Symbol: "%",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeNumber,
+				Value: "1",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #11",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "3.3",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "2",
+				},
+				Operator: Operator{
+					Symbol: "%",
+					Line:   1,
+					CharAt: 4,
+				},
+			},
+			want: nil,
+			err:  fmt.Errorf("Cannot use '%s' operator with float. [1,4]", "%"),
+		},
+		{
+			name: "evaluate binary expression #12",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "3.3",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "2",
+				},
+				Operator: Operator{
+					Symbol: ">",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#t",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #13",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeString,
+					Value: "a",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeString,
+					Value: "b",
+				},
+				Operator: Operator{
+					Symbol: ">",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#f",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #14",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeBoolean,
+					Value: "#t",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeBoolean,
+					Value: "#f",
+				},
+				Operator: Operator{
+					Symbol: ">",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#t",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #15",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeBoolean,
+					Value: "#t",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeBoolean,
+					Value: "#t",
+				},
+				Operator: Operator{
+					Symbol: ">=",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#t",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #15",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "2.2",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "2.2",
+				},
+				Operator: Operator{
+					Symbol: ">=",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#t",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #16",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "2.2",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "2.2",
+				},
+				Operator: Operator{
+					Symbol: "==",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#t",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #17",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "2.2",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeString,
+					Value: "2.2",
+				},
+				Operator: Operator{
+					Symbol: "==",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#f",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #18",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeString,
+					Value: "2.2",
+				},
+				Right: &LiteralExpression{
+					Type:  LiteralTypeString,
+					Value: "2.2",
+				},
+				Operator: Operator{
+					Symbol: "!=",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#f",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #19",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeString,
+					Value: "2.2",
+				},
+				Right: &FunctionExpression{
+					Params: []Identifier{
+						{
+							Name: "a",
+						},
+						{
+							Name: "b",
+						},
+					},
+					Body: []Statement{},
+					EC:   &ExecutionContext{},
+				},
+				Operator: Operator{
+					Symbol: "==",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#f",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #20",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeString,
+					Value: "2.2",
+				},
+				Right: &FunctionExpression{
+					Params: []Identifier{
+						{
+							Name: "a",
+						},
+						{
+							Name: "b",
+						},
+					},
+					Body: []Statement{},
+					EC:   &ExecutionContext{},
+				},
+				Operator: Operator{
+					Symbol: "&&",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#t",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #21",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &ObjectExpression{
+					Properties: []*ObjectProperty{},
+				},
+				Right: &ArrayExpression{
+					Elements: []Expression{},
+				},
+				Operator: Operator{
+					Symbol: "&&",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#f",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #22",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &ObjectExpression{
+					Properties: []*ObjectProperty{},
+				},
+				Right: &ArrayExpression{
+					Elements: []Expression{
+						&LiteralExpression{
+							Type:  LiteralTypeString,
+							Value: "",
+						},
+					},
+				},
+				Operator: Operator{
+					Symbol: "||",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#t",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #23",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeString,
+					Value: "1",
+				},
+				Right: &LiteralExpression{
+					Type: LiteralTypeUndefined,
+				},
+				Operator: Operator{
+					Symbol: "&&",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#f",
+			},
+			err: nil,
+		},
+		{
+			name: "evaluate binary expression #24",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{},
+			},
+			exp: &BinaryExpression{
+				Left: &LiteralExpression{
+					Type:  LiteralTypeString,
+					Value: "1",
+				},
+				Right: &LiteralExpression{
+					Type: LiteralTypeNull,
+				},
+				Operator: Operator{
+					Symbol: "&&",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#f",
+			},
+			err: nil,
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			exp, err := tt.exp.Evaluate(tt.ec)
+			require.Equal(t, tt.want, exp)
+			require.Equal(t, tt.err, err)
+		})
+	}
+}
+
+func TestEvaluate_CompareReference(t *testing.T) {
+	cases := []struct {
+		name string
+		ec   func() *ExecutionContext
+		exp  Expression
+		want Expression
+		err  error
+	}{
+		{
+			name: "compare reference #1",
+			ec: func() *ExecutionContext {
+				obj := &ObjectExpression{
+					Properties: []*ObjectProperty{
+						{
+							KeyIdentifier: Identifier{
+								Name: "a",
+							},
+							Value: &LiteralExpression{
+								Type:  LiteralTypeString,
+								Value: "xxx",
+							},
+						},
+					},
+				}
+				return &ExecutionContext{
+					Variables: map[string]Expression{
+						"a": obj,
+						"b": obj,
+					},
+				}
+			},
+			exp: &BinaryExpression{
+				Left: &VariableExpression{
+					Name: "a",
+				},
+				Right: &VariableExpression{
+					Name: "b",
+				},
+				Operator: Operator{
+					Symbol: "==",
+				},
+			},
+			want: &LiteralExpression{
+				Type:  LiteralTypeBoolean,
+				Value: "#t",
+			},
+			err: nil,
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			exp, err := tt.exp.Evaluate(tt.ec())
 			require.Equal(t, tt.want, exp)
 			require.Equal(t, tt.err, err)
 		})
@@ -554,7 +1058,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 								},
 								Value: &LiteralExpression{
 									Type:  LiteralTypeBoolean,
-									Value: "true",
+									Value: "#t",
 								},
 								Computed: true,
 							},
@@ -572,7 +1076,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 			},
 			want: &LiteralExpression{
 				Type:  LiteralTypeBoolean,
-				Value: "true",
+				Value: "#t",
 			},
 			err: nil,
 		},
@@ -589,7 +1093,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 								},
 								Value: &LiteralExpression{
 									Type:  LiteralTypeBoolean,
-									Value: "true",
+									Value: "#t",
 								},
 								Computed: true,
 							},
@@ -609,7 +1113,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 			},
 			want: &LiteralExpression{
 				Type:  LiteralTypeBoolean,
-				Value: "true",
+				Value: "#t",
 			},
 			err: nil,
 		},
@@ -625,7 +1129,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 								},
 								Value: &LiteralExpression{
 									Type:  LiteralTypeBoolean,
-									Value: "true",
+									Value: "#t",
 								},
 							},
 						},
@@ -644,7 +1148,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 			},
 			want: &LiteralExpression{
 				Type:  LiteralTypeBoolean,
-				Value: "true",
+				Value: "#t",
 			},
 			err: nil,
 		},
@@ -681,7 +1185,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				},
 				PropertyExpression: &LiteralExpression{
 					Type:   LiteralTypeBoolean,
-					Value:  "true",
+					Value:  "#t",
 					Line:   1,
 					CharAt: 4,
 				},
@@ -1039,49 +1543,55 @@ func TestEvaluate_CallExpression(t *testing.T) {
 func TestEvaluate_TMP(t *testing.T) {
 	cases := []struct {
 		name string
-		ec   *ExecutionContext
+		ec   func() *ExecutionContext
 		exp  Expression
 		want Expression
 		err  error
 	}{
 		{
-			name: "evaluate member access expression #6",
-			ec: &ExecutionContext{
-				Variables: map[string]Expression{
-					"a": &ArrayExpression{
-						Elements: []Expression{
-							&LiteralExpression{
-								Type:  LiteralTypeNumber,
-								Value: "1",
+			name: "evaluate binary expression #20",
+			ec: func() *ExecutionContext {
+				obj := &ObjectExpression{
+					Properties: []*ObjectProperty{
+						{
+							KeyIdentifier: Identifier{
+								Name: "a",
+							},
+							Value: &LiteralExpression{
+								Type:  LiteralTypeString,
+								Value: "xxx",
 							},
 						},
 					},
-				},
+				}
+				return &ExecutionContext{
+					Variables: map[string]Expression{
+						"a": obj,
+						"b": obj,
+					},
+				}
 			},
-			exp: &MemberAccessExpression{
-				Object: &VariableExpression{
+			exp: &BinaryExpression{
+				Left: &VariableExpression{
 					Name: "a",
 				},
-				PropertyExpression: &LiteralExpression{
-					Type:  LiteralTypeNumber,
-					Value: "0",
+				Right: &VariableExpression{
+					Name: "b",
 				},
-				Compute: true,
-				Line:    1,
-				CharAt:  1,
+				Operator: Operator{
+					Symbol: "==",
+				},
 			},
 			want: &LiteralExpression{
-				Type:   LiteralTypeNumber,
-				Value:  "1",
-				Line:   1,
-				CharAt: 1,
+				Type:  LiteralTypeBoolean,
+				Value: "#t",
 			},
 			err: nil,
 		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
-			exp, err := tt.exp.Evaluate(tt.ec)
+			exp, err := tt.exp.Evaluate(tt.ec())
 			require.Equal(t, tt.want, exp)
 			require.Equal(t, tt.err, err)
 		})

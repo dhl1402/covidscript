@@ -89,7 +89,7 @@ func TestExecute(t *testing.T) {
 		{
 			name: "execute variable declaration #4",
 			in: `var a,b = 1,"2"
-				 var c = false`,
+				 var c = #f`,
 			inEC: &core.ExecutionContext{
 				Variables: map[string]core.Expression{},
 			},
@@ -110,7 +110,7 @@ func TestExecute(t *testing.T) {
 						},
 						"c": &core.LiteralExpression{
 							Type:   core.LiteralTypeBoolean,
-							Value:  "false",
+							Value:  "#f",
 							Line:   2,
 							CharAt: 9,
 						},
@@ -210,7 +210,7 @@ func TestExecute(t *testing.T) {
 			in: `var a = [
 				   "1"+"2",
 				   1+2,
-				   1+false,
+				   1+#f,
 				 ]`,
 			inEC: &core.ExecutionContext{
 				Variables: map[string]core.Expression{},
@@ -234,7 +234,7 @@ func TestExecute(t *testing.T) {
 								},
 								&core.LiteralExpression{
 									Type:   core.LiteralTypeString,
-									Value:  "1false",
+									Value:  "1#f",
 									Line:   4,
 									CharAt: 1,
 								},

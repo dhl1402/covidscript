@@ -21,6 +21,10 @@ func (e *ArrayExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	return e, nil
 }
 
+func (e *ArrayExpression) IsTruthy() bool {
+	return len(e.Elements) > 0
+}
+
 func (e *ArrayExpression) GetCharAt() int {
 	return e.CharAt
 }
