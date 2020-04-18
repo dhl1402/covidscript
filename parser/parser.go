@@ -55,6 +55,13 @@ func parseStatements(tokens []lexer.Token) ([]core.Statement, int, error) {
 			}
 			ss = append(ss, *s)
 			i = i + processed - 1
+		case t.Value == "for":
+			s, processed, err := parseForStatement(tokens[i:])
+			if err != nil {
+				return nil, 0, err
+			}
+			ss = append(ss, *s)
+			i = i + processed - 1
 		case t.Value == ";":
 			continue
 		default:
@@ -242,9 +249,9 @@ func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
 		CharAt: tokens[0].CharAt,
 	}
 	i := 1 // skip 'if'
-	astm, processed, err := parseAssignmentStatement(tokens[i:])
+	astmt, processed, err := parseAssignmentStatement(tokens[i:])
 	if err == nil {
-		ifstmt.Assignment = astm
+		ifstmt.Assignment = astmt
 		i = i + processed
 		if i >= len(tokens) || tokens[i].Value != ";" {
 			return nil, 0, fmt.Errorf("TODO: ; is expected")
@@ -264,9 +271,9 @@ func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
 		return nil, 0, err
 	}
 	i = i + processed
+	ifstmt.Consequent = *bstmt
 
 	// parse elif
-	ifstmt.Consequent = *bstmt
 	if i < len(tokens) && tokens[i].Value == "elif" {
 		elifstmt, processed, err := parseIfStatement(tokens[i:])
 		if err != nil {
@@ -290,6 +297,56 @@ func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
 		i = i + processed + 1
 	}
 	return ifstmt, i, nil
+}
+
+func parseForStatement(tokens []lexer.Token) (*core.ForStatement, int, error) {
+	if len(tokens) < 3 { // 3 is len of the most simple for
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	forstmt := &core.ForStatement{
+		Line:   tokens[0].Line,
+		CharAt: tokens[0].CharAt,
+	}
+	i := 1 // skip 'for'
+	if tokens[i].Value == "{" {
+		bstmt, processed, err := parseBlockStatement(tokens[i:])
+		if err != nil {
+			return nil, 0, err
+		}
+		forstmt.Body = *bstmt
+		return forstmt, i + processed, nil
+	}
+	astmt, processed, err := parseAssignmentStatement(tokens[i:])
+	if err == nil {
+		forstmt.Assignment = astmt
+		i = i + processed
+	}
+	if i < len(tokens) && tokens[i].Value == ";" {
+		i++ // skip ';'
+	}
+	if i < len(tokens) && tokens[i].Value == "{" {
+		return nil, 0, fmt.Errorf("TODO Unexpected token {")
+	}
+	estmt, processed, err := parseExpressionStatement(tokens[i:])
+	if err == nil {
+		forstmt.Test = estmt.Expression
+		i = i + processed
+	}
+	if i < len(tokens) && tokens[i].Value == ";" {
+		i++ // skip ';'
+	}
+	ustmt, processed, err := parseAssignmentStatement(tokens[i:])
+	if err == nil {
+		forstmt.Update = ustmt
+		i = i + processed
+	}
+	bstmt, processed, err := parseBlockStatement(tokens[i:])
+	if err != nil {
+		return nil, 0, err
+	}
+	i = i + processed
+	forstmt.Body = *bstmt
+	return forstmt, i, nil
 }
 
 func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {

@@ -6550,6 +6550,623 @@ func TestToAST_IfStatement(t *testing.T) {
 	}
 }
 
+func TestToAST_ForStatement(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want []core.Statement
+	}{
+		{
+			name: "parse for statement #1",
+			in:   `for i:=0;i<1;i=i+1{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Assignment: &core.AssignmentStatement{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 5,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "0",
+							Line:   1,
+							CharAt: 8,
+						},
+						DeclarationShorthand: true,
+						Line:                 1,
+						CharAt:               5,
+					},
+					Test: &core.BinaryExpression{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 10,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 12,
+						},
+						Operator: core.Operator{
+							Symbol: "<",
+							Line:   1,
+							CharAt: 11,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+					Update: &core.AssignmentStatement{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 14,
+						},
+						Right: &core.BinaryExpression{
+							Left: &core.VariableExpression{
+								Name:   "i",
+								Line:   1,
+								CharAt: 16,
+							},
+							Right: &core.LiteralExpression{
+								Type:   "number",
+								Value:  "1",
+								Line:   1,
+								CharAt: 18,
+							},
+							Operator: core.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 17,
+							},
+							Line:   1,
+							CharAt: 16,
+						},
+						Line:   1,
+						CharAt: 14,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     19,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #2",
+			in:   `for{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     4,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #2",
+			in:   `for ;i<1;i=i+1{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Test: &core.BinaryExpression{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 6,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 8,
+						},
+						Operator: core.Operator{
+							Symbol: "<",
+							Line:   1,
+							CharAt: 7,
+						},
+						Line:   1,
+						CharAt: 6,
+					},
+					Update: &core.AssignmentStatement{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 10,
+						},
+						Right: &core.BinaryExpression{
+							Left: &core.VariableExpression{
+								Name:   "i",
+								Line:   1,
+								CharAt: 12,
+							},
+							Right: &core.LiteralExpression{
+								Type:   "number",
+								Value:  "1",
+								Line:   1,
+								CharAt: 14,
+							},
+							Operator: core.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 13,
+							},
+							Line:   1,
+							CharAt: 12,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     15,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #3",
+			in:   `for i<1;i=i+1{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Test: &core.BinaryExpression{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 5,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 7,
+						},
+						Operator: core.Operator{
+							Symbol: "<",
+							Line:   1,
+							CharAt: 6,
+						},
+						Line:   1,
+						CharAt: 5,
+					},
+					Update: &core.AssignmentStatement{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 9,
+						},
+						Right: &core.BinaryExpression{
+							Left: &core.VariableExpression{
+								Name:   "i",
+								Line:   1,
+								CharAt: 11,
+							},
+							Right: &core.LiteralExpression{
+								Type:   "number",
+								Value:  "1",
+								Line:   1,
+								CharAt: 13,
+							},
+							Operator: core.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 12,
+							},
+							Line:   1,
+							CharAt: 11,
+						},
+						Line:   1,
+						CharAt: 9,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     14,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #4",
+			in:   `for i:=0;;i=i+1{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Assignment: &core.AssignmentStatement{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 5,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "0",
+							Line:   1,
+							CharAt: 8,
+						},
+						DeclarationShorthand: true,
+						Line:                 1,
+						CharAt:               5,
+					},
+					Update: &core.AssignmentStatement{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 11,
+						},
+						Right: &core.BinaryExpression{
+							Left: &core.VariableExpression{
+								Name:   "i",
+								Line:   1,
+								CharAt: 13,
+							},
+							Right: &core.LiteralExpression{
+								Type:   "number",
+								Value:  "1",
+								Line:   1,
+								CharAt: 15,
+							},
+							Operator: core.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 14,
+							},
+							Line:   1,
+							CharAt: 13,
+						},
+						Line:   1,
+						CharAt: 11,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     16,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #5",
+			in:   `for i:=0;i<1;{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Assignment: &core.AssignmentStatement{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 5,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "0",
+							Line:   1,
+							CharAt: 8,
+						},
+						DeclarationShorthand: true,
+						Line:                 1,
+						CharAt:               5,
+					},
+					Test: &core.BinaryExpression{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 10,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 12,
+						},
+						Operator: core.Operator{
+							Symbol: "<",
+							Line:   1,
+							CharAt: 11,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     14,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #6",
+			in:   `for i:=0;i<1{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Assignment: &core.AssignmentStatement{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 5,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "0",
+							Line:   1,
+							CharAt: 8,
+						},
+						DeclarationShorthand: true,
+						Line:                 1,
+						CharAt:               5,
+					},
+					Test: &core.BinaryExpression{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 10,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 12,
+						},
+						Operator: core.Operator{
+							Symbol: "<",
+							Line:   1,
+							CharAt: 11,
+						},
+						Line:   1,
+						CharAt: 10,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     13,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #7",
+			in:   `for i:=0;;{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Assignment: &core.AssignmentStatement{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 5,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "0",
+							Line:   1,
+							CharAt: 8,
+						},
+						DeclarationShorthand: true,
+						Line:                 1,
+						CharAt:               5,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     11,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #8",
+			in:   `for i<1{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Test: &core.BinaryExpression{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 5,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 7,
+						},
+						Operator: core.Operator{
+							Symbol: "<",
+							Line:   1,
+							CharAt: 6,
+						},
+						Line:   1,
+						CharAt: 5,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     8,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #9",
+			in:   `for i<1;{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Test: &core.BinaryExpression{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 5,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 7,
+						},
+						Operator: core.Operator{
+							Symbol: "<",
+							Line:   1,
+							CharAt: 6,
+						},
+						Line:   1,
+						CharAt: 5,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     9,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #10",
+			in:   `for ;i<1{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Test: &core.BinaryExpression{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 6,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 8,
+						},
+						Operator: core.Operator{
+							Symbol: "<",
+							Line:   1,
+							CharAt: 7,
+						},
+						Line:   1,
+						CharAt: 6,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     9,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #11",
+			in:   `for ;i<1;{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Test: &core.BinaryExpression{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 6,
+						},
+						Right: &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   1,
+							CharAt: 8,
+						},
+						Operator: core.Operator{
+							Symbol: "<",
+							Line:   1,
+							CharAt: 7,
+						},
+						Line:   1,
+						CharAt: 6,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     10,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #12",
+			in:   `for ;;i=i+1{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Update: &core.AssignmentStatement{
+						Left: &core.VariableExpression{
+							Name:   "i",
+							Line:   1,
+							CharAt: 7,
+						},
+						Right: &core.BinaryExpression{
+							Left: &core.VariableExpression{
+								Name:   "i",
+								Line:   1,
+								CharAt: 9,
+							},
+							Right: &core.LiteralExpression{
+								Type:   "number",
+								Value:  "1",
+								Line:   1,
+								CharAt: 11,
+							},
+							Operator: core.Operator{
+								Symbol: "+",
+								Line:   1,
+								CharAt: 10,
+							},
+							Line:   1,
+							CharAt: 9,
+						},
+						Line:   1,
+						CharAt: 7,
+					},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     12,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			ast, _ := ToAST(tokens)
+			require.Equal(t, tt.want, ast)
+		})
+	}
+}
+
 func Test_TMP(t *testing.T) {
 	cases := []struct {
 		name string
