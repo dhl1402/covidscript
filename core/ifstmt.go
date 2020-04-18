@@ -1,11 +1,13 @@
 package core
 
 type IfStatement struct {
-	Test                Expression
-	VariableDeclaration VariableDeclaration
-	EC                  *ExecutionContext
-	Consequent          []Statement
-	Alternate           *IfStatement
+	Test       Expression
+	Assignment AssignmentStatement
+	EC         *ExecutionContext
+	Consequent BlockStatement
+	Alternate  *IfStatement
+	Line       int
+	CharAt     int
 }
 
 func (stmt IfStatement) Execute(ec *ExecutionContext) (Expression, error) {

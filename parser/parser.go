@@ -39,49 +39,104 @@ func parseStatements(tokens []lexer.Token) ([]core.Statement, int, error) {
 			}
 			ss = append(ss, *s)
 			i = i + processed - 1
-		case t.Value == "}":
-			return ss, i, nil
-		default:
-			e, processed, err := parseExpression(tokens[i:])
+		case t.Value == "{":
+			s, processed, err := parseBlockStatement(tokens[i:])
 			if err != nil {
 				return nil, 0, err
 			}
-			if i+processed < len(tokens) && (tokens[i+processed].Value == "=" || tokens[i+processed].Value == ":=") && e != nil {
-				// parse AssignmentStatement
-				switch e.(type) {
-				case *core.VariableExpression:
-				case *core.MemberAccessExpression:
-				default:
-					return nil, 0, fmt.Errorf("TODO") // left of assignment must be VariableExpression or MemberAccessExpression
-				}
-				as := core.AssignmentStatement{
-					Left:   e,
-					Line:   t.Line,
-					CharAt: t.CharAt,
-				}
-				if tokens[i+processed].Value == ":=" {
-					as.DeclarationShorthand = true
-				}
-				i = i + processed + 1 // handle '=' -> +1
-				rightExp, processed, err := parseExpression(tokens[i:])
+			ss = append(ss, *s)
+			i = i + processed - 1
+		case t.Value == "}":
+			return ss, i + 1, nil
+		case t.Value == "if":
+			s, processed, err := parseIfStatement(tokens[i:])
+			if err != nil {
+				return nil, 0, err
+			}
+			ss = append(ss, *s)
+			i = i + processed - 1
+		case t.Value == ";":
+			continue
+		default:
+			s, processed, err := parseAssignmentStatement(tokens[i:])
+			if err == nil {
+				ss = append(ss, *s)
+				i = i + processed - 1
+			} else {
+				s, processed, err := parseExpressionStatement(tokens[i:])
 				if err != nil {
 					return nil, 0, err
 				}
-				as.Right = rightExp
-				ss = append(ss, as)
-				i = i + processed - 1
-			} else if e != nil {
-				// parse ExpressionStatement
-				ss = append(ss, core.ExpressionStatement{
-					Expression: e,
-					Line:       e.GetLine(),
-					CharAt:     e.GetCharAt(),
-				})
+				ss = append(ss, *s)
 				i = i + processed - 1
 			}
 		}
 	}
 	return ss, i, nil
+}
+
+func parseBlockStatement(tokens []lexer.Token) (*core.BlockStatement, int, error) {
+	if len(tokens) < 2 {
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	stmts, i, err := parseStatements(tokens[1:])
+	if err != nil {
+		return nil, 0, err
+	}
+	return &core.BlockStatement{
+		Statements: stmts,
+		Line:       tokens[0].Line,
+		CharAt:     tokens[0].CharAt,
+	}, i + 1, nil
+}
+
+func parseAssignmentStatement(tokens []lexer.Token) (*core.AssignmentStatement, int, error) {
+	if len(tokens) == 0 {
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	exp, i, err := parseExpression(tokens[0:])
+	if err != nil {
+		return nil, 0, err
+	}
+	if i >= len(tokens) || (tokens[i].Value != "=" && tokens[i].Value != ":=") {
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	switch exp.(type) {
+	case *core.VariableExpression:
+	case *core.MemberAccessExpression:
+	default:
+		return nil, 0, fmt.Errorf("TODO") // left of assignment must be VariableExpression or MemberAccessExpression
+	}
+	as := &core.AssignmentStatement{
+		Left:   exp,
+		Line:   tokens[0].Line,
+		CharAt: tokens[0].CharAt,
+	}
+	if tokens[i].Value == ":=" {
+		as.DeclarationShorthand = true
+	}
+	i++ // handle '=' -> +1
+	rightExp, processed, err := parseExpression(tokens[i:])
+	if err != nil {
+		return nil, 0, err
+	}
+	as.Right = rightExp
+	return as, i + processed, nil
+}
+
+func parseExpressionStatement(tokens []lexer.Token) (*core.ExpressionStatement, int, error) {
+	if len(tokens) == 0 {
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	exp, i, err := parseExpression(tokens[0:])
+	if err != nil {
+		return nil, 0, err
+	}
+	return &core.ExpressionStatement{
+		Expression: exp,
+		Line:       exp.GetLine(),
+		CharAt:     exp.GetCharAt(),
+	}, i, nil
 }
 
 func parseFunctionDeclaration(tokens []lexer.Token) (*core.FunctionDeclaration, int, error) {
@@ -172,7 +227,65 @@ func parseVariableDeclaration(tokens []lexer.Token) (*core.VariableDeclaration, 
 	return s, i + processed + 2, nil
 }
 
-// primitive, object, array, function, function call, binary expression, object property, array element, identifier
+func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
+	if len(tokens) < 4 { // 4 is len of the most simple if
+		return nil, 0, fmt.Errorf("TODO")
+	}
+	ifstmt := &core.IfStatement{
+		Line:   tokens[0].Line,
+		CharAt: tokens[0].CharAt,
+	}
+	i := 1 // skip 'if'
+	astm, processed, err := parseAssignmentStatement(tokens[i:])
+	if err == nil {
+		ifstmt.Assignment = *astm
+		i = i + processed
+		if i >= len(tokens) || tokens[i].Value != ";" {
+			return nil, 0, fmt.Errorf("TODO: ; is expected")
+		}
+		i++ // skip ';'
+	}
+	estmt, processed, err := parseExpressionStatement(tokens[i:])
+	if err != nil {
+		return nil, 0, err
+	}
+	i = i + processed
+	ifstmt.Test = estmt.Expression
+
+	// parse if body block
+	bstmt, processed, err := parseBlockStatement(tokens[i:])
+	if err != nil {
+		return nil, 0, err
+	}
+	i = i + processed
+
+	// parse elif
+	ifstmt.Consequent = *bstmt
+	if i < len(tokens) && tokens[i].Value == "elif" {
+		elifstmt, processed, err := parseIfStatement(tokens[i:])
+		if err != nil {
+			return nil, 0, err
+		}
+		ifstmt.Alternate = elifstmt
+		i = i + processed
+	}
+	// parse else
+	if i < len(tokens) && tokens[i].Value == "else" {
+		bstmt, processed, err := parseBlockStatement(tokens[i+1:])
+		if err != nil {
+			return nil, 0, err
+		}
+		elseStmt := &core.IfStatement{
+			Consequent: *bstmt,
+			Line:       tokens[i].Line,
+			CharAt:     tokens[i].CharAt,
+		}
+		ifstmt.Alternate = elseStmt
+		i = i + processed
+	}
+	return ifstmt, i, nil
+}
+
 func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if len(tokens) == 0 {
 		return nil, 0, fmt.Errorf("TODO")
@@ -260,6 +373,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					lbexp.Right = bexp
 					bexp = lbexp
 				}
+				tmpExp = bexp
 			}
 		} else if t.Value == "!" {
 			unaryQueue[parenLevel] = append(unaryQueue[parenLevel], t)
@@ -306,7 +420,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 				}
 				bexp = &core.BinaryExpression{
 					Left:     tmpExp,
-					Line:     t.Line, // tmpExp.getCharAt()
+					Line:     tmpExp.GetLine(),
 					CharAt:   tmpExp.GetCharAt(),
 					Operator: op,
 				}
@@ -653,7 +767,7 @@ func parseFunctionParamAndBody(tokens []lexer.Token) ([]core.Identifier, []core.
 		return nil, nil, 0, fmt.Errorf("TODO")
 	}
 	statements, processed, err := parseStatements(tokens[i+1:])
-	i = i + processed + 1
+	i = i + processed
 	if err != nil {
 		return nil, nil, 0, err
 	}

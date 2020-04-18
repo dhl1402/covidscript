@@ -1037,12 +1037,8 @@ func TestTMP(t *testing.T) {
 		err    error
 	}{
 		{
-			name: "execute function declaration #2",
-			in: `
-			func a(b,c){
-			  return b+c
-			}
-			var d = a(1,2)`,
+			name: "execute variable declaration #8",
+			in:   `var a = func(){}`,
 			inEC: &core.ExecutionContext{
 				Variables: map[string]core.Expression{},
 			},
@@ -1051,72 +1047,14 @@ func TestTMP(t *testing.T) {
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.FunctionExpression{
-					Params: []core.Identifier{
-						{Name: "b", Line: 2, CharAt: 8},
-						{Name: "c", Line: 2, CharAt: 10},
-					},
-					Body: []core.Statement{
-						core.ReturnStatement{
-							Argument: &core.BinaryExpression{
-								Left: &core.VariableExpression{
-									Name:   "b",
-									Line:   3,
-									CharAt: 8,
-								},
-								Right: &core.VariableExpression{
-									Name:   "c",
-									Line:   3,
-									CharAt: 10,
-								},
-								Operator: core.Operator{
-									Symbol: "+",
-									Line:   3,
-									CharAt: 9,
-								},
-								Line:   3,
-								CharAt: 8,
-							},
-							Line:   3,
-							CharAt: 1,
-						},
-					},
+					Params: []core.Identifier{},
+					Body:   []core.Statement{},
 					EC: &core.ExecutionContext{
-						Outer: gec,
-						Variables: map[string]core.Expression{
-							"b": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "1",
-								Line:   3,
-								CharAt: 8,
-							},
-							"c": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "2",
-								Line:   3,
-								CharAt: 10,
-							},
-							"_args0_": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "1",
-								Line:   3,
-								CharAt: 8,
-							},
-							"_args1_": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "2",
-								Line:   3,
-								CharAt: 10,
-							},
-						},
+						Outer:     gec,
+						Variables: map[string]core.Expression{},
 					},
-					Line:   5,
+					Line:   1,
 					CharAt: 9,
-				}
-				gec.Variables["d"] = &core.LiteralExpression{
-					Type:   core.LiteralTypeNumber,
-					Value:  "3",
-					Line:   3,
-					CharAt: 8,
 				}
 				return gec
 			},
