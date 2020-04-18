@@ -1327,6 +1327,170 @@ func TestExecute(t *testing.T) {
 			},
 			err: nil,
 		},
+		{
+			name: "execute for statement #1",
+			in: `
+				a:=0
+				for i:=0;i<3;i=i+1 {
+					a=a+1
+				}
+				`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   4,
+							CharAt: 3,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute for statement #2",
+			in: `
+				a:=0
+				i:=0
+				for i<3;i=i+1 {
+					a=a+1
+				}
+				`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   5,
+							CharAt: 3,
+						},
+						"i": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   4,
+							CharAt: 5,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute for statement #3",
+			in: `
+				a:=0
+				for i:=0;i<3 {
+					a=a+1
+					i=i+1
+				}
+				`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   4,
+							CharAt: 3,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute for statement #4",
+			in: `
+				a:=0
+				for a<3 {
+					a=a+1
+				}
+				`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   3,
+							CharAt: 5,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute for statement #5",
+			in: `
+				a:=0
+				for a<3 {
+					a=a+1
+					if a==2 {
+						return
+					}
+				}
+				`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   5,
+							CharAt: 4,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute for statement #6",
+			in: `
+				a:=0
+				for {
+					a=a+1
+					if a==10 {
+						return
+					}
+				}
+				`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "10",
+							Line:   5,
+							CharAt: 4,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1348,7 +1512,36 @@ func TestTMP(t *testing.T) {
 		inEC   *core.ExecutionContext
 		wantEC func() *core.ExecutionContext
 		err    error
-	}{}
+	}{
+		{
+			name: "execute for statement #5",
+			in: `
+				a:=0
+				for {
+					a=a+1
+					if a==10 {
+						return
+					}
+				}
+				`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "10",
+							Line:   5,
+							CharAt: 4,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			tokens, err := lexer.Lex(tt.in)

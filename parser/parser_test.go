@@ -6638,21 +6638,6 @@ func TestToAST_ForStatement(t *testing.T) {
 		},
 		{
 			name: "parse for statement #2",
-			in:   `for{}`,
-			want: []core.Statement{
-				core.ForStatement{
-					Body: core.BlockStatement{
-						Statements: []core.Statement{},
-						Line:       1,
-						CharAt:     4,
-					},
-					Line:   1,
-					CharAt: 1,
-				},
-			},
-		},
-		{
-			name: "parse for statement #2",
 			in:   `for ;i<1;i=i+1{}`,
 			want: []core.Statement{
 				core.ForStatement{
@@ -7150,6 +7135,21 @@ func TestToAST_ForStatement(t *testing.T) {
 						Statements: []core.Statement{},
 						Line:       1,
 						CharAt:     12,
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse for statement #13",
+			in:   `for{}`,
+			want: []core.Statement{
+				core.ForStatement{
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     4,
 					},
 					Line:   1,
 					CharAt: 1,

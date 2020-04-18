@@ -189,11 +189,10 @@ func parseReturnStatement(tokens []lexer.Token) (*core.ReturnStatement, int, err
 		Line:   tokens[0].Line,
 		CharAt: tokens[0].CharAt,
 	}
-	exp, i, err := parseExpression(tokens[1:]) // skip 'return'
-	if err != nil {
-		return nil, 0, err
+	exp, i, _ := parseExpression(tokens[1:]) // skip 'return'
+	if exp != nil {
+		r.Argument = exp
 	}
-	r.Argument = exp
 	return r, i + 1, nil
 }
 
