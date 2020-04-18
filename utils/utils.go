@@ -39,3 +39,10 @@ func IncludeStr(ss []string, s string) bool {
 	}
 	return false
 }
+
+func ToBoolStr(b bool) string {
+	if b {
+		return "#t"
+	}
+	return "#f"
+}

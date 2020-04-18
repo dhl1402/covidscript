@@ -351,6 +351,44 @@ func TestLex_Token(t *testing.T) {
 				{Value: "3", Line: 1, CharAt: 10},
 			},
 		},
+		{
+			name: "lex unary token #1",
+			in:   `!a`,
+			want: []Token{
+				{Value: "!", Line: 1, CharAt: 1},
+				{Value: "a", Line: 1, CharAt: 2},
+			},
+		},
+		{
+			name: "lex unary token #2",
+			in:   `a !b`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: "!", Line: 1, CharAt: 3},
+				{Value: "b", Line: 1, CharAt: 4},
+			},
+		},
+		{
+			name: "lex unary token #3",
+			in:   `!a=!b`,
+			want: []Token{
+				{Value: "!", Line: 1, CharAt: 1},
+				{Value: "a", Line: 1, CharAt: 2},
+				{Value: "=", Line: 1, CharAt: 3},
+				{Value: "!", Line: 1, CharAt: 4},
+				{Value: "b", Line: 1, CharAt: 5},
+			},
+		},
+		{
+			name: "lex unary token #3",
+			in:   `a=2!`,
+			want: []Token{
+				{Value: "a", Line: 1, CharAt: 1},
+				{Value: "=", Line: 1, CharAt: 2},
+				{Value: "2", Line: 1, CharAt: 3},
+				{Value: "!", Line: 1, CharAt: 4},
+			},
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
@@ -366,19 +404,7 @@ func TestLex_TMP(t *testing.T) {
 		name string
 		in   string
 		want []Token
-	}{
-		{
-			name: "lex float number #3",
-			in:   `1.1==1.2.3`,
-			want: []Token{
-				{Value: "1.1", Line: 1, CharAt: 1},
-				{Value: "==", Line: 1, CharAt: 4},
-				{Value: "1.2", Line: 1, CharAt: 6},
-				{Value: ".", Line: 1, CharAt: 9},
-				{Value: "3", Line: 1, CharAt: 10},
-			},
-		},
-	}
+	}{}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			tokens, err := Lex(tt.in)

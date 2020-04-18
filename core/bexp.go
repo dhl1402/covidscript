@@ -3,6 +3,8 @@ package core
 import (
 	"fmt"
 	"strconv"
+
+	"github.com/dhl1402/covidscript/utils"
 )
 
 type BinaryExpression struct {
@@ -34,7 +36,7 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		}
 		return &LiteralExpression{
 			Type:   LiteralTypeBoolean,
-			Value:  toBooleanStr(right.IsTruthy()),
+			Value:  utils.ToBoolStr(right.IsTruthy()),
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
@@ -58,7 +60,7 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		}
 		return &LiteralExpression{
 			Type:   LiteralTypeBoolean,
-			Value:  toBooleanStr(right.IsTruthy()),
+			Value:  utils.ToBoolStr(right.IsTruthy()),
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
@@ -74,7 +76,7 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	if e.Operator.Symbol == "==" {
 		return &LiteralExpression{
 			Type:   LiteralTypeBoolean,
-			Value:  toBooleanStr(isEqual(left, right)),
+			Value:  utils.ToBoolStr(isEqual(left, right)),
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
@@ -82,7 +84,7 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	if e.Operator.Symbol == "!=" {
 		return &LiteralExpression{
 			Type:   LiteralTypeBoolean,
-			Value:  toBooleanStr(!isEqual(left, right)),
+			Value:  utils.ToBoolStr(!isEqual(left, right)),
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
@@ -180,14 +182,14 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		if lle.Type == LiteralTypeNumber {
 			return &LiteralExpression{
 				Type:   LiteralTypeBoolean,
-				Value:  toBooleanStr(ln > rn),
+				Value:  utils.ToBoolStr(ln > rn),
 				Line:   e.Line,
 				CharAt: e.CharAt,
 			}, nil
 		}
 		return &LiteralExpression{
 			Type:   LiteralTypeBoolean,
-			Value:  toBooleanStr(lle.Value > rle.Value),
+			Value:  utils.ToBoolStr(lle.Value > rle.Value),
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
@@ -196,14 +198,14 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		if lle.Type == LiteralTypeNumber {
 			return &LiteralExpression{
 				Type:   LiteralTypeBoolean,
-				Value:  toBooleanStr(ln < rn),
+				Value:  utils.ToBoolStr(ln < rn),
 				Line:   e.Line,
 				CharAt: e.CharAt,
 			}, nil
 		}
 		return &LiteralExpression{
 			Type:   LiteralTypeBoolean,
-			Value:  toBooleanStr(lle.Value < rle.Value),
+			Value:  utils.ToBoolStr(lle.Value < rle.Value),
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
@@ -212,14 +214,14 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		if lle.Type == LiteralTypeNumber {
 			return &LiteralExpression{
 				Type:   LiteralTypeBoolean,
-				Value:  toBooleanStr(ln >= rn),
+				Value:  utils.ToBoolStr(ln >= rn),
 				Line:   e.Line,
 				CharAt: e.CharAt,
 			}, nil
 		}
 		return &LiteralExpression{
 			Type:   LiteralTypeBoolean,
-			Value:  toBooleanStr(lle.Value >= rle.Value),
+			Value:  utils.ToBoolStr(lle.Value >= rle.Value),
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
@@ -228,26 +230,19 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		if lle.Type == LiteralTypeNumber {
 			return &LiteralExpression{
 				Type:   LiteralTypeBoolean,
-				Value:  toBooleanStr(ln <= rn),
+				Value:  utils.ToBoolStr(ln <= rn),
 				Line:   e.Line,
 				CharAt: e.CharAt,
 			}, nil
 		}
 		return &LiteralExpression{
 			Type:   LiteralTypeBoolean,
-			Value:  toBooleanStr(lle.Value <= rle.Value),
+			Value:  utils.ToBoolStr(lle.Value <= rle.Value),
 			Line:   e.Line,
 			CharAt: e.CharAt,
 		}, nil
 	}
 	return nil, fmt.Errorf("Operator %s is not supported. [%d,%d]", e.Operator.Symbol, e.Operator.Line, e.Operator.CharAt)
-}
-
-func toBooleanStr(b bool) string {
-	if b {
-		return "#t"
-	}
-	return "#f"
 }
 
 func isEqual(e1 Expression, e2 Expression) bool {

@@ -183,9 +183,11 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	var maexp *core.MemberAccessExpression
 	bexpsAfterGroup := []*core.BinaryExpression{}
 	openParen := 0
+	unaryQueue := [][]lexer.Token{{}} // by paren level
 	var i int
 	for i = 0; i < len(tokens); i++ {
 		t := tokens[i]
+		parenLevel := openParen + len(bexpsAfterGroup)
 		var nt *lexer.Token
 		if i+1 < len(tokens) {
 			nt = &tokens[i+1]
@@ -227,6 +229,8 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					return nil, 0, fmt.Errorf("TODO")
 				}
 				tmpExp = maexp
+			} else if len(unaryQueue[parenLevel]) > 0 {
+				tmpExp = wrapInUnaryExpression(exp, unaryQueue, parenLevel)
 			} else {
 				tmpExp = exp
 			}
@@ -257,6 +261,8 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					bexp = lbexp
 				}
 			}
+		} else if t.Value == "!" {
+			unaryQueue[parenLevel] = append(unaryQueue[parenLevel], t)
 		} else if t.Value == "." {
 			if lastBexp != nil {
 				maexp = &core.MemberAccessExpression{
@@ -321,6 +327,9 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 			tmpExp = nil
 		} else if t.Value == "(" {
 			openParen++
+			if openParen+len(bexpsAfterGroup) >= len(unaryQueue) {
+				unaryQueue = append(unaryQueue, []lexer.Token{}) // increase level
+			}
 			if tmpExp != nil {
 				args, processed, err := parseSequentExpressions(tokens[i+1:])
 				if err != nil {
@@ -349,12 +358,23 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 				}
 			}
 		} else if t.Value == ")" {
+			parenLevel--
 			if openParen == 0 && len(bexpsAfterGroup) == 0 {
 				// it means this ')' doesn't belong to current expreesion
 				break
 			}
 			if openParen > 0 && openParen >= len(bexpsAfterGroup) {
-				// if openParen is increased by some exp like (a)
+				// if openParen is increased by some exp like (a) or ((a+b)+c) -> do not need to swap
+				if len(unaryQueue[parenLevel]) > 0 {
+					if openParen == len(bexpsAfterGroup) && bexp != nil {
+						tmpExp = wrapInUnaryExpression(bexp, unaryQueue, parenLevel).(*core.UnaryExpression)
+						bexp = nil
+					} else if bexp == nil {
+						tmpExp = wrapInUnaryExpression(tmpExp, unaryQueue, parenLevel)
+					} else {
+						bexp.Right = wrapInUnaryExpression(bexp.Right, unaryQueue, parenLevel)
+					}
+				}
 				openParen--
 			} else if bexp != nil {
 				if len(bexpsAfterGroup) > 0 {
@@ -366,6 +386,9 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 						bexpBeforeGroup.Right = bexp
 						groupedBexp := bexp
 						bexp = bexpBeforeGroup
+						if len(unaryQueue[parenLevel]) > 0 {
+							bexp.Right = wrapInUnaryExpression(bexp.Right, unaryQueue, parenLevel)
+						}
 
 						// loop from groupedBexp to lastBexpAfterGroup and update exp CharAt
 						groupedBexp.CharAt = lastBexpAfterGroup.CharAt
@@ -373,6 +396,9 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 							tmpBexp.CharAt = lastBexpAfterGroup.CharAt
 							tmpBexp, _ = tmpBexp.Left.(*core.BinaryExpression)
 						}
+					} else if len(unaryQueue[parenLevel]) > 0 {
+						tmpExp, _ = wrapInUnaryExpression(bexp, unaryQueue, parenLevel).(*core.UnaryExpression)
+						bexp = nil
 					}
 					bexpsAfterGroup = append(bexpsAfterGroup[i+1:], bexpsAfterGroup[:i]...)
 				}
@@ -400,6 +426,18 @@ func getLastBexpAfterGroup(bexps []*core.BinaryExpression, rightShouldNotNil boo
 		}
 	}
 	return nil, -1
+}
+
+func wrapInUnaryExpression(exp core.Expression, unaryQueue [][]lexer.Token, parenLevel int) core.Expression {
+	for j := len(unaryQueue[parenLevel]) - 1; j >= 0; j-- {
+		exp = &core.UnaryExpression{
+			Expression: exp,
+			Line:       unaryQueue[parenLevel][j].Line,
+			CharAt:     unaryQueue[parenLevel][j].CharAt,
+		}
+	}
+	unaryQueue[parenLevel] = []lexer.Token{}
+	return exp
 }
 
 // Check first token, if it is the start of an expression then parse it and return
