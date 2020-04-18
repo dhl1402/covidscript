@@ -488,6 +488,56 @@ func TestExecute(t *testing.T) {
 			err: nil,
 		},
 		{
+			name: "execute if statement #3",
+			in: `var a=1
+				 func b() {
+					a=2
+				 }
+				 b()`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				gec := &core.ExecutionContext{
+					Variables: map[string]core.Expression{},
+				}
+				gec.Variables["a"] = &core.LiteralExpression{
+					Type:   "number",
+					Value:  "2",
+					Line:   3,
+					CharAt: 3,
+				}
+				gec.Variables["b"] = &core.FunctionExpression{
+					Params: []core.Identifier{},
+					Body: []core.Statement{
+						core.AssignmentStatement{
+							Left: &core.VariableExpression{
+								Name:   "a",
+								Line:   3,
+								CharAt: 1,
+							},
+							Right: &core.LiteralExpression{
+								Type:   "number",
+								Value:  "2",
+								Line:   3,
+								CharAt: 3,
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+					},
+					EC: &core.ExecutionContext{
+						Outer:     gec,
+						Variables: map[string]core.Expression{},
+					},
+					Line:   5,
+					CharAt: 1,
+				}
+				return gec
+			},
+			err: nil,
+		},
+		{
 			name: "execute assignment statement #1",
 			in: `
 				var a
@@ -1014,6 +1064,269 @@ func TestExecute(t *testing.T) {
 			},
 			err: nil,
 		},
+		{
+			name: "execute if statement #1",
+			in: `
+				var a
+				if #t {
+					a=1
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				gec := &core.ExecutionContext{
+					Variables: map[string]core.Expression{},
+				}
+				gec.Variables["a"] = &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   4,
+					CharAt: 3,
+				}
+				return gec
+			},
+			err: nil,
+		},
+		{
+			name: "execute if statement #2",
+			in: `
+				var a=1
+				if a==1 {
+					a=2
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				gec := &core.ExecutionContext{
+					Variables: map[string]core.Expression{},
+				}
+				gec.Variables["a"] = &core.LiteralExpression{
+					Type:   "number",
+					Value:  "2",
+					Line:   4,
+					CharAt: 3,
+				}
+				return gec
+			},
+			err: nil,
+		},
+		{
+			name: "execute if statement #4",
+			in: `
+				var a=1
+				if !a {
+					a=2
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				gec := &core.ExecutionContext{
+					Variables: map[string]core.Expression{},
+				}
+				gec.Variables["a"] = &core.LiteralExpression{
+					Type:   "number",
+					Value:  "1",
+					Line:   3,
+					CharAt: 5,
+				}
+				return gec
+			},
+			err: nil,
+		},
+		{
+			name: "execute if statement #5",
+			in: `
+				var a=1
+				if !a {
+					a=2
+				} elif a==1 {
+					a=3	
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				gec := &core.ExecutionContext{
+					Variables: map[string]core.Expression{},
+				}
+				gec.Variables["a"] = &core.LiteralExpression{
+					Type:   "number",
+					Value:  "3",
+					Line:   6,
+					CharAt: 3,
+				}
+				return gec
+			},
+			err: nil,
+		},
+		{
+			name: "execute if statement #6",
+			in: `
+				var a=1
+				if !a {
+					a=2
+				} elif a==1 && #f {
+					a=3	
+				} elif a {
+					a=4	
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				gec := &core.ExecutionContext{
+					Variables: map[string]core.Expression{},
+				}
+				gec.Variables["a"] = &core.LiteralExpression{
+					Type:   "number",
+					Value:  "4",
+					Line:   8,
+					CharAt: 3,
+				}
+				return gec
+			},
+			err: nil,
+		},
+		{
+			name: "execute if statement #8",
+			in: `
+				var a=1
+				if !a {
+					a=2
+				} elif a==1 && #f {
+					a=3	
+				} elif #f {
+					a=4	
+				} else {
+					a=5	
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				gec := &core.ExecutionContext{
+					Variables: map[string]core.Expression{},
+				}
+				gec.Variables["a"] = &core.LiteralExpression{
+					Type:   "number",
+					Value:  "5",
+					Line:   10,
+					CharAt: 3,
+				}
+				return gec
+			},
+			err: nil,
+		},
+		{
+			name: "execute if statement #9",
+			in: `
+				var a=1
+				if b:=2; a {
+					a=b
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				gec := &core.ExecutionContext{
+					Variables: map[string]core.Expression{},
+				}
+				gec.Variables["a"] = &core.LiteralExpression{
+					Type:   "number",
+					Value:  "2",
+					Line:   4,
+					CharAt: 3,
+				}
+				return gec
+			},
+			err: nil,
+		},
+		{
+			name: "execute if statement #10",
+			in: `
+				var a=1
+				var b
+				if a:=2; a!=1 {
+					b=3
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   2,
+							CharAt: 7,
+						},
+						"b": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "3",
+							Line:   5,
+							CharAt: 3,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute if statement #11",
+			in: `
+				var b
+				if a:=2; a!=2 {
+					b=3
+				}elif a==2{
+					b=4
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"b": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "4",
+							Line:   6,
+							CharAt: 3,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute if statement #12",
+			in: `
+				var c
+				if a:=2; a!=2 {
+					c=3
+				}elif b:=1; (a+(b))>=0{
+					c=4
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"c": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "4",
+							Line:   6,
+							CharAt: 3,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1035,32 +1348,7 @@ func TestTMP(t *testing.T) {
 		inEC   *core.ExecutionContext
 		wantEC func() *core.ExecutionContext
 		err    error
-	}{
-		{
-			name: "execute variable declaration #8",
-			in:   `var a = func(){}`,
-			inEC: &core.ExecutionContext{
-				Variables: map[string]core.Expression{},
-			},
-			wantEC: func() *core.ExecutionContext {
-				gec := &core.ExecutionContext{
-					Variables: map[string]core.Expression{},
-				}
-				gec.Variables["a"] = &core.FunctionExpression{
-					Params: []core.Identifier{},
-					Body:   []core.Statement{},
-					EC: &core.ExecutionContext{
-						Outer:     gec,
-						Variables: map[string]core.Expression{},
-					},
-					Line:   1,
-					CharAt: 9,
-				}
-				return gec
-			},
-			err: nil,
-		},
-	}
+	}{}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			tokens, err := lexer.Lex(tt.in)

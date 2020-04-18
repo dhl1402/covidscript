@@ -6136,7 +6136,7 @@ func TestToAST_IfStatement(t *testing.T) {
 						Line:       1,
 						CharAt:     12,
 					},
-					Assignment: core.AssignmentStatement{
+					Assignment: &core.AssignmentStatement{
 						Left: &core.VariableExpression{
 							Name:   "a",
 							Line:   1,
@@ -6211,7 +6211,7 @@ func TestToAST_IfStatement(t *testing.T) {
 						Line:   1,
 						CharAt: 12,
 					},
-					Assignment: core.AssignmentStatement{
+					Assignment: &core.AssignmentStatement{
 						Left: &core.VariableExpression{
 							Name:   "a",
 							Line:   1,
@@ -6262,7 +6262,7 @@ func TestToAST_IfStatement(t *testing.T) {
 						Line:       1,
 						CharAt:     12,
 					},
-					Assignment: core.AssignmentStatement{
+					Assignment: &core.AssignmentStatement{
 						Left: &core.VariableExpression{
 							Name:   "a",
 							Line:   1,
@@ -6342,7 +6342,7 @@ func TestToAST_IfStatement(t *testing.T) {
 						Line:       1,
 						CharAt:     12,
 					},
-					Assignment: core.AssignmentStatement{
+					Assignment: &core.AssignmentStatement{
 						Left: &core.VariableExpression{
 							Name:   "a",
 							Line:   1,
@@ -6451,7 +6451,7 @@ func TestToAST_IfStatement(t *testing.T) {
 						Line:       1,
 						CharAt:     12,
 					},
-					Assignment: core.AssignmentStatement{
+					Assignment: &core.AssignmentStatement{
 						Left: &core.VariableExpression{
 							Name:   "a",
 							Line:   1,

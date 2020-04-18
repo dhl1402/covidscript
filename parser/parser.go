@@ -79,6 +79,12 @@ func parseBlockStatement(tokens []lexer.Token) (*core.BlockStatement, int, error
 	if len(tokens) < 2 {
 		return nil, 0, fmt.Errorf("TODO")
 	}
+	if tokens[0].Value != "{" {
+		return nil, 0, fmt.Errorf("TODO: { is expected")
+	}
+	if tokens[len(tokens)-1].Value != "}" {
+		return nil, 0, fmt.Errorf("TODO: } is expected")
+	}
 	stmts, i, err := parseStatements(tokens[1:])
 	if err != nil {
 		return nil, 0, err
@@ -238,7 +244,7 @@ func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
 	i := 1 // skip 'if'
 	astm, processed, err := parseAssignmentStatement(tokens[i:])
 	if err == nil {
-		ifstmt.Assignment = *astm
+		ifstmt.Assignment = astm
 		i = i + processed
 		if i >= len(tokens) || tokens[i].Value != ";" {
 			return nil, 0, fmt.Errorf("TODO: ; is expected")
@@ -281,7 +287,7 @@ func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
 			CharAt:     tokens[i].CharAt,
 		}
 		ifstmt.Alternate = elseStmt
-		i = i + processed
+		i = i + processed + 1
 	}
 	return ifstmt, i, nil
 }

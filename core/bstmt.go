@@ -7,8 +7,8 @@ type BlockStatement struct {
 }
 
 func (stmt BlockStatement) Execute(ec *ExecutionContext) (Expression, error) {
-	for _, stmt := range stmt.Statements {
-		rexp, err := stmt.Execute(ec)
+	for _, s := range stmt.Statements {
+		rexp, err := s.Execute(ec)
 		if rexp != nil || err != nil {
 			return rexp, err
 		}

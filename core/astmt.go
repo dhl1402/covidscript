@@ -20,10 +20,14 @@ func (stmt AssignmentStatement) Execute(ec *ExecutionContext) (Expression, error
 	}
 	switch left := stmt.Left.(type) {
 	case (*VariableExpression):
-		if ec.Variables[left.Name] == nil && !stmt.DeclarationShorthand {
+		if _, ok := ec.Get(left.Name); !ok && !stmt.DeclarationShorthand {
 			return nil, fmt.Errorf("%s is not defined. [%d,%d]", left.Name, stmt.Line, stmt.CharAt)
 		}
-		ec.Set(left.Name, right)
+		if stmt.DeclarationShorthand {
+			ec.Set(left.Name, right)
+		} else {
+			ec.Assign(left.Name, right)
+		}
 	case (*MemberAccessExpression):
 		// do not need to handle error in this case because error have been already handled in the following `left.Evaluate(ec)``
 		var pexp *LiteralExpression

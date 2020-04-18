@@ -19,7 +19,7 @@ func (e *UnaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	}
 	return &LiteralExpression{
 		Type:   LiteralTypeBoolean,
-		Value:  utils.ToBoolStr(exp.IsTruthy()),
+		Value:  utils.ToBoolStr(!exp.IsTruthy()),
 		Line:   e.Line,
 		CharAt: e.CharAt,
 	}, nil
