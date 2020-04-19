@@ -9,12 +9,12 @@ import (
 
 func Append(conf config.Config) *core.FunctionExpression {
 	return &core.FunctionExpression{
-		Params: []core.Identifier{{Name: "array"}, {Name: "array"}},
+		Params: []core.Identifier{{Name: "array"}},
 		NativeFunction: func(ec *core.ExecutionContext) (core.Expression, error) {
 			arg, _ := ec.Get("array")
 			_, ok := arg.(*core.ArrayExpression)
 			if !ok {
-				return nil, fmt.Errorf("Runtime error: unexpected %s as argument type of len, expected array.", arg.GetType())
+				return nil, fmt.Errorf("Runtime error: unexpected %s as argument type of append, expected array.", arg.GetType())
 			}
 			result := &core.ArrayExpression{
 				Elements: []core.Expression{},
