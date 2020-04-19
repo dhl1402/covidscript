@@ -541,6 +541,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					}
 					lastBexp.Right = tmpExp
 					lastBexp.Group = false
+					tmpExp = lastBexp
 				} else {
 					tmpExp = &core.CallExpression{
 						Callee:    tmpExp,
