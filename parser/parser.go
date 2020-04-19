@@ -39,6 +39,10 @@ func parseStatements(tokens []lexer.Token) ([]core.Statement, int, error) {
 			}
 			ss = append(ss, *s)
 			i = i + processed - 1
+		case t.Value == "break":
+			ss = append(ss, core.BreakStatement{Line: t.Line, CharAt: t.CharAt})
+		case t.Value == "continue":
+			ss = append(ss, core.ContinueStatement{Line: t.Line, CharAt: t.CharAt})
 		case t.Value == "{":
 			s, processed, err := parseBlockStatement(tokens[i:])
 			if err != nil {

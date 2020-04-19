@@ -22,10 +22,25 @@ func (stmt ForStatement) Execute(ec *ExecutionContext) (Expression, error) {
 		}
 	}
 	if stmt.Test == nil {
+	l1:
 		for {
-			rexp, err := stmt.Body.Execute(bec)
-			if rexp != nil || err != nil {
-				return rexp, err
+			for _, s := range stmt.Body.Statements {
+				rexp, err := s.Execute(ec)
+				if _, ok := err.(BreakError); ok {
+					break l1
+				}
+				if _, ok := err.(ContinueError); ok {
+					break
+				}
+				if rexp != nil || err != nil {
+					return rexp, err
+				}
+			}
+			if stmt.Update != nil {
+				_, err := stmt.Update.Execute(bec)
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 	} else {
@@ -33,10 +48,19 @@ func (stmt ForStatement) Execute(ec *ExecutionContext) (Expression, error) {
 		if err != nil {
 			return nil, err
 		}
+	l2:
 		for t.IsTruthy() {
-			rexp, err := stmt.Body.Execute(bec)
-			if rexp != nil || err != nil {
-				return rexp, err
+			for _, s := range stmt.Body.Statements {
+				rexp, err := s.Execute(bec)
+				if _, ok := err.(BreakError); ok {
+					break l2
+				}
+				if _, ok := err.(ContinueError); ok {
+					break
+				}
+				if rexp != nil || err != nil {
+					return rexp, err
+				}
 			}
 			if stmt.Update != nil {
 				_, err := stmt.Update.Execute(bec)

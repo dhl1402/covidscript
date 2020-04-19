@@ -488,7 +488,7 @@ func TestExecute(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "execute if statement #3",
+			name: "execute function declaration #3",
 			in: `var a=1
 				 func b() {
 					a=2
@@ -1328,6 +1328,30 @@ func TestExecute(t *testing.T) {
 			err: nil,
 		},
 		{
+			name: "execute if statement #13",
+			in: `
+				if #t {
+					break
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: nil,
+			err:    core.BreakError{Message: "break is not in a loop. [3,1]"},
+		},
+		{
+			name: "execute if statement #14",
+			in: `
+				if #t {
+					continue
+				}`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: nil,
+			err:    core.ContinueError{Message: "continue is not in a loop. [3,1]"},
+		},
+		{
 			name: "execute for statement #1",
 			in: `
 				a:=0
@@ -1491,6 +1515,88 @@ func TestExecute(t *testing.T) {
 			},
 			err: nil,
 		},
+		{
+			name: "execute for statement #7",
+			in: `
+				a:=0
+				for {
+					a=a+1
+					break
+				}
+				`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   4,
+							CharAt: 3,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute for statement #8",
+			in: `
+				a:=0
+				for {
+					a=a+1
+					if a == 2 {
+						break
+					}
+				}
+				`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "2",
+							Line:   5,
+							CharAt: 4,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
+		{
+			name: "execute for statement #9",
+			in: `
+				a:=0
+				for i:=0;i<3;i=i+1 {
+					if i<2 {
+						continue
+					}
+					a=a+1
+				}
+				`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: func() *core.ExecutionContext {
+				return &core.ExecutionContext{
+					Variables: map[string]core.Expression{
+						"a": &core.LiteralExpression{
+							Type:   "number",
+							Value:  "1",
+							Line:   7,
+							CharAt: 3,
+						},
+					},
+				}
+			},
+			err: nil,
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1514,13 +1620,13 @@ func TestTMP(t *testing.T) {
 		err    error
 	}{
 		{
-			name: "execute for statement #5",
+			name: "execute for statement #7",
 			in: `
 				a:=0
 				for {
 					a=a+1
-					if a==10 {
-						return
+					if a ==2 {
+						break
 					}
 				}
 				`,
@@ -1532,7 +1638,7 @@ func TestTMP(t *testing.T) {
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
-							Value:  "10",
+							Value:  "2",
 							Line:   5,
 							CharAt: 4,
 						},

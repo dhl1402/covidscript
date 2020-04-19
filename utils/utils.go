@@ -3,7 +3,7 @@ package utils
 import "strconv"
 
 func IsReservedKeyword(s string) bool {
-	ss := []string{"var", "func", "return", "if", "else", "elif", "#t", "#f", "null", "undefined"}
+	ss := []string{"var", "func", "return", "if", "else", "elif", "#t", "#f", "null", "undefined", "for", "break", "continue"}
 	return IncludeStr(ss, s)
 }
 
