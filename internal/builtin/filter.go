@@ -70,8 +70,8 @@ func Filter(conf config.Config) *core.FunctionExpression {
 					if test.IsTruthy() {
 						result.Properties = append(result.Properties, prop)
 					}
-					return result, nil
 				}
+				return result, nil
 			}
 			return nil, fmt.Errorf("Runtime error: first argument of filter must be array or object.")
 		},

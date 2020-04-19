@@ -81,5 +81,5 @@ func (e *ObjectExpression) ToString() string {
 	if len(s) > 1 {
 		s = s[:len(s)-2]
 	}
-	return s + "]"
+	return s + "}"
 }
