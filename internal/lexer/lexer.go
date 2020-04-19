@@ -14,6 +14,14 @@ func Lex(sc string) ([]Token, error) {
 	charAt := 1
 	for len(sc) > 0 {
 		c := string(sc[0])
+		if c == "/" && len(sc) > 1 && string(sc[1]) == "/" {
+			comment, err := lexComment(sc)
+			if err != nil {
+				return nil, err
+			}
+			sc = sc[len(comment):]
+			continue
+		}
 		if utils.IsStringBoundary(c) {
 			str, err := lexString(sc)
 			if err != nil {
@@ -117,4 +125,14 @@ func lexString(sc string) (string, error) {
 		}
 	}
 	return result, fmt.Errorf("Lexing error: missing closing quote.")
+}
+
+func lexComment(sc string) (string, error) {
+	result := ""
+	c := string(sc[0])
+	for !utils.IsNewLine(c) {
+		result = result + c
+		c = string(sc[len(result)])
+	}
+	return result, nil
 }

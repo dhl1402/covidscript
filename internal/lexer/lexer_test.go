@@ -389,6 +389,57 @@ func TestLex_Token(t *testing.T) {
 				{Value: "!", Line: 1, CharAt: 4},
 			},
 		},
+		{
+			name: "lex comment",
+			in: `var a={
+					// b:'123',
+					c:456
+				}`,
+			want: []Token{
+				{Value: "var", Line: 1, CharAt: 1},
+				{Value: "a", Line: 1, CharAt: 5},
+				{Value: "=", Line: 1, CharAt: 6},
+				{Value: "{", Line: 1, CharAt: 7},
+				{Value: "c", Line: 3, CharAt: 1},
+				{Value: ":", Line: 3, CharAt: 2},
+				{Value: "456", Line: 3, CharAt: 3},
+				{Value: "}", Line: 4, CharAt: 1},
+			},
+		},
+		{
+			name: "lex comment #1",
+			in: `var a={
+					// b:'123',
+					c:456
+				}`,
+			want: []Token{
+				{Value: "var", Line: 1, CharAt: 1},
+				{Value: "a", Line: 1, CharAt: 5},
+				{Value: "=", Line: 1, CharAt: 6},
+				{Value: "{", Line: 1, CharAt: 7},
+				{Value: "c", Line: 3, CharAt: 1},
+				{Value: ":", Line: 3, CharAt: 2},
+				{Value: "456", Line: 3, CharAt: 3},
+				{Value: "}", Line: 4, CharAt: 1},
+			},
+		},
+		{
+			name: "lex comment #2",
+			in: `var a={
+					// b:'123',
+					c:45//6
+				}`,
+			want: []Token{
+				{Value: "var", Line: 1, CharAt: 1},
+				{Value: "a", Line: 1, CharAt: 5},
+				{Value: "=", Line: 1, CharAt: 6},
+				{Value: "{", Line: 1, CharAt: 7},
+				{Value: "c", Line: 3, CharAt: 1},
+				{Value: ":", Line: 3, CharAt: 2},
+				{Value: "45", Line: 3, CharAt: 3},
+				{Value: "}", Line: 4, CharAt: 1},
+			},
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
