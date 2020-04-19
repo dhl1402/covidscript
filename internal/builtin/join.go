@@ -32,7 +32,7 @@ func Join(conf config.Config) *core.FunctionExpression {
 				result = result + fmt.Sprintf("%s%s", elem.ToString(), sep)
 			}
 			if len(arexp.Elements) > 0 {
-				result = result[:len(sep)]
+				result = result[:len(result)-len(sep)]
 			}
 			return &core.LiteralExpression{
 				Type:  core.LiteralTypeString,
