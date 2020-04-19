@@ -58,5 +58,8 @@ func (e *LiteralExpression) GetType() string {
 }
 
 func (e *LiteralExpression) ToString() string {
+	if e.Type == LiteralTypeUndefined || e.Type == LiteralTypeNull {
+		return string(e.Type)
+	}
 	return e.Value
 }
