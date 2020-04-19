@@ -49,6 +49,9 @@ func createGlobalEC(conf config.Config) *core.ExecutionContext {
 			"keys":    builtin.Keys(conf),
 			"values":  builtin.Values(conf),
 			"reduce":  builtin.Reduce(conf),
+			"append":  builtin.Append(conf),
+			"type":    builtin.Type(conf),
+			"delete":  builtin.Delete(conf),
 		},
 	}
 }
