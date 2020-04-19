@@ -31,9 +31,9 @@ func Join(conf config.Config) *core.FunctionExpression {
 			for _, elem := range arexp.Elements {
 				result = result + fmt.Sprintf("%s%s", elem, sep)
 			}
-			if len(arexp.Elements) > 0 {
-				result = result[:len(sep)]
-			}
+			// if len(arexp.Elements) > 0 {
+			// 	result = result[:len(sep)]
+			// }
 			return &core.LiteralExpression{
 				Type:  core.LiteralTypeString,
 				Value: result,

@@ -46,6 +46,8 @@ func createGlobalEC(conf config.Config) *core.ExecutionContext {
 			"map":     builtin.Map(conf),
 			"join":    builtin.Join(conf),
 			"indexOf": builtin.IndexOf(conf),
+			"keys":    builtin.Keys(conf),
+			"values":  builtin.Values(conf),
 		},
 	}
 }
