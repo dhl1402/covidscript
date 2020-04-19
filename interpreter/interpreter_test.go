@@ -538,6 +538,32 @@ func TestExecute(t *testing.T) {
 			err: nil,
 		},
 		{
+			name: "execute function declaration #4",
+			in: `func a(){
+				break
+			}
+			a()
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: nil,
+			err:    core.BreakError{Message: "break is not in a loop. [2,1]"},
+		},
+		{
+			name: "execute function declaration #5",
+			in: `func a(){
+				continue
+			}
+			a()
+			`,
+			inEC: &core.ExecutionContext{
+				Variables: map[string]core.Expression{},
+			},
+			wantEC: nil,
+			err:    core.ContinueError{Message: "continue is not in a loop. [2,1]"},
+		},
+		{
 			name: "execute assignment statement #1",
 			in: `
 				var a
@@ -1618,43 +1644,17 @@ func TestTMP(t *testing.T) {
 		inEC   *core.ExecutionContext
 		wantEC func() *core.ExecutionContext
 		err    error
-	}{
-		{
-			name: "execute for statement #7",
-			in: `
-				a:=0
-				for {
-					a=a+1
-					if a ==2 {
-						break
-					}
-				}
-				`,
-			inEC: &core.ExecutionContext{
-				Variables: map[string]core.Expression{},
-			},
-			wantEC: func() *core.ExecutionContext {
-				return &core.ExecutionContext{
-					Variables: map[string]core.Expression{
-						"a": &core.LiteralExpression{
-							Type:   "number",
-							Value:  "2",
-							Line:   5,
-							CharAt: 4,
-						},
-					},
-				}
-			},
-			err: nil,
-		},
-	}
+	}{}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			tokens, err := lexer.Lex(tt.in)
 			require.Equal(t, err, nil)
 			stmts, _ := parser.ToAST(tokens)
-			require.Equal(t, tt.err, Execute(tt.inEC, stmts))
-			require.Equal(t, tt.wantEC(), tt.inEC)
+			err = Execute(tt.inEC, stmts)
+			require.Equal(t, tt.err, err)
+			if err == nil {
+				require.Equal(t, tt.wantEC(), tt.inEC)
+			}
 		})
 	}
 }
