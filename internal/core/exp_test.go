@@ -80,7 +80,7 @@ func TestEvaluate_VariableExpression(t *testing.T) {
 				CharAt: 1,
 			},
 			want: nil,
-			err:  fmt.Errorf("a is not defined. [1,1]"),
+			err:  fmt.Errorf("Runtime error: a is not defined. [1,1]"),
 		},
 	}
 	for _, tt := range cases {
@@ -230,7 +230,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 				},
 			},
 			want: nil,
-			err:  fmt.Errorf("Cannot use '-' operator with string. [1,2]"),
+			err:  fmt.Errorf("Runtime error: cannot use '-' operator with string. [1,2]"),
 		},
 		{
 			name: "evaluate binary expression #6",
@@ -257,7 +257,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 				},
 			},
 			want: nil,
-			err:  fmt.Errorf("Cannot use '+' operator with array. [1,2]"),
+			err:  fmt.Errorf("Runtime error: cannot use '+' operator with array. [1,2]"),
 		},
 		{
 			name: "evaluate binary expression #7",
@@ -286,7 +286,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 				},
 			},
 			want: nil,
-			err:  fmt.Errorf("Cannot divide by zero. [1,3]"),
+			err:  fmt.Errorf("Runtime error: cannot divide by zero. [1,3]"),
 		},
 		{
 			name: "evaluate binary expression #8",
@@ -381,7 +381,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 				},
 			},
 			want: nil,
-			err:  fmt.Errorf("Cannot use '%s' operator with float. [1,4]", "%"),
+			err:  fmt.Errorf("Runtime error: cannot use '%s' operator with float. [1,4]", "%"),
 		},
 		{
 			name: "evaluate binary expression #12",
@@ -1192,7 +1192,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				Compute: true,
 			},
 			want: nil,
-			err:  fmt.Errorf("Property key of type boolean is not supported. [1,4]"),
+			err:  fmt.Errorf("Runtime error: property key of type boolean is not supported. [1,4]"),
 		},
 		{
 			name: "evaluate member access expression #6",
@@ -1288,7 +1288,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				CharAt:  1,
 			},
 			want: nil,
-			err:  fmt.Errorf("Index is out of range. [1.3]"),
+			err:  fmt.Errorf("Runtime error: index is out of range. [1.3]"),
 		},
 		{
 			name: "evaluate member access expression #9",
@@ -1319,7 +1319,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				CharAt:  1,
 			},
 			want: nil,
-			err:  fmt.Errorf("Index must be number. [1,3]"),
+			err:  fmt.Errorf("Runtime error: index must be number. [1,3]"),
 		},
 		{
 			name: "evaluate member access expression #10",
@@ -1351,7 +1351,7 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 				CharAt:  1,
 			},
 			want: nil,
-			err:  fmt.Errorf("Can't access property of type number. [1,1]"),
+			err:  fmt.Errorf("Runtime error: can't access property of type number. [1,1]"),
 		},
 	}
 	for _, tt := range cases {
@@ -1528,7 +1528,7 @@ func TestEvaluate_CallExpression(t *testing.T) {
 				CharAt:    1,
 			},
 			want: nil,
-			err:  fmt.Errorf("a is not a function. [1,1]"), // TODO: e.Callee.ToString()
+			err:  fmt.Errorf("Runtime error: a is not a function. [1,1]"),
 		},
 	}
 	for _, tt := range cases {

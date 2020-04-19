@@ -116,5 +116,5 @@ func lexString(sc string) (string, error) {
 			result = result + c
 		}
 	}
-	return result, fmt.Errorf("Missing closing quote.")
+	return result, fmt.Errorf("Lexing error: missing closing quote.")
 }

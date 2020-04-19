@@ -91,23 +91,23 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	}
 	lle, ok := left.(*LiteralExpression)
 	if !ok {
-		return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, left.GetType(), e.Operator.Line, e.Operator.CharAt)
+		return nil, fmt.Errorf("Runtime error: cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, left.GetType(), e.Operator.Line, e.Operator.CharAt)
 	}
 	rle, ok := right.(*LiteralExpression)
 	if !ok {
-		return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, right.GetType(), e.Operator.Line, e.Operator.CharAt)
+		return nil, fmt.Errorf("Runtime error: cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, right.GetType(), e.Operator.Line, e.Operator.CharAt)
 	}
 	if e.Operator.Symbol == "-" || e.Operator.Symbol == "*" || e.Operator.Symbol == "/" || e.Operator.Symbol == "%" {
 		if lle.Type != LiteralTypeNumber {
-			return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, lle.GetType(), e.Operator.Line, e.Operator.CharAt)
+			return nil, fmt.Errorf("Runtime error: cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, lle.GetType(), e.Operator.Line, e.Operator.CharAt)
 		}
 		if rle.Type != LiteralTypeNumber {
-			return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, rle.GetType(), e.Operator.Line, e.Operator.CharAt)
+			return nil, fmt.Errorf("Runtime error: cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, rle.GetType(), e.Operator.Line, e.Operator.CharAt)
 		}
 	}
 	if e.Operator.Symbol == ">" || e.Operator.Symbol == "<" || e.Operator.Symbol == ">=" || e.Operator.Symbol == "<=" {
 		if lle.Type != rle.Type {
-			return nil, fmt.Errorf("Cannot use '%s' operator with 2 different types. [%d,%d]", e.Operator.Symbol, e.Operator.Line, e.Operator.CharAt)
+			return nil, fmt.Errorf("Runtime error: cannot use '%s' operator with 2 different types. [%d,%d]", e.Operator.Symbol, e.Operator.Line, e.Operator.CharAt)
 		}
 	}
 	ln, _ := strconv.ParseFloat(lle.Value, 64)
@@ -115,10 +115,10 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	switch e.Operator.Symbol {
 	case "+":
 		if lle.Type == LiteralTypeUndefined || lle.Type == LiteralTypeNull {
-			return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, lle.GetType(), e.Operator.Line, e.Operator.CharAt)
+			return nil, fmt.Errorf("Runtime error: cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, lle.GetType(), e.Operator.Line, e.Operator.CharAt)
 		}
 		if rle.Type == LiteralTypeUndefined || rle.Type == LiteralTypeNull {
-			return nil, fmt.Errorf("Cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, rle.GetType(), e.Operator.Line, e.Operator.CharAt)
+			return nil, fmt.Errorf("Runtime error: cannot use '%s' operator with %s. [%d,%d]", e.Operator.Symbol, rle.GetType(), e.Operator.Line, e.Operator.CharAt)
 		}
 		if lle.Type == LiteralTypeNumber && rle.Type == LiteralTypeNumber {
 			return &LiteralExpression{
@@ -153,7 +153,7 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	case "/":
 		// handle number
 		if rn == 0 {
-			return nil, fmt.Errorf("Cannot divide by zero. [%d,%d]", rle.Line, rle.CharAt)
+			return nil, fmt.Errorf("Runtime error: cannot divide by zero. [%d,%d]", rle.Line, rle.CharAt)
 		}
 		return &LiteralExpression{
 			Type:   LiteralTypeNumber,
@@ -165,11 +165,11 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		// handle number
 		li, err := strconv.Atoi(lle.Value)
 		if err != nil {
-			return nil, fmt.Errorf("Cannot use '%s' operator with float. [%d,%d]", e.Operator.Symbol, e.Operator.Line, e.Operator.CharAt)
+			return nil, fmt.Errorf("Runtime error: cannot use '%s' operator with float. [%d,%d]", e.Operator.Symbol, e.Operator.Line, e.Operator.CharAt)
 		}
 		ri, err := strconv.Atoi(rle.Value)
 		if err != nil {
-			return nil, fmt.Errorf("Cannot use '%s' operator with float. [%d,%d]", e.Operator.Symbol, e.Operator.Line, e.Operator.CharAt)
+			return nil, fmt.Errorf("Runtime error: cannot use '%s' operator with float. [%d,%d]", e.Operator.Symbol, e.Operator.Line, e.Operator.CharAt)
 		}
 		return &LiteralExpression{
 			Type:   LiteralTypeNumber,
@@ -242,7 +242,7 @@ func (e *BinaryExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 			CharAt: e.CharAt,
 		}, nil
 	}
-	return nil, fmt.Errorf("Operator %s is not supported. [%d,%d]", e.Operator.Symbol, e.Operator.Line, e.Operator.CharAt)
+	return nil, fmt.Errorf("Runtime error: operator %s is not supported. [%d,%d]", e.Operator.Symbol, e.Operator.Line, e.Operator.CharAt)
 }
 
 func isEqual(e1 Expression, e2 Expression) bool {

@@ -27,7 +27,7 @@ func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, err
 		}
 		lexp, ok := tmpExp.(*LiteralExpression)
 		if !ok || (lexp.Type != LiteralTypeString && lexp.Type != LiteralTypeNumber) {
-			return nil, fmt.Errorf("Property key of type %s is not supported. [%d,%d]", tmpExp.GetType(), tmpExp.GetLine(), tmpExp.GetCharAt())
+			return nil, fmt.Errorf("Runtime error: property key of type %s is not supported. [%d,%d]", tmpExp.GetType(), tmpExp.GetLine(), tmpExp.GetCharAt())
 		}
 		pexp = lexp
 	}
@@ -54,7 +54,6 @@ func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, err
 		}, nil
 	case (*ArrayExpression):
 		if !e.Compute {
-			// TODO: support built-in property
 			return &LiteralExpression{
 				Type:   LiteralTypeUndefined,
 				Line:   e.Line,
@@ -62,19 +61,19 @@ func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, err
 			}, nil
 		}
 		if pexp.Type != LiteralTypeNumber {
-			return nil, fmt.Errorf("Index must be number. [%d,%d]", pexp.Line, pexp.GetCharAt())
+			return nil, fmt.Errorf("Runtime error: index must be number. [%d,%d]", pexp.Line, pexp.GetCharAt())
 		}
 		if i, err := strconv.Atoi(pexp.Value); err == nil {
 			if i >= len(o.Elements) {
-				return nil, fmt.Errorf("Index is out of range. [%d.%d]", pexp.Line, pexp.CharAt)
+				return nil, fmt.Errorf("Runtime error: index is out of range. [%d.%d]", pexp.Line, pexp.CharAt)
 			}
 			o.Elements[i].SetLine(e.Line)
 			o.Elements[i].SetCharAt(e.CharAt)
 			return o.Elements[i], nil
 		}
-		return nil, fmt.Errorf("Invalid array index. [%d,%d]", pexp.Line, pexp.CharAt)
+		return nil, fmt.Errorf("Runtime error: invalid array index. [%d,%d]", pexp.Line, pexp.CharAt)
 	}
-	return nil, fmt.Errorf("Can't access property of type %s. [%d,%d]", obj.GetType(), e.Line, e.CharAt)
+	return nil, fmt.Errorf("Runtime error: can't access property of type %s. [%d,%d]", obj.GetType(), e.Line, e.CharAt)
 }
 
 func (e *MemberAccessExpression) IsTruthy() bool {

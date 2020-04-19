@@ -7,7 +7,7 @@ import (
 	"github.com/go-kit/kit/endpoint"
 )
 
-func makeInterpreteEndpoint(s Service, middlewares ...endpoint.Middleware) endpoint.Endpoint {
+func makeInterpretEndpoint(s Service, middlewares ...endpoint.Middleware) endpoint.Endpoint {
 	e := func(ctx context.Context, req interface{}) (res interface{}, err error) {
 		return s.Intepret(ctx, req.(InterpretRequest))
 	}

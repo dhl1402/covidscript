@@ -88,17 +88,17 @@ func parseStatements(tokens []lexer.Token) ([]core.Statement, int, error) {
 
 func parseBlockStatement(tokens []lexer.Token) (*core.BlockStatement, int, error) {
 	if len(tokens) < 2 {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse block statement")
 	}
 	if tokens[0].Value != "{" {
-		return nil, 0, fmt.Errorf("TODO: { is expected")
+		return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '{'. [%d,%d]", tokens[0].Value, tokens[0].Line, tokens[0].CharAt)
 	}
 	stmts, i, err := parseStatements(tokens[1:])
 	if err != nil {
 		return nil, 0, err
 	}
 	if tokens[i].Value != "}" {
-		return nil, 0, fmt.Errorf("TODO: } is expected")
+		return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '}'. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
 	}
 	return &core.BlockStatement{
 		Statements: stmts,
@@ -109,20 +109,24 @@ func parseBlockStatement(tokens []lexer.Token) (*core.BlockStatement, int, error
 
 func parseAssignmentStatement(tokens []lexer.Token) (*core.AssignmentStatement, int, error) {
 	if len(tokens) == 0 {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse assignment statement")
 	}
 	exp, i, err := parseExpression(tokens[0:])
 	if err != nil {
 		return nil, 0, err
 	}
-	if i >= len(tokens) || (tokens[i].Value != "=" && tokens[i].Value != ":=") {
-		return nil, 0, fmt.Errorf("TODO")
+	if i >= len(tokens) {
+		lastToken := tokens[len(tokens)-1]
+		return nil, 0, fmt.Errorf("Parsing error: unexpected end of statement. [%d,%d]", lastToken.Line, lastToken.CharAt)
+	}
+	if tokens[i].Value != "=" && tokens[i].Value != ":=" {
+		return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '=' or ':='. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
 	}
 	switch exp.(type) {
 	case *core.VariableExpression:
 	case *core.MemberAccessExpression:
 	default:
-		return nil, 0, fmt.Errorf("TODO") // left of assignment must be VariableExpression or MemberAccessExpression
+		return nil, 0, fmt.Errorf("Parsing error: %s cannot be the left side of assignment statement. [%d,%d]", exp.GetType(), exp.GetLine(), exp.GetCharAt())
 	}
 	as := &core.AssignmentStatement{
 		Left:   exp,
@@ -143,7 +147,7 @@ func parseAssignmentStatement(tokens []lexer.Token) (*core.AssignmentStatement, 
 
 func parseExpressionStatement(tokens []lexer.Token) (*core.ExpressionStatement, int, error) {
 	if len(tokens) == 0 {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse expression statement")
 	}
 	exp, i, err := parseExpression(tokens[0:])
 	if err != nil {
@@ -158,13 +162,13 @@ func parseExpressionStatement(tokens []lexer.Token) (*core.ExpressionStatement, 
 
 func parseFunctionDeclaration(tokens []lexer.Token) (*core.FunctionDeclaration, int, error) {
 	if len(tokens) < 6 { // 6 is len of the most simple function
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse function declaration")
 	}
 	if !tokens[1].IsIdentifier() {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: %s is not a valid variable name. [%d,%d]", tokens[1].Value, tokens[1].Line, tokens[1].CharAt)
 	}
 	if tokens[2].Value != "(" {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '('. [%d,%d]", tokens[2].Value, tokens[2].Line, tokens[2].CharAt)
 	}
 	i := 2
 	f := &core.FunctionDeclaration{
@@ -187,7 +191,7 @@ func parseFunctionDeclaration(tokens []lexer.Token) (*core.FunctionDeclaration, 
 
 func parseReturnStatement(tokens []lexer.Token) (*core.ReturnStatement, int, error) {
 	if len(tokens) == 0 {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse return statement")
 	}
 	r := &core.ReturnStatement{
 		Line:   tokens[0].Line,
@@ -202,14 +206,14 @@ func parseReturnStatement(tokens []lexer.Token) (*core.ReturnStatement, int, err
 
 func parseVariableDeclaration(tokens []lexer.Token) (*core.VariableDeclaration, int, error) {
 	if len(tokens) == 0 {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse variable declaration")
 	}
 	ids, i, err := parseSequentIdentifiers(tokens[1:]) // tokens[1:] -> skip 'var'
 	if err != nil {
 		return nil, 0, err
 	}
 	if len(ids) == 0 {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse variable names. [%d,%d]", tokens[0].Line, tokens[0].CharAt)
 	}
 	s := &core.VariableDeclaration{
 		Line:   tokens[0].Line,
@@ -232,10 +236,10 @@ func parseVariableDeclaration(tokens []lexer.Token) (*core.VariableDeclaration, 
 		return nil, 0, err
 	}
 	if exps == nil {
-		return nil, 0, fmt.Errorf("TODO") // = without expressions
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse variable initialization. [%d,%d]", tokens[i+1].Line, tokens[i+1].CharAt)
 	}
 	if len(exps) > len(s.Declarations) {
-		return nil, 0, fmt.Errorf("TODO") // = too many expressions
+		return nil, 0, fmt.Errorf("Parsing error: too many expressions. [%d,%d]", exps[len(exps)-1].GetLine(), exps[len(exps)-1].GetCharAt())
 	}
 	for ii, exp := range exps {
 		s.Declarations[ii].Init = exp
@@ -245,7 +249,7 @@ func parseVariableDeclaration(tokens []lexer.Token) (*core.VariableDeclaration, 
 
 func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
 	if len(tokens) < 4 { // 4 is len of the most simple if
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse if statement")
 	}
 	ifstmt := &core.IfStatement{
 		Line:   tokens[0].Line,
@@ -256,8 +260,12 @@ func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
 	if err == nil {
 		ifstmt.Assignment = astmt
 		i = i + processed
-		if i >= len(tokens) || tokens[i].Value != ";" {
-			return nil, 0, fmt.Errorf("TODO: ; is expected")
+		if i >= len(tokens) {
+			lastToken := tokens[len(tokens)-1]
+			return nil, 0, fmt.Errorf("Parsing error: unexpected end of statement. [%d,%d]", lastToken.Line, lastToken.CharAt)
+		}
+		if tokens[i].Value != ";" {
+			return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected ';'. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
 		}
 		i++ // skip ';'
 	}
@@ -304,7 +312,7 @@ func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
 
 func parseForStatement(tokens []lexer.Token) (*core.ForStatement, int, error) {
 	if len(tokens) < 3 { // 3 is len of the most simple for
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse for statement")
 	}
 	forstmt := &core.ForStatement{
 		Line:   tokens[0].Line,
@@ -328,7 +336,7 @@ func parseForStatement(tokens []lexer.Token) (*core.ForStatement, int, error) {
 		i++ // skip ';'
 	}
 	if i < len(tokens) && tokens[i].Value == "{" {
-		return nil, 0, fmt.Errorf("TODO Unexpected token {")
+		return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s'. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
 	}
 	estmt, processed, err := parseExpressionStatement(tokens[i:])
 	if err == nil {
@@ -354,7 +362,7 @@ func parseForStatement(tokens []lexer.Token) (*core.ForStatement, int, error) {
 
 func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if len(tokens) == 0 {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse expression")
 	}
 	var tmpExp core.Expression
 	var bexp *core.BinaryExpression
@@ -405,7 +413,8 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 						CharAt:             maexp.CharAt,
 					}
 				} else {
-					return nil, 0, fmt.Errorf("TODO")
+					tt := tokens[i-processed+1]
+					return nil, 0, fmt.Errorf("Parsing error: unexpected expression. [%d,%d]", tt.Line, tt.CharAt)
 				}
 				tmpExp = maexp
 			} else if len(unaryQueue[parenLevel]) > 0 {
@@ -416,7 +425,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 			if maexp != nil && maexp.PropertyExpression == nil && maexp.PropertyIdentifier.Name == "" {
 				vexp, _ := tmpExp.(*core.VariableExpression)
 				if vexp == nil {
-					return nil, 0, fmt.Errorf("TODO")
+					return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s'. [%d,%d]", t.Value, t.Line, t.CharAt)
 				}
 				maexp.PropertyIdentifier = core.Identifier{
 					Name:   vexp.Name,
@@ -454,7 +463,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 				lastBexp.Group = false
 			} else if maexp == nil {
 				if tmpExp == nil {
-					return nil, 0, fmt.Errorf("TODO")
+					return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s'. [%d,%d]", t.Value, t.Line, t.CharAt)
 				}
 				maexp = &core.MemberAccessExpression{
 					Object: tmpExp,
@@ -468,7 +477,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					CharAt: maexp.CharAt,
 				}
 			} else {
-				return nil, 0, fmt.Errorf("TODO")
+				return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s'. [%d,%d]", t.Value, t.Line, t.CharAt)
 			}
 			tmpExp = nil
 		} else if t.IsOperatorSymbol() {
@@ -479,7 +488,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 			}
 			if bexp == nil {
 				if tmpExp == nil {
-					return nil, 0, fmt.Errorf("TODO")
+					return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s'. [%d,%d]", t.Value, t.Line, t.CharAt)
 				}
 				if tmpExp == maexp {
 					maexp = nil
@@ -498,7 +507,7 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					Operator: op,
 				}
 			} else {
-				return nil, 0, fmt.Errorf("TODO")
+				return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s'. [%d,%d]", t.Value, t.Line, t.CharAt)
 			}
 			if bexp != nil && openParen > 0 {
 				bexpsAfterGroup = append(bexpsAfterGroup, bexp)
@@ -516,8 +525,12 @@ func parseExpression(tokens []lexer.Token) (core.Expression, int, error) {
 					return nil, 0, err
 				}
 				i = i + processed
-				if i+1 >= len(tokens) || tokens[i+1].Value != ")" {
-					return nil, 0, fmt.Errorf("TODO")
+				if i+1 >= len(tokens) {
+					lastToken := tokens[len(tokens)-1]
+					return nil, 0, fmt.Errorf("Parsing error: unexpected end of expression. [%d,%d]", lastToken.Line, lastToken.CharAt)
+				}
+				if tokens[i+1].Value != ")" {
+					return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected ')'. [%d,%d]", tokens[i+1].Value, tokens[i+1].Line, tokens[i+1].CharAt)
 				}
 				if lastBexp != nil {
 					tmpExp = &core.CallExpression{
@@ -623,7 +636,7 @@ func wrapInUnaryExpression(exp core.Expression, unaryQueue [][]lexer.Token, pare
 // Check first token, if it is the start of an expression then parse it and return
 func parseTempExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if len(tokens) == 0 {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse expression")
 	}
 	t := tokens[0]
 	if ptype, ok := t.ParsePrimitiveType(); ok {
@@ -654,7 +667,7 @@ func parseTempExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if t.Value == "func" {
 		return parseFunctionExpression(tokens)
 	}
-	return nil, 0, fmt.Errorf("TODO")
+	return nil, 0, fmt.Errorf("Parsing error: cannot parse expression")
 }
 
 func parseSequentIdentifiers(tokens []lexer.Token) ([]core.Identifier, int, error) {
@@ -699,10 +712,9 @@ func parseSequentExpressions(tokens []lexer.Token) ([]core.Expression, int, erro
 	return exps, i, nil
 }
 
-// TODO: method, shorthand
 func parseObjectExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if len(tokens) == 0 || tokens[0].Value != "{" {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse object")
 	}
 	obj := &core.ObjectExpression{
 		Properties: []*core.ObjectProperty{},
@@ -726,8 +738,8 @@ func parseObjectExpression(tokens []lexer.Token) (core.Expression, int, error) {
 				i++
 				break
 			}
-			if prop != nil || !nt.IsIdentifier() { // TODO: or !compute prop key
-				return nil, 0, fmt.Errorf("TODO")
+			if prop != nil || (!nt.IsIdentifier() && nt.Value != "[") {
+				return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s'. [%d,%d]", t.Value, t.Line, t.CharAt)
 			}
 			continue
 		}
@@ -749,13 +761,13 @@ func parseObjectExpression(tokens []lexer.Token) (core.Expression, int, error) {
 				}
 				aexp, _ := exp.(*core.ArrayExpression)
 				if aexp == nil || len(aexp.Elements) != 1 {
-					return nil, 0, fmt.Errorf("TODO")
+					return nil, 0, fmt.Errorf("Parsing error: cannot parse object property key. [%d,%d]", t.Line, t.CharAt)
 				}
 				prop.KeyExpression = aexp.Elements[0]
 				prop.Computed = true
 				i = i + processed - 1
 			} else {
-				return nil, 0, fmt.Errorf("TODO")
+				return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s'. [%d,%d]", t.Value, t.Line, t.CharAt)
 			}
 		} else if prop != nil && t.Value == ":" {
 			exp, processed, err := parseExpression(tokens[i+1:])
@@ -767,7 +779,7 @@ func parseObjectExpression(tokens []lexer.Token) (core.Expression, int, error) {
 			obj.Properties = append(obj.Properties, prop)
 			prop = nil
 		} else {
-			return nil, 0, fmt.Errorf("TODO")
+			return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s'. [%d,%d]", t.Value, t.Line, t.CharAt)
 		}
 	}
 	return obj, i + 1, nil
@@ -775,14 +787,18 @@ func parseObjectExpression(tokens []lexer.Token) (core.Expression, int, error) {
 
 func parseArrayExpression(tokens []lexer.Token) (core.Expression, int, error) {
 	if len(tokens) == 0 || tokens[0].Value != "[" {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse array expession")
 	}
 	exps, processed, err := parseSequentExpressions(tokens[1:]) // skip '['
 	if err != nil {
 		return nil, 0, err
 	}
-	if processed+1 >= len(tokens) || tokens[processed+1].Value != "]" {
-		return nil, 0, fmt.Errorf("TODO")
+	if processed+1 >= len(tokens) {
+		lastToken := tokens[len(tokens)-1]
+		return nil, 0, fmt.Errorf("Parsing error: missing token ']'. [%d,%d]", lastToken.Line, lastToken.CharAt)
+	}
+	if tokens[processed+1].Value != "]" {
+		return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected ']. [%d,%d]", tokens[processed+1].Value, tokens[processed+1].Line, tokens[processed+1].CharAt)
 	}
 	return &core.ArrayExpression{
 		Elements: exps,
@@ -793,10 +809,10 @@ func parseArrayExpression(tokens []lexer.Token) (core.Expression, int, error) {
 
 func parseFunctionExpression(tokens []lexer.Token) (*core.FunctionExpression, int, error) {
 	if len(tokens) < 5 { // 6 is len of the most simple function
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse function expression")
 	}
 	if tokens[1].Value != "(" {
-		return nil, 0, fmt.Errorf("TODO")
+		return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '('. [%d,%d]", tokens[1].Value, tokens[1].Line, tokens[1].CharAt)
 	}
 	i := 1
 	f := &core.FunctionExpression{
@@ -814,10 +830,10 @@ func parseFunctionExpression(tokens []lexer.Token) (*core.FunctionExpression, in
 
 func parseFunctionParamAndBody(tokens []lexer.Token) ([]core.Identifier, []core.Statement, int, error) {
 	if len(tokens) < 4 { // (){} -> min len = 4
-		return nil, nil, 0, fmt.Errorf("TODO")
+		return nil, nil, 0, fmt.Errorf("Parsing error: cannot parse function")
 	}
 	if tokens[0].Value != "(" {
-		return nil, nil, 0, fmt.Errorf("TODO")
+		return nil, nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '('. [%d,%d]", tokens[0].Value, tokens[0].Line, tokens[0].CharAt)
 	}
 	i := 0
 	params, processed, err := parseSequentIdentifiers(tokens[i+1:])
@@ -826,11 +842,11 @@ func parseFunctionParamAndBody(tokens []lexer.Token) ([]core.Identifier, []core.
 		return nil, nil, 0, err
 	}
 	if tokens[i].Value != ")" {
-		return nil, nil, 0, fmt.Errorf("TODO")
+		return nil, nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected ')'. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
 	}
 	i++
 	if tokens[i].Value != "{" {
-		return nil, nil, 0, fmt.Errorf("TODO")
+		return nil, nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '{'. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
 	}
 	statements, processed, err := parseStatements(tokens[i+1:])
 	i = i + processed
@@ -838,7 +854,7 @@ func parseFunctionParamAndBody(tokens []lexer.Token) ([]core.Identifier, []core.
 		return nil, nil, 0, err
 	}
 	if tokens[i].Value != "}" {
-		return nil, nil, 0, fmt.Errorf("TODO")
+		return nil, nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '}'. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
 	}
 	return params, statements, i + 1, nil
 }

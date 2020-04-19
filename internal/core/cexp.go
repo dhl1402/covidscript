@@ -16,7 +16,7 @@ func (e *CallExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	}
 	f, ok := callee.(*FunctionExpression)
 	if !ok {
-		return nil, fmt.Errorf("a is not a function. [%d,%d]", e.Line, e.CharAt) // TODO: e.Callee.ToString()
+		return nil, fmt.Errorf("Runtime error: %s is not a function. [%d,%d]", e.Callee.ToString(), e.Line, e.CharAt)
 	}
 
 	for i, argexp := range e.Arguments {

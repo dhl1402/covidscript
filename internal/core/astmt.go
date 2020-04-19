@@ -21,7 +21,7 @@ func (stmt AssignmentStatement) Execute(ec *ExecutionContext) (Expression, error
 	switch left := stmt.Left.(type) {
 	case (*VariableExpression):
 		if _, ok := ec.Get(left.Name); !ok && !stmt.DeclarationShorthand {
-			return nil, fmt.Errorf("%s is not defined. [%d,%d]", left.Name, stmt.Line, stmt.CharAt)
+			return nil, fmt.Errorf("Runtime error: %s is not defined. [%d,%d]", left.Name, stmt.Line, stmt.CharAt)
 		}
 		if stmt.DeclarationShorthand {
 			ec.Set(left.Name, right)
@@ -75,7 +75,7 @@ func (stmt AssignmentStatement) Execute(ec *ExecutionContext) (Expression, error
 			}
 		}
 	default:
-		return nil, fmt.Errorf("Cannot identify variable. [%d,%d]", stmt.Left.GetLine(), stmt.Left.GetCharAt())
+		return nil, fmt.Errorf("Runtime error: cannot identify variable. [%d,%d]", stmt.Left.GetLine(), stmt.Left.GetCharAt())
 	}
 	return nil, nil
 }

@@ -16,7 +16,7 @@ func NewHandler(s Service, router *httprouter.Router, logger *zap.SugaredLogger)
 		kithttp.ServerErrorEncoder(svc.EncodeError),
 	}
 	router.Handler(http.MethodPost, "/api/:ver/interpret", kithttp.NewServer(
-		makeInterpreteEndpoint(s, svc.NewLoggerMiddleware(logger, "Interpret")),
+		makeInterpretEndpoint(s, svc.NewLoggerMiddleware(logger, "Interpret")),
 		decodeInterpretRequest,
 		encodeInterpretResponse,
 		options...,
