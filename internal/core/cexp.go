@@ -18,7 +18,6 @@ func (e *CallExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	if !ok {
 		return nil, fmt.Errorf("Runtime error: %s is not a function. [%d,%d]", e.Callee.ToString(), e.Line, e.CharAt)
 	}
-
 	for i, argexp := range e.Arguments {
 		arg, err := argexp.Evaluate(ec)
 		if err != nil {
@@ -30,7 +29,11 @@ func (e *CallExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		f.EC.Set(fmt.Sprintf("_args%d_", i), arg)
 	}
 	if f.NativeFunction != nil {
-		return f.NativeFunction(f.EC)
+		rexp, err := f.NativeFunction(f.EC)
+		if err != nil && string(err.Error()[len(err.Error())-1]) == "." {
+			err = fmt.Errorf("%s [%d,%d]", err.Error(), e.Line, e.CharAt)
+		}
+		return rexp, err
 	}
 	for _, stmt := range f.Body {
 		rexp, err := stmt.Execute(f.EC)

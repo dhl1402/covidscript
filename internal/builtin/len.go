@@ -14,7 +14,7 @@ func Len(conf config.Config) *core.FunctionExpression {
 			arg, _ := ec.Get("array")
 			arexp, ok := arg.(*core.ArrayExpression)
 			if !ok {
-				return nil, fmt.Errorf("Runtime error: unexpected type %s, expected array. [%d,%d]", arg.GetType(), arg.GetLine(), arg.GetCharAt())
+				return nil, fmt.Errorf("Runtime error: unexpected %s as argument type of len, expected array.", arg.GetType())
 			}
 			return &core.LiteralExpression{
 				Type:  core.LiteralTypeNumber,
