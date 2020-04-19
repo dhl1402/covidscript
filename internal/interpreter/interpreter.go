@@ -53,6 +53,7 @@ func createGlobalEC(conf config.Config) *core.ExecutionContext {
 			"type":    builtin.Type(conf),
 			"delete":  builtin.Delete(conf),
 			"sort":    builtin.Sort(conf),
+			"neg":     builtin.Negative(conf),
 		},
 	}
 }
