@@ -9,14 +9,14 @@ import (
 
 func Join(conf config.Config) *core.FunctionExpression {
 	return &core.FunctionExpression{
-		Params: []core.Identifier{{Name: "array"}, {Name: "seperator"}},
+		Params: []core.Identifier{{Name: "array"}, {Name: "separator"}},
 		NativeFunction: func(ec *core.ExecutionContext) (core.Expression, error) {
 			arg1, _ := ec.Get("array")
 			arexp, ok := arg1.(*core.ArrayExpression)
 			if !ok {
 				return nil, fmt.Errorf("Runtime error: first argument must be array.")
 			}
-			arg2, _ := ec.Get("seperator")
+			arg2, _ := ec.Get("separator")
 			lexp, ok := arg2.(*core.LiteralExpression)
 			if !ok || (lexp.Type != core.LiteralTypeString && lexp.Type != core.LiteralTypeUndefined) {
 				return nil, fmt.Errorf("Runtime error: second argument must be string.")
