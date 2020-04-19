@@ -17,7 +17,7 @@ func IndexOf(conf config.Config) *core.FunctionExpression {
 				return nil, fmt.Errorf("Runtime error: first argument must be array.")
 			}
 			arg2, _ := ec.Get("elem")
-			for _, elem := range arexp.Elements {
+			for i, elem := range arexp.Elements {
 				bexp := &core.BinaryExpression{
 					Left:     elem,
 					Right:    arg2,
