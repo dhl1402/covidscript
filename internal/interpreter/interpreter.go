@@ -43,6 +43,7 @@ func createGlobalEC(conf config.Config) *core.ExecutionContext {
 			"echo":   builtin.Echo(conf),
 			"len":    builtin.Len(conf),
 			"filter": builtin.Filter(conf),
+			"map":    builtin.Map(conf),
 		},
 	}
 }
