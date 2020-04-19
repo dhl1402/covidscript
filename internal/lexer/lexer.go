@@ -3,7 +3,7 @@ package lexer
 import (
 	"fmt"
 
-	"github.com/dhl1402/covidscript/utils"
+	"github.com/dhl1402/covidscript/internal/utils"
 )
 
 // Lex source code into tokens

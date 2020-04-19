@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/dhl1402/covidscript/core"
-	"github.com/dhl1402/covidscript/lexer"
-	"github.com/dhl1402/covidscript/parser"
+	"github.com/dhl1402/covidscript/internal/core"
+	"github.com/dhl1402/covidscript/internal/lexer"
+	"github.com/dhl1402/covidscript/internal/parser"
 )
 
 func TestExecute(t *testing.T) {
@@ -1629,7 +1629,7 @@ func TestExecute(t *testing.T) {
 			tokens, err := lexer.Lex(tt.in)
 			require.Equal(t, err, nil)
 			stmts, _ := parser.ToAST(tokens)
-			require.Equal(t, tt.err, Execute(tt.inEC, stmts))
+			require.Equal(t, tt.err, execute(tt.inEC, stmts))
 			if tt.err == nil {
 				require.Equal(t, tt.wantEC(), tt.inEC)
 			}
@@ -1650,7 +1650,7 @@ func TestTMP(t *testing.T) {
 			tokens, err := lexer.Lex(tt.in)
 			require.Equal(t, err, nil)
 			stmts, _ := parser.ToAST(tokens)
-			err = Execute(tt.inEC, stmts)
+			err = execute(tt.inEC, stmts)
 			require.Equal(t, tt.err, err)
 			if err == nil {
 				require.Equal(t, tt.wantEC(), tt.inEC)

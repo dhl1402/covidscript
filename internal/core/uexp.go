@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 
-	"github.com/dhl1402/covidscript/utils"
+	"github.com/dhl1402/covidscript/internal/utils"
 )
 
 type UnaryExpression struct {

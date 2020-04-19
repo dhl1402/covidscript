@@ -3,8 +3,8 @@ package lexer
 import (
 	"strconv"
 
-	"github.com/dhl1402/covidscript/core"
-	"github.com/dhl1402/covidscript/utils"
+	"github.com/dhl1402/covidscript/internal/core"
+	"github.com/dhl1402/covidscript/internal/utils"
 )
 
 type Token struct {
