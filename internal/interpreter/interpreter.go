@@ -41,6 +41,7 @@ func createGlobalEC(conf config.Config) *core.ExecutionContext {
 		Type: core.TypeGlobalEC,
 		Variables: map[string]core.Expression{
 			"echo": builtin.Echo(conf),
+			"len":  builtin.Len(conf),
 		},
 	}
 }
