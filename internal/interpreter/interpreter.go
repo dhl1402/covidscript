@@ -44,6 +44,7 @@ func createGlobalEC(conf config.Config) *core.ExecutionContext {
 			"len":    builtin.Len(conf),
 			"filter": builtin.Filter(conf),
 			"map":    builtin.Map(conf),
+			"join":   builtin.Join(conf),
 		},
 	}
 }
