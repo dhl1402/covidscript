@@ -93,12 +93,12 @@ func parseBlockStatement(tokens []lexer.Token) (*core.BlockStatement, int, error
 	if tokens[0].Value != "{" {
 		return nil, 0, fmt.Errorf("TODO: { is expected")
 	}
-	if tokens[len(tokens)-1].Value != "}" {
-		return nil, 0, fmt.Errorf("TODO: } is expected")
-	}
 	stmts, i, err := parseStatements(tokens[1:])
 	if err != nil {
 		return nil, 0, err
+	}
+	if tokens[i].Value != "}" {
+		return nil, 0, fmt.Errorf("TODO: } is expected")
 	}
 	return &core.BlockStatement{
 		Statements: stmts,
