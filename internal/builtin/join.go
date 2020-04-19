@@ -16,7 +16,7 @@ func Join(conf config.Config) *core.FunctionExpression {
 			if !ok {
 				return nil, fmt.Errorf("Runtime error: first argument must be array.")
 			}
-			arg2, _ := ec.Get("seperato")
+			arg2, _ := ec.Get("seperator")
 			lexp, ok := arg2.(*core.LiteralExpression)
 			if !ok || (lexp.Type != core.LiteralTypeString && lexp.Type != core.LiteralTypeUndefined) {
 				return nil, fmt.Errorf("Runtime error: second argument must be string.")
