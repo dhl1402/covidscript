@@ -16,7 +16,7 @@ type Token struct {
 
 func (t Token) IsIdentifier() bool {
 	s := t.Value
-	if match, err := regexp.MatchString("^[a-zA-Z_$][a-zA-Z_$0-9]+$", s); !match || err != nil {
+	if match, err := regexp.MatchString("^[a-zA-Z_$][a-zA-Z_$0-9]*$", s); !match || err != nil {
 		return false
 	}
 	return s != "" && !t.IsOperatorSymbol() && !utils.IsReservedKeyword(s) && !utils.IsSpecialChars(s) && !utils.IsStringBoundary(s) && !utils.IsWhiteSpace(s) && !utils.IsNewLine(s)
