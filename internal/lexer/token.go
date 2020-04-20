@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"regexp"
 	"strconv"
 
 	"github.com/dhl1402/covidscript/internal/core"
@@ -14,8 +15,10 @@ type Token struct {
 }
 
 func (t Token) IsIdentifier() bool {
-	// TODO: regex to test identifier
 	s := t.Value
+	if match, err := regexp.MatchString("^[a-zA-Z_$][a-zA-Z_$0-9]+$", s); !match || err != nil {
+		return false
+	}
 	return s != "" && !t.IsOperatorSymbol() && !utils.IsReservedKeyword(s) && !utils.IsSpecialChars(s) && !utils.IsStringBoundary(s) && !utils.IsWhiteSpace(s) && !utils.IsNewLine(s)
 }
 
