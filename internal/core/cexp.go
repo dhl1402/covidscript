@@ -18,25 +18,38 @@ func (e *CallExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	if !ok {
 		return nil, fmt.Errorf("Runtime error: %s is not a function. [%d,%d]", e.Callee.ToString(), e.Line, e.CharAt)
 	}
+	fEC := f.EC.Clone()
+	if f.EC.Type == TypeGlobalEC {
+		fEC = f.EC
+	}
 	for i, argexp := range e.Arguments {
 		arg, err := argexp.Evaluate(ec)
 		if err != nil {
 			return nil, err
 		}
 		if i < len(f.Params) {
-			f.EC.Set(f.Params[i].Name, arg)
+			fEC.Set(f.Params[i].Name, arg)
 		}
-		f.EC.Set(fmt.Sprintf("_args%d_", i), arg)
+		fEC.Set(fmt.Sprintf("_args%d_", i), arg)
+	}
+	for _, p := range f.Params {
+		if _, exist := fEC.Get(p.Name); !exist {
+			fEC.Set(p.Name, &LiteralExpression{
+				Type:   LiteralTypeUndefined,
+				Line:   p.Line,
+				CharAt: p.CharAt,
+			})
+		}
 	}
 	if f.NativeFunction != nil {
-		rexp, err := f.NativeFunction(f.EC)
+		rexp, err := f.NativeFunction(fEC)
 		if err != nil && string(err.Error()[len(err.Error())-1]) == "." {
 			err = fmt.Errorf("%s [%d,%d]", err.Error(), e.Line, e.CharAt)
 		}
 		return rexp, err
 	}
 	for _, stmt := range f.Body {
-		rexp, err := stmt.Execute(f.EC)
+		rexp, err := stmt.Execute(fEC)
 		if rexp != nil || err != nil {
 			return rexp, err
 		}

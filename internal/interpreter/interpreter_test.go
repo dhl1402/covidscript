@@ -22,10 +22,12 @@ func TestExecute(t *testing.T) {
 			name: "execute variable declaration #1",
 			in:   "var a = 1",
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   core.LiteralTypeNumber,
@@ -43,10 +45,12 @@ func TestExecute(t *testing.T) {
 			in: `var a = 1
 				 var a = 2`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   core.LiteralTypeNumber,
@@ -64,10 +68,12 @@ func TestExecute(t *testing.T) {
 			in: `var a = 1
 				 var b = 2`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   core.LiteralTypeNumber,
@@ -91,10 +97,12 @@ func TestExecute(t *testing.T) {
 			in: `var a,b = 1,"2"
 				 var c = #f`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   core.LiteralTypeNumber,
@@ -123,10 +131,12 @@ func TestExecute(t *testing.T) {
 			name: "execute variable declaration #5",
 			in:   `var a,b = 1`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   core.LiteralTypeNumber,
@@ -153,10 +163,12 @@ func TestExecute(t *testing.T) {
 				 }
 				 var d = a.b.c`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.ObjectExpression{
 							Properties: []*core.ObjectProperty{
@@ -213,10 +225,12 @@ func TestExecute(t *testing.T) {
 				   1+#f,
 				 ]`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.ArrayExpression{
 							Elements: []core.Expression{
@@ -251,10 +265,12 @@ func TestExecute(t *testing.T) {
 			name: "execute variable declaration #8",
 			in:   `var a = func(){}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.FunctionExpression{
@@ -279,10 +295,12 @@ func TestExecute(t *testing.T) {
 			}
 			var d = a(1,2)`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.FunctionExpression{
@@ -316,33 +334,8 @@ func TestExecute(t *testing.T) {
 						},
 					},
 					EC: &core.ExecutionContext{
-						Outer: gec,
-						Variables: map[string]core.Expression{
-							"b": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "1",
-								Line:   3,
-								CharAt: 8,
-							},
-							"c": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "2",
-								Line:   3,
-								CharAt: 10,
-							},
-							"_args0_": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "1",
-								Line:   3,
-								CharAt: 8,
-							},
-							"_args1_": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "2",
-								Line:   3,
-								CharAt: 10,
-							},
-						},
+						Outer:     gec,
+						Variables: map[string]core.Expression{},
 					},
 					Line:   5,
 					CharAt: 9,
@@ -361,10 +354,12 @@ func TestExecute(t *testing.T) {
 			name: "execute variable declaration #10",
 			in:   `a:=1`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
@@ -381,10 +376,12 @@ func TestExecute(t *testing.T) {
 			name: "execute function declaration #1",
 			in:   `func a(){}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.FunctionExpression{
@@ -409,10 +406,12 @@ func TestExecute(t *testing.T) {
 			}
 			var d = a(1,2)`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.FunctionExpression{
@@ -446,33 +445,8 @@ func TestExecute(t *testing.T) {
 						},
 					},
 					EC: &core.ExecutionContext{
-						Outer: gec,
-						Variables: map[string]core.Expression{
-							"b": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "1",
-								Line:   3,
-								CharAt: 8,
-							},
-							"c": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "2",
-								Line:   3,
-								CharAt: 10,
-							},
-							"_args0_": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "1",
-								Line:   3,
-								CharAt: 8,
-							},
-							"_args1_": &core.LiteralExpression{
-								Type:   core.LiteralTypeNumber,
-								Value:  "2",
-								Line:   3,
-								CharAt: 10,
-							},
-						},
+						Outer:     gec,
+						Variables: map[string]core.Expression{},
 					},
 					Line:   5,
 					CharAt: 9,
@@ -495,10 +469,12 @@ func TestExecute(t *testing.T) {
 				 }
 				 b()`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.LiteralExpression{
@@ -545,6 +521,7 @@ func TestExecute(t *testing.T) {
 			a()
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: nil,
@@ -558,6 +535,7 @@ func TestExecute(t *testing.T) {
 			a()
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: nil,
@@ -570,10 +548,12 @@ func TestExecute(t *testing.T) {
 				a=1
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   core.LiteralTypeNumber,
@@ -594,10 +574,12 @@ func TestExecute(t *testing.T) {
 				b=a+1
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   core.LiteralTypeNumber,
@@ -623,10 +605,12 @@ func TestExecute(t *testing.T) {
 				a[0]="xxx"
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.ArrayExpression{
 							Elements: []core.Expression{
@@ -658,10 +642,12 @@ func TestExecute(t *testing.T) {
 				a[1][1]="xxx"
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.ArrayExpression{
 							Elements: []core.Expression{
@@ -706,10 +692,12 @@ func TestExecute(t *testing.T) {
 				a[b[1]][1]="xxx"
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.ArrayExpression{
 							Elements: []core.Expression{
@@ -771,10 +759,12 @@ func TestExecute(t *testing.T) {
 				a.b=2
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.ObjectExpression{
 							Properties: []*core.ObjectProperty{
@@ -809,10 +799,12 @@ func TestExecute(t *testing.T) {
 				a.c=2
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.ObjectExpression{
 							Properties: []*core.ObjectProperty{
@@ -862,10 +854,12 @@ func TestExecute(t *testing.T) {
 				a["c"]=2
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.ObjectExpression{
 							Properties: []*core.ObjectProperty{
@@ -917,10 +911,12 @@ func TestExecute(t *testing.T) {
 				a.c[1]="xxx"
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.ObjectExpression{
 							Properties: []*core.ObjectProperty{
@@ -986,27 +982,31 @@ func TestExecute(t *testing.T) {
 				var d=a(1)(2)
 			`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				aec := &core.ExecutionContext{
-					Outer: gec,
-					Variables: map[string]core.Expression{
-						"b": &core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "1",
-							Line:   4,
-							CharAt: 8,
-						},
-						"_args0_": &core.LiteralExpression{
-							Type:   core.LiteralTypeNumber,
-							Value:  "1",
-							Line:   4,
-							CharAt: 8,
-						},
+					Outer:     gec,
+					Variables: map[string]core.Expression{},
+				}
+				aecClone := aec.Clone()
+				aecClone.Variables = map[string]core.Expression{
+					"b": &core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "1",
+						Line:   4,
+						CharAt: 8,
+					},
+					"_args0_": &core.LiteralExpression{
+						Type:   core.LiteralTypeNumber,
+						Value:  "1",
+						Line:   4,
+						CharAt: 8,
 					},
 				}
 				gec.Variables["a"] = &core.FunctionExpression{
@@ -1053,21 +1053,8 @@ func TestExecute(t *testing.T) {
 									},
 								},
 								EC: &core.ExecutionContext{
-									Outer: aec,
-									Variables: map[string]core.Expression{
-										"c": &core.LiteralExpression{
-											Type:   core.LiteralTypeNumber,
-											Value:  "2",
-											Line:   4,
-											CharAt: 10,
-										},
-										"_args0_": &core.LiteralExpression{
-											Type:   core.LiteralTypeNumber,
-											Value:  "2",
-											Line:   4,
-											CharAt: 10,
-										},
-									},
+									Outer:     aecClone,
+									Variables: map[string]core.Expression{},
 								},
 								Line:   3,
 								CharAt: 8,
@@ -1098,10 +1085,12 @@ func TestExecute(t *testing.T) {
 					a=1
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.LiteralExpression{
@@ -1122,10 +1111,12 @@ func TestExecute(t *testing.T) {
 					a=2
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.LiteralExpression{
@@ -1146,10 +1137,12 @@ func TestExecute(t *testing.T) {
 					a=2
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.LiteralExpression{
@@ -1172,10 +1165,12 @@ func TestExecute(t *testing.T) {
 					a=3	
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.LiteralExpression{
@@ -1200,10 +1195,12 @@ func TestExecute(t *testing.T) {
 					a=4	
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.LiteralExpression{
@@ -1230,10 +1227,12 @@ func TestExecute(t *testing.T) {
 					a=5	
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.LiteralExpression{
@@ -1254,10 +1253,12 @@ func TestExecute(t *testing.T) {
 					a=b
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				gec := &core.ExecutionContext{
+					Type:      core.TypeGlobalEC,
 					Variables: map[string]core.Expression{},
 				}
 				gec.Variables["a"] = &core.LiteralExpression{
@@ -1279,10 +1280,12 @@ func TestExecute(t *testing.T) {
 					b=3
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
@@ -1311,10 +1314,12 @@ func TestExecute(t *testing.T) {
 					b=4
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"b": &core.LiteralExpression{
 							Type:   "number",
@@ -1337,10 +1342,12 @@ func TestExecute(t *testing.T) {
 					c=4
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"c": &core.LiteralExpression{
 							Type:   "number",
@@ -1360,6 +1367,7 @@ func TestExecute(t *testing.T) {
 					break
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: nil,
@@ -1372,6 +1380,7 @@ func TestExecute(t *testing.T) {
 					continue
 				}`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: nil,
@@ -1386,10 +1395,12 @@ func TestExecute(t *testing.T) {
 				}
 				`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
@@ -1412,10 +1423,12 @@ func TestExecute(t *testing.T) {
 				}
 				`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
@@ -1444,10 +1457,12 @@ func TestExecute(t *testing.T) {
 				}
 				`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
@@ -1469,10 +1484,12 @@ func TestExecute(t *testing.T) {
 				}
 				`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
@@ -1497,10 +1514,12 @@ func TestExecute(t *testing.T) {
 				}
 				`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
@@ -1525,10 +1544,12 @@ func TestExecute(t *testing.T) {
 				}
 				`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
@@ -1551,10 +1572,12 @@ func TestExecute(t *testing.T) {
 				}
 				`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
@@ -1579,10 +1602,12 @@ func TestExecute(t *testing.T) {
 				}
 				`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",
@@ -1607,10 +1632,12 @@ func TestExecute(t *testing.T) {
 				}
 				`,
 			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
 				Variables: map[string]core.Expression{},
 			},
 			wantEC: func() *core.ExecutionContext {
 				return &core.ExecutionContext{
+					Type: core.TypeGlobalEC,
 					Variables: map[string]core.Expression{
 						"a": &core.LiteralExpression{
 							Type:   "number",

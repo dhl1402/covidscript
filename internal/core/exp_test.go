@@ -1416,7 +1416,7 @@ func TestEvaluate_FunctionExpression(t *testing.T) {
 					},
 				},
 				Body: []Statement{},
-				EC:   &ExecutionContext{},
+				EC:   nil,
 			},
 			want: &FunctionExpression{
 				Params: []Identifier{
@@ -1429,14 +1429,7 @@ func TestEvaluate_FunctionExpression(t *testing.T) {
 				},
 				Body: []Statement{},
 				EC: &ExecutionContext{
-					Variables: map[string]Expression{
-						"a": &LiteralExpression{
-							Type: LiteralTypeUndefined,
-						},
-						"b": &LiteralExpression{
-							Type: LiteralTypeUndefined,
-						},
-					},
+					Variables: map[string]Expression{},
 				},
 			},
 			err: nil,
@@ -1473,7 +1466,7 @@ func TestEvaluate_CallExpression(t *testing.T) {
 							},
 						},
 						Body: []Statement{},
-						EC:   &ExecutionContext{},
+						EC:   nil,
 					},
 				},
 			},
@@ -1516,7 +1509,6 @@ func TestEvaluate_CallExpression(t *testing.T) {
 								},
 							},
 						},
-						EC: &ExecutionContext{},
 					},
 				},
 			},
@@ -1542,7 +1534,7 @@ func TestEvaluate_CallExpression(t *testing.T) {
 			err: nil,
 		},
 		{
-			name: "evaluate call expression #1",
+			name: "evaluate call expression #3",
 			ec: &ExecutionContext{
 				Variables: map[string]Expression{
 					"a": &LiteralExpression{

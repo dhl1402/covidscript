@@ -38,3 +38,15 @@ func (ec *ExecutionContext) Assign(s string, exp Expression) bool {
 	}
 	return false
 }
+
+func (ec *ExecutionContext) Clone() *ExecutionContext {
+	vars := map[string]Expression{}
+	for k, v := range ec.Variables {
+		vars[k] = v
+	}
+	return &ExecutionContext{
+		Type:      ec.Type,
+		Outer:     ec.Outer,
+		Variables: vars,
+	}
+}

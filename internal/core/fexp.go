@@ -17,15 +17,6 @@ func (e *FunctionExpression) Evaluate(ec *ExecutionContext) (Expression, error) 
 			Outer:     ec,
 			Variables: map[string]Expression{},
 		}
-	} else if e.EC.Type != TypeGlobalEC {
-		e.EC.Variables = map[string]Expression{}
-	}
-	for _, p := range e.Params {
-		e.EC.Set(p.Name, &LiteralExpression{
-			Type:   LiteralTypeUndefined,
-			Line:   p.Line,
-			CharAt: p.CharAt,
-		})
 	}
 	return e, nil
 }
