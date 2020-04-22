@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/dhl1402/covidscript/internal/config"
 	"github.com/dhl1402/covidscript/internal/core"
 )
 
-func Sort(conf config.Config) *core.FunctionExpression {
+func Sort() *core.FunctionExpression {
 	return &core.FunctionExpression{
 		Params: []core.Identifier{
 			{Name: "array"},

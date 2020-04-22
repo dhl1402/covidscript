@@ -3,11 +3,10 @@ package builtin
 import (
 	"fmt"
 
-	"github.com/dhl1402/covidscript/internal/config"
 	"github.com/dhl1402/covidscript/internal/core"
 )
 
-func Values(conf config.Config) *core.FunctionExpression {
+func Values() *core.FunctionExpression {
 	return &core.FunctionExpression{
 		Params: []core.Identifier{{Name: "obj"}},
 		NativeFunction: func(ec *core.ExecutionContext) (core.Expression, error) {

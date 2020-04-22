@@ -3,11 +3,10 @@ package builtin
 import (
 	"fmt"
 
-	"github.com/dhl1402/covidscript/internal/config"
 	"github.com/dhl1402/covidscript/internal/core"
 )
 
-func IndexOf(conf config.Config) *core.FunctionExpression {
+func IndexOf() *core.FunctionExpression {
 	return &core.FunctionExpression{
 		Params: []core.Identifier{{Name: "array"}, {Name: "elem"}},
 		NativeFunction: func(ec *core.ExecutionContext) (core.Expression, error) {

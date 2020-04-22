@@ -3,11 +3,10 @@ package builtin
 import (
 	"fmt"
 
-	"github.com/dhl1402/covidscript/internal/config"
 	"github.com/dhl1402/covidscript/internal/core"
 )
 
-func Map(conf config.Config) *core.FunctionExpression {
+func Map() *core.FunctionExpression {
 	return &core.FunctionExpression{
 		Params: []core.Identifier{
 			{Name: "input"},

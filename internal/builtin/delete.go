@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/dhl1402/covidscript/internal/config"
 	"github.com/dhl1402/covidscript/internal/core"
 )
 
-func Delete(conf config.Config) *core.FunctionExpression {
+func Delete() *core.FunctionExpression {
 	return &core.FunctionExpression{
 		Params: []core.Identifier{
 			{Name: "input"},
