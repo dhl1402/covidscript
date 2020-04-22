@@ -29,11 +29,11 @@ func Map(conf config.Config) *core.FunctionExpression {
 					cexp := core.CallExpression{
 						Callee: fexp,
 						Arguments: []core.Expression{
+							elem,
 							&core.LiteralExpression{
 								Type:  core.LiteralTypeNumber,
 								Value: fmt.Sprintf("%d", i),
 							},
-							elem,
 						},
 					}
 					rexp, err := cexp.Evaluate(ec)
@@ -59,7 +59,7 @@ func Map(conf config.Config) *core.FunctionExpression {
 					}
 					cexp := core.CallExpression{
 						Callee:    fexp,
-						Arguments: []core.Expression{key, prop.Value},
+						Arguments: []core.Expression{prop.Value, key},
 					}
 					rexp, err := cexp.Evaluate(ec)
 					if err != nil {
