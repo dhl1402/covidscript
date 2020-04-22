@@ -3,11 +3,10 @@ package builtin
 import (
 	"fmt"
 
-	"github.com/dhl1402/covidscript/internal/config"
 	"github.com/dhl1402/covidscript/internal/core"
 )
 
-func Append(conf config.Config) *core.FunctionExpression {
+func Append() *core.FunctionExpression {
 	return &core.FunctionExpression{
 		Params: []core.Identifier{{Name: "array"}},
 		NativeFunction: func(ec *core.ExecutionContext) (core.Expression, error) {
