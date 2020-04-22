@@ -440,6 +440,11 @@ func TestLex_Token(t *testing.T) {
 				{Value: "}", Line: 4, CharAt: 1},
 			},
 		},
+		{
+			name: "lex comment #3",
+			in:   `// abc`,
+			want: []Token{},
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {

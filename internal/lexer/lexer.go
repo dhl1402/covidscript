@@ -132,6 +132,9 @@ func lexComment(sc string) (string, error) {
 	c := string(sc[0])
 	for !utils.IsNewLine(c) {
 		result = result + c
+		if len(result) == len(sc) {
+			break
+		}
 		c = string(sc[len(result)])
 	}
 	return result, nil
