@@ -3,9 +3,11 @@ package playground
 import (
 	"bytes"
 	"context"
+	"fmt"
 
 	"github.com/dhl1402/covidscript/internal/config"
 	"github.com/dhl1402/covidscript/internal/interpreter"
+	"github.com/getsentry/sentry-go"
 	"go.uber.org/zap"
 )
 
@@ -29,6 +31,7 @@ func (s *service) Intepret(ctx context.Context, req InterpretRequest) (*Interpre
 	err := interpreter.Interpret(req.Script, config.Config{Writer: &buf})
 	if err != nil {
 		errMessage = err.Error()
+		sentry.CaptureException(fmt.Errorf("Script: %s\nError: %s", req.Script, errMessage),
 	}
 	return &InterpretResponse{
 		Error:    errMessage,

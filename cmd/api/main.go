@@ -10,6 +10,7 @@ import (
 	"github.com/dhl1402/covidscript/cmd/api/playground"
 	"github.com/dhl1402/covidscript/cmd/api/svc"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -18,6 +19,9 @@ func main() {
 	logger := svc.MakeLogger()
 	defer logger.Sync()
 	sugar := logger.Sugar()
+	sentry.Init(sentry.ClientOptions{
+		Dsn: "https://2d7eee162843474d8021b4f3592e3df9@o316001.ingest.sentry.io/5209601",
+	})
 
 	s := playground.New(sugar.With("svc", "playground"))
 	playground.NewHandler(s, router, sugar)
