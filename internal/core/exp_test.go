@@ -1353,6 +1353,38 @@ func TestEvaluate_MemberAccessExpression(t *testing.T) {
 			want: nil,
 			err:  fmt.Errorf("Runtime error: can't access property of type number. [1,1]"),
 		},
+		{
+			name: "evaluate member access expression #11",
+			ec: &ExecutionContext{
+				Variables: map[string]Expression{
+					"a": &LiteralExpression{
+						Type:   LiteralTypeString,
+						Value:  "abc",
+						Line:   1,
+						CharAt: 1,
+					},
+				},
+			},
+			exp: &MemberAccessExpression{
+				Object: &VariableExpression{
+					Name:   "a",
+					Line:   1,
+					CharAt: 1,
+				},
+				PropertyExpression: &LiteralExpression{
+					Type:  LiteralTypeNumber,
+					Value: "1",
+				},
+				Compute: true,
+			},
+			want: &LiteralExpression{
+				Type:   LiteralTypeString,
+				Value:  "b",
+				Line:   1,
+				CharAt: 3,
+			},
+			err: nil,
+		},
 	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {

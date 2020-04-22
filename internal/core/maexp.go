@@ -72,6 +72,32 @@ func (e *MemberAccessExpression) Evaluate(ec *ExecutionContext) (Expression, err
 			return o.Elements[i], nil
 		}
 		return nil, fmt.Errorf("Runtime error: invalid array index. [%d,%d]", pexp.Line, pexp.CharAt)
+	case (*LiteralExpression):
+		if o.Type != LiteralTypeString {
+			break
+		}
+		if !e.Compute {
+			return &LiteralExpression{
+				Type:   LiteralTypeUndefined,
+				Line:   e.Line,
+				CharAt: e.CharAt,
+			}, nil
+		}
+		if pexp.Type != LiteralTypeNumber {
+			return nil, fmt.Errorf("Runtime error: index must be number. [%d,%d]", pexp.Line, pexp.GetCharAt())
+		}
+		if i, err := strconv.Atoi(pexp.Value); err == nil {
+			if i >= len(o.Value) {
+				return nil, fmt.Errorf("Runtime error: index is out of range. [%d.%d]", pexp.Line, pexp.CharAt)
+			}
+			return &LiteralExpression{
+				Type:   LiteralTypeString,
+				Value:  string(o.Value[i]),
+				Line:   o.Line,
+				CharAt: o.CharAt + i + 1,
+			}, nil
+		}
+		return nil, fmt.Errorf("Runtime error: invalid index. [%d,%d]", pexp.Line, pexp.CharAt)
 	}
 	return nil, fmt.Errorf("Runtime error: can't access property of type %s. [%d,%d]", obj.GetType(), e.Line, e.CharAt)
 }
