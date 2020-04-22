@@ -31,7 +31,7 @@ func (s *service) Intepret(ctx context.Context, req InterpretRequest) (*Interpre
 	err := interpreter.Interpret(req.Script, config.Config{Writer: &buf})
 	if err != nil {
 		errMessage = err.Error()
-		sentry.CaptureException(fmt.Errorf("Script: %s\nError: %s", req.Script, errMessage),
+		sentry.CaptureException(fmt.Errorf("Script: %s\nError: %s", req.Script, errMessage))
 	}
 	return &InterpretResponse{
 		Error:    errMessage,
