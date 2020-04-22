@@ -1,12 +1,12 @@
 package core
 
 type ForStatement struct {
-	Assignment *AssignmentStatement
-	Test       Expression
-	Update     *AssignmentStatement
-	Body       BlockStatement
-	Line       int
-	CharAt     int
+	Init   Statement
+	Test   Expression
+	Update *AssignmentStatement
+	Body   BlockStatement
+	Line   int
+	CharAt int
 }
 
 func (stmt ForStatement) Execute(ec *ExecutionContext) (Expression, error) {
@@ -15,8 +15,8 @@ func (stmt ForStatement) Execute(ec *ExecutionContext) (Expression, error) {
 		Outer:     ec,
 		Variables: map[string]Expression{},
 	}
-	if stmt.Assignment != nil {
-		_, err := stmt.Assignment.Execute(bec)
+	if stmt.Init != nil {
+		_, err := stmt.Init.Execute(bec)
 		if err != nil {
 			return nil, err
 		}

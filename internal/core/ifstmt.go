@@ -2,7 +2,7 @@ package core
 
 type IfStatement struct {
 	Test       Expression
-	Assignment *AssignmentStatement
+	Init       Statement
 	Consequent BlockStatement
 	Alternate  *IfStatement
 	Line       int
@@ -17,8 +17,8 @@ func (stmt IfStatement) Execute(ec *ExecutionContext) (Expression, error) {
 	}
 	s := stmt
 	for true {
-		if s.Assignment != nil {
-			_, err := s.Assignment.Execute(bec)
+		if s.Init != nil {
+			_, err := s.Init.Execute(bec)
 			if err != nil {
 				return nil, err
 			}

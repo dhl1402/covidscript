@@ -69,18 +69,22 @@ func parseStatements(tokens []lexer.Token) ([]core.Statement, int, error) {
 		case t.Value == ";":
 			continue
 		default:
-			s, processed, err := parseAssignmentStatement(tokens[i:])
-			if err == nil {
+			if s, processed, err := parseShorthandVariableDeclaration(tokens[i:]); err == nil {
 				ss = append(ss, *s)
 				i = i + processed - 1
-			} else {
-				s, processed, err := parseExpressionStatement(tokens[i:])
-				if err != nil {
-					return nil, 0, err
-				}
-				ss = append(ss, *s)
-				i = i + processed - 1
+				continue
 			}
+			if s, processed, err := parseAssignmentStatement(tokens[i:]); err == nil {
+				ss = append(ss, *s)
+				i = i + processed - 1
+				continue
+			}
+			s, processed, err := parseExpressionStatement(tokens[i:])
+			if err != nil {
+				return nil, 0, err
+			}
+			ss = append(ss, *s)
+			i = i + processed - 1
 		}
 	}
 	return ss, i, nil
@@ -119,8 +123,8 @@ func parseAssignmentStatement(tokens []lexer.Token) (*core.AssignmentStatement, 
 		lastToken := tokens[len(tokens)-1]
 		return nil, 0, fmt.Errorf("Parsing error: unexpected end of statement. [%d,%d]", lastToken.Line, lastToken.CharAt)
 	}
-	if tokens[i].Value != "=" && tokens[i].Value != ":=" {
-		return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '=' or ':='. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
+	if tokens[i].Value != "=" {
+		return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '='. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
 	}
 	switch exp.(type) {
 	case *core.VariableExpression:
@@ -132,9 +136,6 @@ func parseAssignmentStatement(tokens []lexer.Token) (*core.AssignmentStatement, 
 		Left:   exp,
 		Line:   tokens[0].Line,
 		CharAt: tokens[0].CharAt,
-	}
-	if tokens[i].Value == ":=" {
-		as.DeclarationShorthand = true
 	}
 	i++ // handle '=' -> +1
 	rightExp, processed, err := parseExpression(tokens[i:])
@@ -247,6 +248,49 @@ func parseVariableDeclaration(tokens []lexer.Token) (*core.VariableDeclaration, 
 	return s, i + processed + 2, nil
 }
 
+func parseShorthandVariableDeclaration(tokens []lexer.Token) (*core.VariableDeclaration, int, error) {
+	if len(tokens) == 0 {
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse variable declaration")
+	}
+	ids, i, err := parseSequentIdentifiers(tokens[0:])
+	if err != nil {
+		return nil, 0, err
+	}
+	if len(ids) == 0 {
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse variable names. [%d,%d]", tokens[0].Line, tokens[0].CharAt)
+	}
+	s := &core.VariableDeclaration{
+		Line:   tokens[0].Line,
+		CharAt: tokens[0].CharAt,
+	}
+	for _, id := range ids {
+		s.Declarations = append(s.Declarations, core.VariableDeclarator{
+			ID:     id,
+			Init:   nil,
+			Line:   id.Line,
+			CharAt: id.CharAt,
+		})
+	}
+	if i >= len(tokens) || tokens[i].Value != ":=" {
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse variable declaration")
+	}
+	// start parsing variable initialization
+	exps, processed, err := parseSequentExpressions(tokens[i+1:])
+	if err != nil {
+		return nil, 0, err
+	}
+	if exps == nil {
+		return nil, 0, fmt.Errorf("Parsing error: cannot parse variable initialization. [%d,%d]", tokens[i+1].Line, tokens[i+1].CharAt)
+	}
+	if len(exps) > len(s.Declarations) {
+		return nil, 0, fmt.Errorf("Parsing error: too many expressions. [%d,%d]", exps[len(exps)-1].GetLine(), exps[len(exps)-1].GetCharAt())
+	}
+	for ii, exp := range exps {
+		s.Declarations[ii].Init = exp
+	}
+	return s, i + processed + 1, nil
+}
+
 func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
 	if len(tokens) < 4 { // 4 is len of the most simple if
 		return nil, 0, fmt.Errorf("Parsing error: cannot parse if statement")
@@ -256,9 +300,19 @@ func parseIfStatement(tokens []lexer.Token) (*core.IfStatement, int, error) {
 		CharAt: tokens[0].CharAt,
 	}
 	i := 1 // skip 'if'
-	astmt, processed, err := parseAssignmentStatement(tokens[i:])
-	if err == nil {
-		ifstmt.Assignment = astmt
+	if vdstmt, processed, err := parseShorthandVariableDeclaration(tokens[i:]); err == nil {
+		ifstmt.Init = vdstmt
+		i = i + processed
+		if i >= len(tokens) {
+			lastToken := tokens[len(tokens)-1]
+			return nil, 0, fmt.Errorf("Parsing error: unexpected end of statement. [%d,%d]", lastToken.Line, lastToken.CharAt)
+		}
+		if tokens[i].Value != ";" {
+			return nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected ';'. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
+		}
+		i++ // skip ';'
+	} else if astmt, processed, err := parseAssignmentStatement(tokens[i:]); err == nil {
+		ifstmt.Init = astmt
 		i = i + processed
 		if i >= len(tokens) {
 			lastToken := tokens[len(tokens)-1]
@@ -327,9 +381,11 @@ func parseForStatement(tokens []lexer.Token) (*core.ForStatement, int, error) {
 		forstmt.Body = *bstmt
 		return forstmt, i + processed, nil
 	}
-	astmt, processed, err := parseAssignmentStatement(tokens[i:])
-	if err == nil {
-		forstmt.Assignment = astmt
+	if vdstmt, processed, err := parseShorthandVariableDeclaration(tokens[i:]); err == nil {
+		forstmt.Init = vdstmt
+		i = i + processed
+	} else if astmt, processed, err := parseAssignmentStatement(tokens[i:]); err == nil {
+		forstmt.Init = astmt
 		i = i + processed
 	}
 	if i < len(tokens) && tokens[i].Value == ";" {

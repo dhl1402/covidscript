@@ -5971,25 +5971,70 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 			name: "parse assignment statement #2",
 			in:   "a:=b",
 			want: []core.Statement{
-				core.AssignmentStatement{
-					Left: &core.VariableExpression{
-						Name:   "a",
-						Line:   1,
-						CharAt: 1,
+				core.VariableDeclaration{
+					Declarations: []core.VariableDeclarator{
+						{
+							ID: core.Identifier{
+								Name:   "a",
+								Line:   1,
+								CharAt: 1,
+							},
+							Init: &core.VariableExpression{
+								Name:   "b",
+								Line:   1,
+								CharAt: 4,
+							},
+							Line:   1,
+							CharAt: 1,
+						},
 					},
-					Right: &core.VariableExpression{
-						Name:   "b",
-						Line:   1,
-						CharAt: 4,
-					},
-					DeclarationShorthand: true,
-					Line:                 1,
-					CharAt:               1,
+					Line:   1,
+					CharAt: 1,
 				},
 			},
 		},
 		{
-			name: "parse call expression #3",
+			name: "parse assignment statement #3",
+			in:   "a,b:=c,d",
+			want: []core.Statement{
+				core.VariableDeclaration{
+					Declarations: []core.VariableDeclarator{
+						{
+							ID: core.Identifier{
+								Name:   "a",
+								Line:   1,
+								CharAt: 1,
+							},
+							Init: &core.VariableExpression{
+								Name:   "c",
+								Line:   1,
+								CharAt: 6,
+							},
+							Line:   1,
+							CharAt: 1,
+						},
+						{
+							ID: core.Identifier{
+								Name:   "b",
+								Line:   1,
+								CharAt: 3,
+							},
+							Init: &core.VariableExpression{
+								Name:   "d",
+								Line:   1,
+								CharAt: 8,
+							},
+							Line:   1,
+							CharAt: 3,
+						},
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+		{
+			name: "parse call expression #4",
 			in: `var a=1
 			     a=(b)`,
 			want: []core.Statement{
@@ -6031,7 +6076,7 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 			},
 		},
 		{
-			name: "parse assignment statement #4",
+			name: "parse assignment statement #5",
 			in:   "a.b=c",
 			want: []core.Statement{
 				core.AssignmentStatement{
@@ -6060,8 +6105,8 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 			},
 		},
 		{
-			name: "parse assignment statement #5",
-			in:   "a.b:=c",
+			name: "parse assignment statement #6",
+			in:   "a.b=c",
 			want: []core.Statement{
 				core.AssignmentStatement{
 					Left: &core.MemberAccessExpression{
@@ -6081,11 +6126,10 @@ func TestToAST_AssignmentStatement(t *testing.T) {
 					Right: &core.VariableExpression{
 						Name:   "c",
 						Line:   1,
-						CharAt: 6,
+						CharAt: 5,
 					},
-					DeclarationShorthand: true,
-					Line:                 1,
-					CharAt:               1,
+					Line:   1,
+					CharAt: 1,
 				},
 			},
 		},
@@ -6111,6 +6155,27 @@ func TestToAST_IfStatement(t *testing.T) {
 			in:   `if a:=2;a>0{}`,
 			want: []core.Statement{
 				core.IfStatement{
+					Init: &core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "a",
+									Line:   1,
+									CharAt: 4,
+								},
+								Init: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   1,
+									CharAt: 7,
+								},
+								Line:   1,
+								CharAt: 4,
+							},
+						},
+						Line:   1,
+						CharAt: 4,
+					},
 					Test: &core.BinaryExpression{
 						Left: &core.VariableExpression{
 							Name:   "a",
@@ -6135,22 +6200,6 @@ func TestToAST_IfStatement(t *testing.T) {
 						Statements: []core.Statement{},
 						Line:       1,
 						CharAt:     12,
-					},
-					Assignment: &core.AssignmentStatement{
-						Left: &core.VariableExpression{
-							Name:   "a",
-							Line:   1,
-							CharAt: 4,
-						},
-						Right: &core.LiteralExpression{
-							Type:   "number",
-							Value:  "2",
-							Line:   1,
-							CharAt: 7,
-						},
-						DeclarationShorthand: true,
-						Line:                 1,
-						CharAt:               4,
 					},
 					Line:   1,
 					CharAt: 1,
@@ -6211,21 +6260,26 @@ func TestToAST_IfStatement(t *testing.T) {
 						Line:   1,
 						CharAt: 12,
 					},
-					Assignment: &core.AssignmentStatement{
-						Left: &core.VariableExpression{
-							Name:   "a",
-							Line:   1,
-							CharAt: 4,
+					Init: &core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "a",
+									Line:   1,
+									CharAt: 4,
+								},
+								Init: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   1,
+									CharAt: 7,
+								},
+								Line:   1,
+								CharAt: 4,
+							},
 						},
-						Right: &core.LiteralExpression{
-							Type:   "number",
-							Value:  "2",
-							Line:   1,
-							CharAt: 7,
-						},
-						DeclarationShorthand: true,
-						Line:                 1,
-						CharAt:               4,
+						Line:   1,
+						CharAt: 4,
 					},
 					Line:   1,
 					CharAt: 1,
@@ -6262,21 +6316,26 @@ func TestToAST_IfStatement(t *testing.T) {
 						Line:       1,
 						CharAt:     12,
 					},
-					Assignment: &core.AssignmentStatement{
-						Left: &core.VariableExpression{
-							Name:   "a",
-							Line:   1,
-							CharAt: 4,
+					Init: &core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "a",
+									Line:   1,
+									CharAt: 4,
+								},
+								Init: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   1,
+									CharAt: 7,
+								},
+								Line:   1,
+								CharAt: 4,
+							},
 						},
-						Right: &core.LiteralExpression{
-							Type:   "number",
-							Value:  "2",
-							Line:   1,
-							CharAt: 7,
-						},
-						DeclarationShorthand: true,
-						Line:                 1,
-						CharAt:               4,
+						Line:   1,
+						CharAt: 4,
 					},
 					Alternate: &core.IfStatement{
 						Test: &core.BinaryExpression{
@@ -6342,21 +6401,26 @@ func TestToAST_IfStatement(t *testing.T) {
 						Line:       1,
 						CharAt:     12,
 					},
-					Assignment: &core.AssignmentStatement{
-						Left: &core.VariableExpression{
-							Name:   "a",
-							Line:   1,
-							CharAt: 4,
+					Init: &core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "a",
+									Line:   1,
+									CharAt: 4,
+								},
+								Init: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   1,
+									CharAt: 7,
+								},
+								Line:   1,
+								CharAt: 4,
+							},
 						},
-						Right: &core.LiteralExpression{
-							Type:   "number",
-							Value:  "2",
-							Line:   1,
-							CharAt: 7,
-						},
-						DeclarationShorthand: true,
-						Line:                 1,
-						CharAt:               4,
+						Line:   1,
+						CharAt: 4,
 					},
 					Alternate: &core.IfStatement{
 						Test: &core.BinaryExpression{
@@ -6451,21 +6515,26 @@ func TestToAST_IfStatement(t *testing.T) {
 						Line:       1,
 						CharAt:     12,
 					},
-					Assignment: &core.AssignmentStatement{
-						Left: &core.VariableExpression{
-							Name:   "a",
-							Line:   1,
-							CharAt: 4,
+					Init: &core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "a",
+									Line:   1,
+									CharAt: 4,
+								},
+								Init: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   1,
+									CharAt: 7,
+								},
+								Line:   1,
+								CharAt: 4,
+							},
 						},
-						Right: &core.LiteralExpression{
-							Type:   "number",
-							Value:  "2",
-							Line:   1,
-							CharAt: 7,
-						},
-						DeclarationShorthand: true,
-						Line:                 1,
-						CharAt:               4,
+						Line:   1,
+						CharAt: 4,
 					},
 					Alternate: &core.IfStatement{
 						Test: &core.BinaryExpression{
@@ -6561,21 +6630,26 @@ func TestToAST_ForStatement(t *testing.T) {
 			in:   `for i:=0;i<1;i=i+1{}`,
 			want: []core.Statement{
 				core.ForStatement{
-					Assignment: &core.AssignmentStatement{
-						Left: &core.VariableExpression{
-							Name:   "i",
-							Line:   1,
-							CharAt: 5,
+					Init: &core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "i",
+									Line:   1,
+									CharAt: 5,
+								},
+								Init: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "0",
+									Line:   1,
+									CharAt: 8,
+								},
+								Line:   1,
+								CharAt: 5,
+							},
 						},
-						Right: &core.LiteralExpression{
-							Type:   "number",
-							Value:  "0",
-							Line:   1,
-							CharAt: 8,
-						},
-						DeclarationShorthand: true,
-						Line:                 1,
-						CharAt:               5,
+						Line:   1,
+						CharAt: 5,
 					},
 					Test: &core.BinaryExpression{
 						Left: &core.VariableExpression{
@@ -6769,21 +6843,26 @@ func TestToAST_ForStatement(t *testing.T) {
 			in:   `for i:=0;;i=i+1{}`,
 			want: []core.Statement{
 				core.ForStatement{
-					Assignment: &core.AssignmentStatement{
-						Left: &core.VariableExpression{
-							Name:   "i",
-							Line:   1,
-							CharAt: 5,
+					Init: &core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "i",
+									Line:   1,
+									CharAt: 5,
+								},
+								Init: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "0",
+									Line:   1,
+									CharAt: 8,
+								},
+								Line:   1,
+								CharAt: 5,
+							},
 						},
-						Right: &core.LiteralExpression{
-							Type:   "number",
-							Value:  "0",
-							Line:   1,
-							CharAt: 8,
-						},
-						DeclarationShorthand: true,
-						Line:                 1,
-						CharAt:               5,
+						Line:   1,
+						CharAt: 5,
 					},
 					Update: &core.AssignmentStatement{
 						Left: &core.VariableExpression{
@@ -6829,21 +6908,26 @@ func TestToAST_ForStatement(t *testing.T) {
 			in:   `for i:=0;i<1;{}`,
 			want: []core.Statement{
 				core.ForStatement{
-					Assignment: &core.AssignmentStatement{
-						Left: &core.VariableExpression{
-							Name:   "i",
-							Line:   1,
-							CharAt: 5,
+					Init: &core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "i",
+									Line:   1,
+									CharAt: 5,
+								},
+								Init: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "0",
+									Line:   1,
+									CharAt: 8,
+								},
+								Line:   1,
+								CharAt: 5,
+							},
 						},
-						Right: &core.LiteralExpression{
-							Type:   "number",
-							Value:  "0",
-							Line:   1,
-							CharAt: 8,
-						},
-						DeclarationShorthand: true,
-						Line:                 1,
-						CharAt:               5,
+						Line:   1,
+						CharAt: 5,
 					},
 					Test: &core.BinaryExpression{
 						Left: &core.VariableExpression{
@@ -6880,21 +6964,26 @@ func TestToAST_ForStatement(t *testing.T) {
 			in:   `for i:=0;i<1{}`,
 			want: []core.Statement{
 				core.ForStatement{
-					Assignment: &core.AssignmentStatement{
-						Left: &core.VariableExpression{
-							Name:   "i",
-							Line:   1,
-							CharAt: 5,
+					Init: &core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "i",
+									Line:   1,
+									CharAt: 5,
+								},
+								Init: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "0",
+									Line:   1,
+									CharAt: 8,
+								},
+								Line:   1,
+								CharAt: 5,
+							},
 						},
-						Right: &core.LiteralExpression{
-							Type:   "number",
-							Value:  "0",
-							Line:   1,
-							CharAt: 8,
-						},
-						DeclarationShorthand: true,
-						Line:                 1,
-						CharAt:               5,
+						Line:   1,
+						CharAt: 5,
 					},
 					Test: &core.BinaryExpression{
 						Left: &core.VariableExpression{
@@ -6931,21 +7020,26 @@ func TestToAST_ForStatement(t *testing.T) {
 			in:   `for i:=0;;{}`,
 			want: []core.Statement{
 				core.ForStatement{
-					Assignment: &core.AssignmentStatement{
-						Left: &core.VariableExpression{
-							Name:   "i",
-							Line:   1,
-							CharAt: 5,
+					Init: &core.VariableDeclaration{
+						Declarations: []core.VariableDeclarator{
+							{
+								ID: core.Identifier{
+									Name:   "i",
+									Line:   1,
+									CharAt: 5,
+								},
+								Init: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "0",
+									Line:   1,
+									CharAt: 8,
+								},
+								Line:   1,
+								CharAt: 5,
+							},
 						},
-						Right: &core.LiteralExpression{
-							Type:   "number",
-							Value:  "0",
-							Line:   1,
-							CharAt: 8,
-						},
-						DeclarationShorthand: true,
-						Line:                 1,
-						CharAt:               5,
+						Line:   1,
+						CharAt: 5,
 					},
 					Body: core.BlockStatement{
 						Statements: []core.Statement{},
@@ -7173,7 +7267,49 @@ func Test_TMP(t *testing.T) {
 		in   string
 		// want core.Expression
 		want []core.Statement
-	}{}
+	}{
+
+		{
+			name: "parse assignment statement #2",
+			in:   "a,b:=c,d",
+			want: []core.Statement{
+				core.VariableDeclaration{
+					Declarations: []core.VariableDeclarator{
+						{
+							ID: core.Identifier{
+								Name:   "a",
+								Line:   1,
+								CharAt: 1,
+							},
+							Init: &core.VariableExpression{
+								Name:   "c",
+								Line:   1,
+								CharAt: 6,
+							},
+							Line:   1,
+							CharAt: 1,
+						},
+						{
+							ID: core.Identifier{
+								Name:   "b",
+								Line:   1,
+								CharAt: 3,
+							},
+							Init: &core.VariableExpression{
+								Name:   "d",
+								Line:   1,
+								CharAt: 8,
+							},
+							Line:   1,
+							CharAt: 3,
+						},
+					},
+					Line:   1,
+					CharAt: 1,
+				},
+			},
+		},
+	}
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			tokens, err := lexer.Lex(tt.in)
