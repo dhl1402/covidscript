@@ -18,9 +18,9 @@ func (e *CallExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 	if !ok {
 		return nil, fmt.Errorf("Runtime error: %s is not a function. [%d,%d]", e.Callee.ToString(), e.Line, e.CharAt)
 	}
-	fEC := f.EC.Clone()
-	if f.EC.Type == TypeGlobalEC {
-		fEC = f.EC
+	fEC := f.EC
+	if f.EC.Type != TypeGlobalEC {
+		fEC = f.EC.Clone()
 	}
 	for i, argexp := range e.Arguments {
 		arg, err := argexp.Evaluate(ec)
@@ -48,11 +48,13 @@ func (e *CallExpression) Evaluate(ec *ExecutionContext) (Expression, error) {
 		}
 		return rexp, err
 	}
-	for _, stmt := range f.Body {
-		rexp, err := stmt.Execute(fEC)
-		if rexp != nil || err != nil {
-			return rexp, err
-		}
+	var fBody Statement = f.Body
+	if f.EC.Type != TypeGlobalEC {
+		fBody = f.Body.Clone()
+	}
+	rexp, err := fBody.Execute(fEC)
+	if rexp != nil || err != nil {
+		return rexp, err
 	}
 	return &LiteralExpression{
 		Type:   LiteralTypeUndefined,
@@ -87,4 +89,17 @@ func (e *CallExpression) GetType() string {
 
 func (e *CallExpression) ToString() string {
 	return ""
+}
+
+func (e *CallExpression) Clone() Expression {
+	args := []Expression{}
+	for _, arg := range e.Arguments {
+		args = append(args, arg.Clone())
+	}
+	return &CallExpression{
+		Callee:    e.Callee.Clone(),
+		Arguments: args,
+		Line:      e.Line,
+		CharAt:    e.Line,
+	}
 }

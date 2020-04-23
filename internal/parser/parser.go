@@ -181,12 +181,12 @@ func parseFunctionDeclaration(tokens []lexer.Token) (*core.FunctionDeclaration, 
 		Line:   tokens[0].Line,
 		CharAt: tokens[0].CharAt,
 	}
-	params, statements, processed, err := parseFunctionParamAndBody(tokens[i:])
+	params, blockStmt, processed, err := parseFunctionParamAndBody(tokens[i:])
 	if err != nil {
 		return nil, 0, err
 	}
 	f.Params = params
-	f.Body = statements
+	f.Body = *blockStmt
 	return f, i + processed, nil
 }
 
@@ -876,16 +876,16 @@ func parseFunctionExpression(tokens []lexer.Token) (*core.FunctionExpression, in
 		Line:   tokens[0].Line,
 		CharAt: tokens[0].CharAt,
 	}
-	params, statements, processed, err := parseFunctionParamAndBody(tokens[i:])
+	params, blockStmt, processed, err := parseFunctionParamAndBody(tokens[i:])
 	if err != nil {
 		return nil, 0, err
 	}
 	f.Params = params
-	f.Body = statements
+	f.Body = *blockStmt
 	return f, i + processed, nil
 }
 
-func parseFunctionParamAndBody(tokens []lexer.Token) ([]core.Identifier, []core.Statement, int, error) {
+func parseFunctionParamAndBody(tokens []lexer.Token) ([]core.Identifier, *core.BlockStatement, int, error) {
 	if len(tokens) < 4 { // (){} -> min len = 4
 		return nil, nil, 0, fmt.Errorf("Parsing error: cannot parse function")
 	}
@@ -905,6 +905,10 @@ func parseFunctionParamAndBody(tokens []lexer.Token) ([]core.Identifier, []core.
 	if tokens[i].Value != "{" {
 		return nil, nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '{'. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
 	}
+	bstmt := &core.BlockStatement{
+		Line:   tokens[i].Line,
+		CharAt: tokens[i].CharAt,
+	}
 	statements, processed, err := parseStatements(tokens[i+1:])
 	i = i + processed
 	if err != nil {
@@ -913,5 +917,6 @@ func parseFunctionParamAndBody(tokens []lexer.Token) ([]core.Identifier, []core.
 	if tokens[i].Value != "}" {
 		return nil, nil, 0, fmt.Errorf("Parsing error: unexpected token '%s', expected '}'. [%d,%d]", tokens[i].Value, tokens[i].Line, tokens[i].CharAt)
 	}
-	return params, statements, i + 1, nil
+	bstmt.Statements = statements
+	return params, bstmt, i + 1, nil
 }

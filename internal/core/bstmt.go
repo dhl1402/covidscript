@@ -15,3 +15,15 @@ func (stmt BlockStatement) Execute(ec *ExecutionContext) (Expression, error) {
 	}
 	return nil, nil
 }
+
+func (stmt BlockStatement) Clone() Statement {
+	stmts := []Statement{}
+	for _, s := range stmt.Statements {
+		stmts = append(stmts, s.Clone())
+	}
+	return BlockStatement{
+		Statements: stmts,
+		Line:       stmt.Line,
+		CharAt:     stmt.CharAt,
+	}
+}

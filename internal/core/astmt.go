@@ -74,3 +74,12 @@ func (stmt AssignmentStatement) Execute(ec *ExecutionContext) (Expression, error
 	}
 	return nil, nil
 }
+
+func (stmt AssignmentStatement) Clone() Statement {
+	return AssignmentStatement{
+		Left:   stmt.Left.Clone(),
+		Right:  stmt.Right.Clone(),
+		Line:   stmt.Line,
+		CharAt: stmt.CharAt,
+	}
+}

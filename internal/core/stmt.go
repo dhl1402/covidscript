@@ -2,6 +2,7 @@ package core
 
 type Statement interface {
 	Execute(*ExecutionContext) (Expression, error)
+	Clone() Statement
 }
 
 type Identifier struct {

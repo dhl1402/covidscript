@@ -52,3 +52,11 @@ func (e *UnaryExpression) GetType() string {
 func (e *UnaryExpression) ToString() string {
 	return fmt.Sprintf("!%s", e.Expression.ToString())
 }
+
+func (e *UnaryExpression) Clone() Expression {
+	return &UnaryExpression{
+		Expression: e.Expression.Clone(),
+		Line:       e.Line,
+		CharAt:     e.CharAt,
+	}
+}

@@ -76,3 +76,28 @@ func (stmt ForStatement) Execute(ec *ExecutionContext) (Expression, error) {
 	}
 	return nil, nil
 }
+
+func (stmt ForStatement) Clone() Statement {
+	body := stmt.Body.Clone().(BlockStatement)
+	var update *AssignmentStatement
+	if stmt.Update != nil {
+		u := stmt.Update.Clone().(AssignmentStatement)
+		update = &u
+	}
+	var init Statement
+	if stmt.Init != nil {
+		init = stmt.Init.Clone()
+	}
+	var test Expression
+	if stmt.Test != nil {
+		test = stmt.Test.Clone()
+	}
+	return ForStatement{
+		Init:   init,
+		Test:   test,
+		Update: update,
+		Body:   body,
+		Line:   stmt.Line,
+		CharAt: stmt.CharAt,
+	}
+}

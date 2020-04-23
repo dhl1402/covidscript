@@ -32,3 +32,24 @@ func (stmt VariableDeclaration) Execute(ec *ExecutionContext) (Expression, error
 	}
 	return nil, nil
 }
+
+func (stmt VariableDeclaration) Clone() Statement {
+	ds := []VariableDeclarator{}
+	for _, vd := range stmt.Declarations {
+		var init Expression
+		if vd.Init != nil {
+			init = vd.Init.Clone()
+		}
+		ds = append(ds, VariableDeclarator{
+			ID:     vd.ID,
+			Init:   init,
+			Line:   vd.Line,
+			CharAt: vd.CharAt,
+		})
+	}
+	return VariableDeclaration{
+		Declarations: ds,
+		Line:         stmt.Line,
+		CharAt:       stmt.CharAt,
+	}
+}

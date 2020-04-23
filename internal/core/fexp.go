@@ -4,7 +4,7 @@ import "fmt"
 
 type FunctionExpression struct {
 	Params         []Identifier
-	Body           []Statement
+	Body           BlockStatement
 	NativeFunction func(*ExecutionContext) (Expression, error)
 	EC             *ExecutionContext
 	Line           int
@@ -55,4 +55,15 @@ func (e *FunctionExpression) ToString() string {
 		return fmt.Sprintf("func(%s)", params)
 	}
 	return "func()"
+}
+
+func (e *FunctionExpression) Clone() Expression {
+	return &FunctionExpression{
+		EC:             nil,
+		Params:         e.Params,
+		NativeFunction: e.NativeFunction,
+		Body:           e.Body,
+		Line:           e.Line,
+		CharAt:         e.CharAt,
+	}
 }

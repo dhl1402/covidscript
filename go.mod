@@ -3,6 +3,7 @@ module github.com/dhl1402/covidscript
 go 1.14
 
 require (
+	github.com/getsentry/sentry-go v0.6.0
 	github.com/go-kit/kit v0.10.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/stretchr/testify v1.5.1

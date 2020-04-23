@@ -20,3 +20,10 @@ type BreakError struct {
 func (err BreakError) Error() string {
 	return err.Message
 }
+
+func (stmt BreakStatement) Clone() Statement {
+	return BreakStatement{
+		Line:   stmt.Line,
+		CharAt: stmt.CharAt,
+	}
+}

@@ -594,7 +594,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 							Name: "b",
 						},
 					},
-					Body: []Statement{},
+					Body: BlockStatement{},
 					EC:   &ExecutionContext{},
 				},
 				Operator: Operator{
@@ -626,7 +626,7 @@ func TestEvaluate_BinaryExpression(t *testing.T) {
 							Name: "b",
 						},
 					},
-					Body: []Statement{},
+					Body: BlockStatement{},
 					EC:   &ExecutionContext{},
 				},
 				Operator: Operator{
@@ -1415,7 +1415,7 @@ func TestEvaluate_FunctionExpression(t *testing.T) {
 						Name: "b",
 					},
 				},
-				Body: []Statement{},
+				Body: BlockStatement{},
 				EC:   nil,
 			},
 			want: &FunctionExpression{
@@ -1427,7 +1427,7 @@ func TestEvaluate_FunctionExpression(t *testing.T) {
 						Name: "b",
 					},
 				},
-				Body: []Statement{},
+				Body: BlockStatement{},
 				EC: &ExecutionContext{
 					Variables: map[string]Expression{},
 				},
@@ -1465,7 +1465,7 @@ func TestEvaluate_CallExpression(t *testing.T) {
 								Name: "b",
 							},
 						},
-						Body: []Statement{},
+						Body: BlockStatement{},
 						EC:   nil,
 					},
 				},
@@ -1494,17 +1494,19 @@ func TestEvaluate_CallExpression(t *testing.T) {
 								Name: "b",
 							},
 						},
-						Body: []Statement{
-							ReturnStatement{
-								Argument: &BinaryExpression{
-									Left: &VariableExpression{
-										Name: "a",
-									},
-									Right: &VariableExpression{
-										Name: "b",
-									},
-									Operator: Operator{
-										Symbol: "+",
+						Body: BlockStatement{
+							Statements: []Statement{
+								ReturnStatement{
+									Argument: &BinaryExpression{
+										Left: &VariableExpression{
+											Name: "a",
+										},
+										Right: &VariableExpression{
+											Name: "b",
+										},
+										Operator: Operator{
+											Symbol: "+",
+										},
 									},
 								},
 							},

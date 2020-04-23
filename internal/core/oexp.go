@@ -83,3 +83,28 @@ func (e *ObjectExpression) ToString() string {
 	}
 	return s + "}"
 }
+
+func (e *ObjectExpression) Clone() Expression {
+	props := []*ObjectProperty{}
+	for _, p := range e.Properties {
+		var kexp Expression
+		if p.KeyExpression != nil {
+			kexp = p.KeyExpression.Clone()
+		}
+		props = append(props, &ObjectProperty{
+			KeyIdentifier: p.KeyIdentifier,
+			KeyExpression: kexp,
+			Value:         p.Value.Clone(),
+			Shorthand:     p.Shorthand,
+			Method:        p.Method,
+			Computed:      p.Computed,
+			Line:          p.Line,
+			CharAt:        p.CharAt,
+		})
+	}
+	return &ObjectExpression{
+		Properties: props,
+		Line:       e.Line,
+		CharAt:     e.CharAt,
+	}
+}

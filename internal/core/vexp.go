@@ -50,3 +50,11 @@ func (e *VariableExpression) GetType() string {
 func (e *VariableExpression) ToString() string {
 	return e.Name
 }
+
+func (e *VariableExpression) Clone() Expression {
+	return &VariableExpression{
+		Name:   e.Name,
+		Line:   e.Line,
+		CharAt: e.CharAt,
+	}
+}

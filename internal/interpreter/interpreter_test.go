@@ -275,7 +275,11 @@ func TestExecute(t *testing.T) {
 				}
 				gec.Variables["a"] = &core.FunctionExpression{
 					Params: []core.Identifier{},
-					Body:   []core.Statement{},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     15,
+					},
 					EC: &core.ExecutionContext{
 						Outer:     gec,
 						Variables: map[string]core.Expression{},
@@ -308,30 +312,34 @@ func TestExecute(t *testing.T) {
 						{Name: "b", Line: 2, CharAt: 14},
 						{Name: "c", Line: 2, CharAt: 16},
 					},
-					Body: []core.Statement{
-						core.ReturnStatement{
-							Argument: &core.BinaryExpression{
-								Left: &core.VariableExpression{
-									Name:   "b",
+					Body: core.BlockStatement{
+						Statements: []core.Statement{
+							core.ReturnStatement{
+								Argument: &core.BinaryExpression{
+									Left: &core.VariableExpression{
+										Name:   "b",
+										Line:   3,
+										CharAt: 8,
+									},
+									Right: &core.VariableExpression{
+										Name:   "c",
+										Line:   3,
+										CharAt: 10,
+									},
+									Operator: core.Operator{
+										Symbol: "+",
+										Line:   3,
+										CharAt: 9,
+									},
 									Line:   3,
 									CharAt: 8,
 								},
-								Right: &core.VariableExpression{
-									Name:   "c",
-									Line:   3,
-									CharAt: 10,
-								},
-								Operator: core.Operator{
-									Symbol: "+",
-									Line:   3,
-									CharAt: 9,
-								},
 								Line:   3,
-								CharAt: 8,
+								CharAt: 1,
 							},
-							Line:   3,
-							CharAt: 1,
 						},
+						Line:   2,
+						CharAt: 18,
 					},
 					EC: &core.ExecutionContext{
 						Outer:     gec,
@@ -386,7 +394,11 @@ func TestExecute(t *testing.T) {
 				}
 				gec.Variables["a"] = &core.FunctionExpression{
 					Params: []core.Identifier{},
-					Body:   []core.Statement{},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     9,
+					},
 					EC: &core.ExecutionContext{
 						Outer:     gec,
 						Variables: map[string]core.Expression{},
@@ -419,30 +431,34 @@ func TestExecute(t *testing.T) {
 						{Name: "b", Line: 2, CharAt: 8},
 						{Name: "c", Line: 2, CharAt: 10},
 					},
-					Body: []core.Statement{
-						core.ReturnStatement{
-							Argument: &core.BinaryExpression{
-								Left: &core.VariableExpression{
-									Name:   "b",
+					Body: core.BlockStatement{
+						Statements: []core.Statement{
+							core.ReturnStatement{
+								Argument: &core.BinaryExpression{
+									Left: &core.VariableExpression{
+										Name:   "b",
+										Line:   3,
+										CharAt: 8,
+									},
+									Right: &core.VariableExpression{
+										Name:   "c",
+										Line:   3,
+										CharAt: 10,
+									},
+									Operator: core.Operator{
+										Symbol: "+",
+										Line:   3,
+										CharAt: 9,
+									},
 									Line:   3,
 									CharAt: 8,
 								},
-								Right: &core.VariableExpression{
-									Name:   "c",
-									Line:   3,
-									CharAt: 10,
-								},
-								Operator: core.Operator{
-									Symbol: "+",
-									Line:   3,
-									CharAt: 9,
-								},
 								Line:   3,
-								CharAt: 8,
+								CharAt: 1,
 							},
-							Line:   3,
-							CharAt: 1,
 						},
+						Line:   2,
+						CharAt: 12,
 					},
 					EC: &core.ExecutionContext{
 						Outer:     gec,
@@ -485,22 +501,26 @@ func TestExecute(t *testing.T) {
 				}
 				gec.Variables["b"] = &core.FunctionExpression{
 					Params: []core.Identifier{},
-					Body: []core.Statement{
-						core.AssignmentStatement{
-							Left: &core.VariableExpression{
-								Name:   "a",
+					Body: core.BlockStatement{
+						Statements: []core.Statement{
+							core.AssignmentStatement{
+								Left: &core.VariableExpression{
+									Name:   "a",
+									Line:   3,
+									CharAt: 1,
+								},
+								Right: &core.LiteralExpression{
+									Type:   "number",
+									Value:  "2",
+									Line:   3,
+									CharAt: 3,
+								},
 								Line:   3,
 								CharAt: 1,
 							},
-							Right: &core.LiteralExpression{
-								Type:   "number",
-								Value:  "2",
-								Line:   3,
-								CharAt: 3,
-							},
-							Line:   3,
-							CharAt: 1,
 						},
+						Line:   2,
+						CharAt: 10,
 					},
 					EC: &core.ExecutionContext{
 						Outer:     gec,
@@ -994,21 +1014,6 @@ func TestExecute(t *testing.T) {
 					Outer:     gec,
 					Variables: map[string]core.Expression{},
 				}
-				aecClone := aec.Clone()
-				aecClone.Variables = map[string]core.Expression{
-					"b": &core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "1",
-						Line:   4,
-						CharAt: 8,
-					},
-					"_args0_": &core.LiteralExpression{
-						Type:   core.LiteralTypeNumber,
-						Value:  "1",
-						Line:   4,
-						CharAt: 8,
-					},
-				}
 				gec.Variables["a"] = &core.FunctionExpression{
 					Params: []core.Identifier{
 						{
@@ -1017,51 +1022,56 @@ func TestExecute(t *testing.T) {
 							CharAt: 8,
 						},
 					},
-					Body: []core.Statement{
-						core.ReturnStatement{
-							Argument: &core.FunctionExpression{
-								Params: []core.Identifier{
-									{
-										Name:   "c",
-										Line:   3,
-										CharAt: 13,
-									},
-								},
-								Body: []core.Statement{
-									core.ReturnStatement{
-										Argument: &core.BinaryExpression{
-											Left: &core.VariableExpression{
-												Name:   "b",
-												Line:   4,
-												CharAt: 8,
-											},
-											Right: &core.VariableExpression{
-												Name:   "c",
-												Line:   4,
-												CharAt: 10,
-											},
-											Operator: core.Operator{
-												Symbol: "+",
-												Line:   4,
-												CharAt: 9,
-											},
-											Line:   4,
-											CharAt: 8,
+					Body: core.BlockStatement{
+						Statements: []core.Statement{
+							core.ReturnStatement{
+								Argument: &core.FunctionExpression{
+									Params: []core.Identifier{
+										{
+											Name:   "c",
+											Line:   3,
+											CharAt: 13,
 										},
-										Line:   4,
-										CharAt: 1,
 									},
-								},
-								EC: &core.ExecutionContext{
-									Outer:     aecClone,
-									Variables: map[string]core.Expression{},
+									Body: core.BlockStatement{
+										Statements: []core.Statement{
+											core.ReturnStatement{
+												Argument: &core.BinaryExpression{
+													Left: &core.VariableExpression{
+														Name:   "b",
+														Line:   4,
+														CharAt: 8,
+													},
+													Right: &core.VariableExpression{
+														Name:   "c",
+														Line:   4,
+														CharAt: 10,
+													},
+													Operator: core.Operator{
+														Symbol: "+",
+														Line:   4,
+														CharAt: 9,
+													},
+													Line:   4,
+													CharAt: 8,
+												},
+												Line:   4,
+												CharAt: 1,
+											},
+										},
+										Line:   3,
+										CharAt: 15,
+									},
+									EC:     nil,
+									Line:   3,
+									CharAt: 8,
 								},
 								Line:   3,
-								CharAt: 8,
+								CharAt: 1,
 							},
-							Line:   3,
-							CharAt: 1,
 						},
+						Line:   2,
+						CharAt: 10,
 					},
 					EC:     aec,
 					Line:   7,
@@ -1659,6 +1669,236 @@ func TestExecute(t *testing.T) {
 			require.Equal(t, tt.err, execute(tt.inEC, stmts))
 			if tt.err == nil {
 				require.Equal(t, tt.wantEC(), tt.inEC)
+			}
+		})
+	}
+}
+
+func TestExecute_ExpressionPointer(t *testing.T) {
+	cases := []struct {
+		name         string
+		in           string
+		inEC         *core.ExecutionContext
+		var1         string
+		var2         string
+		pointerEqual bool
+		valueEqual   bool
+	}{
+		{
+			name: "test expression pointer #1",
+			in: `
+				func a(b){
+					return b
+				}
+				c:=1
+				d:=a(c)
+				`,
+			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
+				Variables: map[string]core.Expression{},
+			},
+			var1:         "c",
+			var2:         "d",
+			pointerEqual: true,
+			valueEqual:   true,
+		},
+		{
+			name: "test expression pointer #2",
+			in: `
+				func a(b){
+					e:=b
+					return e
+				}
+				c:=1
+				d:=a(c)
+			`,
+			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
+				Variables: map[string]core.Expression{},
+			},
+			var1:         "c",
+			var2:         "d",
+			pointerEqual: true,
+			valueEqual:   true,
+		},
+		{
+			name: "test expression pointer #3",
+			in: `
+				c:=1
+				func a() {
+					return c
+				}
+				d:=a()
+				`,
+			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
+				Variables: map[string]core.Expression{},
+			},
+			var1:         "c",
+			var2:         "d",
+			pointerEqual: true,
+			valueEqual:   true,
+		},
+		{
+			name: "test expression pointer #4",
+			in: `
+				func a() {
+					return 1
+				}
+				b:=a()
+				c:=a()
+				`,
+			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
+				Variables: map[string]core.Expression{},
+			},
+			var1:         "b",
+			var2:         "c",
+			pointerEqual: false,
+			valueEqual:   true,
+		},
+		{
+			name: "test expression pointer #5",
+			in: `
+				func a() {
+					return func() {}
+				}
+				b:=a()
+				c:=a()
+				`,
+			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
+				Variables: map[string]core.Expression{},
+			},
+			var1:         "b",
+			var2:         "c",
+			pointerEqual: false,
+			valueEqual:   true,
+		},
+		{
+			name: "test expression pointer #6",
+			in: `
+				func a() {
+					var d={e: [1,2,3]}
+					return d.e
+				}
+				b:=a()
+				c:=a()
+				`,
+			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
+				Variables: map[string]core.Expression{},
+			},
+			var1:         "b",
+			var2:         "c",
+			pointerEqual: false,
+			valueEqual:   true,
+		},
+		{
+			name: "test expression pointer #7",
+			in: `
+				e:=[1,2,3]
+				func a() {
+					var d={e: e}
+					return d.e
+				}
+				b:=a()
+				c:=a()
+				`,
+			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
+				Variables: map[string]core.Expression{},
+			},
+			var1:         "b",
+			var2:         "c",
+			pointerEqual: true,
+			valueEqual:   true,
+		},
+		{
+			name: "test expression pointer #8",
+			in: `
+				func a() {
+					var d={e: 0}
+					func f() {
+						d.e = d.e + 1
+					}
+					f()
+					return d.e
+				}
+				b:=a()
+				c:=a()
+				`,
+			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
+				Variables: map[string]core.Expression{},
+			},
+			var1:         "b",
+			var2:         "c",
+			pointerEqual: false,
+			valueEqual:   true,
+		},
+		{
+			name: "test expression pointer #9",
+			in: `
+				func a() {
+					var d={e: 0}
+					return func() {
+						d.e = d.e + 1
+						return d.e
+					}
+				}
+				b:=a()()
+				c:=a()()
+				`,
+			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
+				Variables: map[string]core.Expression{},
+			},
+			var1:         "b",
+			var2:         "c",
+			pointerEqual: false,
+			valueEqual:   true,
+		},
+		{
+			name: "test expression pointer #10",
+			in: `
+				func a() {
+					var d={e: 0}
+					return func() {
+						d.e = d.e + 1
+						return d.e
+					}
+				}
+				f:=a()
+				b:=f()
+				c:=f()
+				`,
+			inEC: &core.ExecutionContext{
+				Type:      core.TypeGlobalEC,
+				Variables: map[string]core.Expression{},
+			},
+			var1:         "b",
+			var2:         "c",
+			pointerEqual: false,
+			valueEqual:   false,
+		},
+	}
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			tokens, err := lexer.Lex(tt.in)
+			require.Equal(t, err, nil)
+			stmts, _ := parser.ToAST(tokens)
+			err = execute(tt.inEC, stmts)
+			require.Equal(t, err, nil)
+			if tt.pointerEqual {
+				require.Same(t, tt.inEC.Variables[tt.var1], tt.inEC.Variables[tt.var2])
+			} else {
+				require.NotSame(t, tt.inEC.Variables[tt.var1], tt.inEC.Variables[tt.var2])
+			}
+			if tt.valueEqual {
+				require.Equal(t, tt.inEC.Variables[tt.var1], tt.inEC.Variables[tt.var2])
+			} else {
+				require.NotEqual(t, tt.inEC.Variables[tt.var1], tt.inEC.Variables[tt.var2])
 			}
 		})
 	}

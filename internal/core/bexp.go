@@ -285,3 +285,14 @@ func (e *BinaryExpression) GetType() string {
 func (e *BinaryExpression) ToString() string {
 	return fmt.Sprintf("%s %s %s", e.Left.ToString(), e.Operator.Symbol, e.Right.ToString())
 }
+
+func (e *BinaryExpression) Clone() Expression {
+	return &BinaryExpression{
+		Left:     e.Left.Clone(),
+		Right:    e.Right.Clone(),
+		Operator: e.Operator,
+		Group:    e.Group,
+		Line:     e.Line,
+		CharAt:   e.CharAt,
+	}
+}

@@ -9,4 +9,5 @@ type Expression interface {
 	SetCharAt(int)
 	GetType() string
 	ToString() string
+	Clone() Expression
 }

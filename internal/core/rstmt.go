@@ -16,3 +16,15 @@ func (stmt ReturnStatement) Execute(ec *ExecutionContext) (Expression, error) {
 	}
 	return stmt.Argument.Evaluate(ec)
 }
+
+func (stmt ReturnStatement) Clone() Statement {
+	var arg Expression
+	if stmt.Argument != nil {
+		arg = stmt.Argument.Clone()
+	}
+	return ReturnStatement{
+		Argument: arg,
+		Line:     stmt.Line,
+		CharAt:   stmt.CharAt,
+	}
+}

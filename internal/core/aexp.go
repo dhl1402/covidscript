@@ -55,3 +55,15 @@ func (e *ArrayExpression) ToString() string {
 	}
 	return s + "]"
 }
+
+func (e *ArrayExpression) Clone() Expression {
+	elems := []Expression{}
+	for _, elem := range e.Elements {
+		elems = append(elems, elem.Clone())
+	}
+	return &ArrayExpression{
+		Elements: elems,
+		Line:     e.Line,
+		CharAt:   e.CharAt,
+	}
+}

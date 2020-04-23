@@ -27,7 +27,9 @@ func Interpret(script string, conf config.Config) error {
 func execute(gec *core.ExecutionContext, stmts []core.Statement) error {
 	cexp := core.CallExpression{
 		Callee: &core.FunctionExpression{
-			Body:   stmts,
+			Body: core.BlockStatement{
+				Statements: stmts,
+			},
 			Params: []core.Identifier{},
 			EC:     gec,
 		},

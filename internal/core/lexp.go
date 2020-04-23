@@ -63,3 +63,12 @@ func (e *LiteralExpression) ToString() string {
 	}
 	return e.Value
 }
+
+func (e *LiteralExpression) Clone() Expression {
+	return &LiteralExpression{
+		Type:   e.Type,
+		Value:  e.Value,
+		Line:   e.Line,
+		CharAt: e.CharAt,
+	}
+}

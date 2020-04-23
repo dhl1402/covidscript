@@ -20,3 +20,10 @@ type ContinueError struct {
 func (err ContinueError) Error() string {
 	return err.Message
 }
+
+func (stmt ContinueStatement) Clone() Statement {
+	return ContinueStatement{
+		Line:   stmt.Line,
+		CharAt: stmt.CharAt,
+	}
+}

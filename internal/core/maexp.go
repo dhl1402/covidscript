@@ -129,3 +129,18 @@ func (e *MemberAccessExpression) GetType() string {
 func (e *MemberAccessExpression) ToString() string {
 	return ""
 }
+
+func (e *MemberAccessExpression) Clone() Expression {
+	var pexp Expression
+	if e.PropertyExpression != nil {
+		pexp = e.PropertyExpression.Clone()
+	}
+	return &MemberAccessExpression{
+		Object:             e.Object.Clone(),
+		PropertyIdentifier: e.PropertyIdentifier,
+		PropertyExpression: pexp,
+		Compute:            e.Compute,
+		Line:               e.Line,
+		CharAt:             e.CharAt,
+	}
+}

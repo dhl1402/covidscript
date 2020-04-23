@@ -1663,7 +1663,11 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 				},
 				Right: &core.FunctionExpression{
 					Params: []core.Identifier{},
-					Body:   []core.Statement{},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     11,
+					},
 					Line:   1,
 					CharAt: 4,
 				},
@@ -1688,7 +1692,11 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 				},
 				Left: &core.FunctionExpression{
 					Params: []core.Identifier{},
-					Body:   []core.Statement{},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     9,
+					},
 					Line:   1,
 					CharAt: 2,
 				},
@@ -1707,7 +1715,11 @@ func TestParseExpression_ArrayExpression(t *testing.T) {
 			want: &core.MemberAccessExpression{
 				Object: &core.FunctionExpression{
 					Params: []core.Identifier{},
-					Body:   []core.Statement{},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     9,
+					},
 					Line:   1,
 					CharAt: 2,
 				},
@@ -1753,7 +1765,11 @@ func TestParseExpression_Function(t *testing.T) {
 						CharAt: 9,
 					},
 				},
-				Body:   []core.Statement{},
+				Body: core.BlockStatement{
+					Statements: []core.Statement{},
+					Line:       1,
+					CharAt:     11,
+				},
 				Line:   1,
 				CharAt: 1,
 			},
@@ -1778,82 +1794,86 @@ func TestParseExpression_Function(t *testing.T) {
 						CharAt: 9,
 					},
 				},
-				Body: []core.Statement{
-					core.VariableDeclaration{
-						Declarations: []core.VariableDeclarator{
-							{
-								ID: core.Identifier{
-									Name:   "a",
+				Body: core.BlockStatement{
+					Statements: []core.Statement{
+						core.VariableDeclaration{
+							Declarations: []core.VariableDeclarator{
+								{
+									ID: core.Identifier{
+										Name:   "a",
+										Line:   2,
+										CharAt: 5,
+									},
+									Init: &core.LiteralExpression{
+										Type:   core.LiteralTypeNumber,
+										Value:  "1",
+										Line:   2,
+										CharAt: 9,
+									},
 									Line:   2,
 									CharAt: 5,
 								},
-								Init: &core.LiteralExpression{
-									Type:   core.LiteralTypeNumber,
-									Value:  "1",
+								{
+									ID: core.Identifier{
+										Name:   "b",
+										Line:   2,
+										CharAt: 7,
+									},
+									Init:   nil,
 									Line:   2,
+									CharAt: 7,
+								},
+							},
+							Line:   2,
+							CharAt: 1,
+						},
+						core.VariableDeclaration{
+							Declarations: []core.VariableDeclarator{
+								{
+									ID: core.Identifier{
+										Name:   "c",
+										Line:   3,
+										CharAt: 5,
+									},
+									Init: &core.LiteralExpression{
+										Type:   core.LiteralTypeNumber,
+										Value:  "2",
+										Line:   3,
+										CharAt: 7,
+									},
+									Line:   3,
+									CharAt: 5,
+								},
+							},
+							Line:   3,
+							CharAt: 1,
+						},
+						core.ReturnStatement{
+							Argument: &core.BinaryExpression{
+								Left: &core.VariableExpression{
+									Name:   "a",
+									Line:   4,
+									CharAt: 8,
+								},
+								Right: &core.VariableExpression{
+									Name:   "b",
+									Line:   4,
+									CharAt: 10,
+								},
+								Operator: core.Operator{
+									Symbol: "+",
+									Line:   4,
 									CharAt: 9,
 								},
-								Line:   2,
-								CharAt: 5,
-							},
-							{
-								ID: core.Identifier{
-									Name:   "b",
-									Line:   2,
-									CharAt: 7,
-								},
-								Init:   nil,
-								Line:   2,
-								CharAt: 7,
-							},
-						},
-						Line:   2,
-						CharAt: 1,
-					},
-					core.VariableDeclaration{
-						Declarations: []core.VariableDeclarator{
-							{
-								ID: core.Identifier{
-									Name:   "c",
-									Line:   3,
-									CharAt: 5,
-								},
-								Init: &core.LiteralExpression{
-									Type:   core.LiteralTypeNumber,
-									Value:  "2",
-									Line:   3,
-									CharAt: 7,
-								},
-								Line:   3,
-								CharAt: 5,
-							},
-						},
-						Line:   3,
-						CharAt: 1,
-					},
-					core.ReturnStatement{
-						Argument: &core.BinaryExpression{
-							Left: &core.VariableExpression{
-								Name:   "a",
 								Line:   4,
 								CharAt: 8,
 							},
-							Right: &core.VariableExpression{
-								Name:   "b",
-								Line:   4,
-								CharAt: 10,
-							},
-							Operator: core.Operator{
-								Symbol: "+",
-								Line:   4,
-								CharAt: 9,
-							},
 							Line:   4,
-							CharAt: 8,
+							CharAt: 1,
 						},
-						Line:   4,
-						CharAt: 1,
 					},
+					Line:   1,
+					CharAt: 11,
 				},
 				Line:   1,
 				CharAt: 1,
@@ -5061,7 +5081,11 @@ func TestParseExpression_Precedence(t *testing.T) {
 							PropertyExpression: &core.CallExpression{
 								Callee: &core.FunctionExpression{
 									Params: []core.Identifier{},
-									Body:   []core.Statement{},
+									Body: core.BlockStatement{
+										Statements: []core.Statement{},
+										Line:       1,
+										CharAt:     29,
+									},
 									Line:   1,
 									CharAt: 23,
 								},
@@ -5568,7 +5592,11 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 						CharAt: 6,
 					},
 					Params: []core.Identifier{},
-					Body:   []core.Statement{},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     9,
+					},
 					Line:   1,
 					CharAt: 1,
 				},
@@ -5596,7 +5624,11 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 							CharAt: 10,
 						},
 					},
-					Body:   []core.Statement{},
+					Body: core.BlockStatement{
+						Statements: []core.Statement{},
+						Line:       1,
+						CharAt:     12,
+					},
 					Line:   1,
 					CharAt: 1,
 				},
@@ -5627,59 +5659,63 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 							CharAt: 10,
 						},
 					},
-					Body: []core.Statement{
-						core.VariableDeclaration{
-							Declarations: []core.VariableDeclarator{
-								{
-									ID: core.Identifier{
-										Name:   "a",
+					Body: core.BlockStatement{
+						Statements: []core.Statement{
+							core.VariableDeclaration{
+								Declarations: []core.VariableDeclarator{
+									{
+										ID: core.Identifier{
+											Name:   "a",
+											Line:   2,
+											CharAt: 5,
+										},
+										Init: &core.LiteralExpression{
+											Type:   core.LiteralTypeNumber,
+											Value:  "1",
+											Line:   2,
+											CharAt: 9,
+										},
 										Line:   2,
 										CharAt: 5,
 									},
-									Init: &core.LiteralExpression{
-										Type:   core.LiteralTypeNumber,
-										Value:  "1",
-										Line:   2,
-										CharAt: 9,
-									},
-									Line:   2,
-									CharAt: 5,
-								},
-								{
-									ID: core.Identifier{
-										Name:   "b",
+									{
+										ID: core.Identifier{
+											Name:   "b",
+											Line:   2,
+											CharAt: 7,
+										},
+										Init:   nil,
 										Line:   2,
 										CharAt: 7,
 									},
-									Init:   nil,
-									Line:   2,
-									CharAt: 7,
 								},
+								Line:   2,
+								CharAt: 1,
 							},
-							Line:   2,
-							CharAt: 1,
-						},
-						core.VariableDeclaration{
-							Declarations: []core.VariableDeclarator{
-								{
-									ID: core.Identifier{
-										Name:   "c",
+							core.VariableDeclaration{
+								Declarations: []core.VariableDeclarator{
+									{
+										ID: core.Identifier{
+											Name:   "c",
+											Line:   3,
+											CharAt: 5,
+										},
+										Init: &core.LiteralExpression{
+											Type:   core.LiteralTypeNumber,
+											Value:  "2",
+											Line:   3,
+											CharAt: 7,
+										},
 										Line:   3,
 										CharAt: 5,
 									},
-									Init: &core.LiteralExpression{
-										Type:   core.LiteralTypeNumber,
-										Value:  "2",
-										Line:   3,
-										CharAt: 7,
-									},
-									Line:   3,
-									CharAt: 5,
 								},
+								Line:   3,
+								CharAt: 1,
 							},
-							Line:   3,
-							CharAt: 1,
 						},
+						Line:   1,
+						CharAt: 12,
 					},
 					Line:   1,
 					CharAt: 1,
@@ -5712,82 +5748,86 @@ func TestToAST_FunctionDeclaration(t *testing.T) {
 							CharAt: 10,
 						},
 					},
-					Body: []core.Statement{
-						core.VariableDeclaration{
-							Declarations: []core.VariableDeclarator{
-								{
-									ID: core.Identifier{
-										Name:   "a",
+					Body: core.BlockStatement{
+						Statements: []core.Statement{
+							core.VariableDeclaration{
+								Declarations: []core.VariableDeclarator{
+									{
+										ID: core.Identifier{
+											Name:   "a",
+											Line:   2,
+											CharAt: 5,
+										},
+										Init: &core.LiteralExpression{
+											Type:   core.LiteralTypeNumber,
+											Value:  "1",
+											Line:   2,
+											CharAt: 9,
+										},
 										Line:   2,
 										CharAt: 5,
 									},
-									Init: &core.LiteralExpression{
-										Type:   core.LiteralTypeNumber,
-										Value:  "1",
+									{
+										ID: core.Identifier{
+											Name:   "b",
+											Line:   2,
+											CharAt: 7,
+										},
+										Init:   nil,
 										Line:   2,
+										CharAt: 7,
+									},
+								},
+								Line:   2,
+								CharAt: 1,
+							},
+							core.VariableDeclaration{
+								Declarations: []core.VariableDeclarator{
+									{
+										ID: core.Identifier{
+											Name:   "c",
+											Line:   3,
+											CharAt: 5,
+										},
+										Init: &core.LiteralExpression{
+											Type:   core.LiteralTypeNumber,
+											Value:  "2",
+											Line:   3,
+											CharAt: 7,
+										},
+										Line:   3,
+										CharAt: 5,
+									},
+								},
+								Line:   3,
+								CharAt: 1,
+							},
+							core.ReturnStatement{
+								Argument: &core.BinaryExpression{
+									Left: &core.VariableExpression{
+										Name:   "a",
+										Line:   4,
+										CharAt: 8,
+									},
+									Right: &core.VariableExpression{
+										Name:   "b",
+										Line:   4,
+										CharAt: 10,
+									},
+									Operator: core.Operator{
+										Symbol: "+",
+										Line:   4,
 										CharAt: 9,
 									},
-									Line:   2,
-									CharAt: 5,
-								},
-								{
-									ID: core.Identifier{
-										Name:   "b",
-										Line:   2,
-										CharAt: 7,
-									},
-									Init:   nil,
-									Line:   2,
-									CharAt: 7,
-								},
-							},
-							Line:   2,
-							CharAt: 1,
-						},
-						core.VariableDeclaration{
-							Declarations: []core.VariableDeclarator{
-								{
-									ID: core.Identifier{
-										Name:   "c",
-										Line:   3,
-										CharAt: 5,
-									},
-									Init: &core.LiteralExpression{
-										Type:   core.LiteralTypeNumber,
-										Value:  "2",
-										Line:   3,
-										CharAt: 7,
-									},
-									Line:   3,
-									CharAt: 5,
-								},
-							},
-							Line:   3,
-							CharAt: 1,
-						},
-						core.ReturnStatement{
-							Argument: &core.BinaryExpression{
-								Left: &core.VariableExpression{
-									Name:   "a",
 									Line:   4,
 									CharAt: 8,
 								},
-								Right: &core.VariableExpression{
-									Name:   "b",
-									Line:   4,
-									CharAt: 10,
-								},
-								Operator: core.Operator{
-									Symbol: "+",
-									Line:   4,
-									CharAt: 9,
-								},
 								Line:   4,
-								CharAt: 8,
+								CharAt: 1,
 							},
-							Line:   4,
-							CharAt: 1,
 						},
+						Line:   1,
+						CharAt: 12,
 					},
 					Line:   1,
 					CharAt: 1,
@@ -5914,16 +5954,20 @@ func TestToAST_ExpressionStatement(t *testing.T) {
 						CharAt: 6,
 					},
 					Params: []core.Identifier{},
-					Body: []core.Statement{
-						core.ExpressionStatement{
-							Expression: &core.VariableExpression{
-								Name:   "b",
+					Body: core.BlockStatement{
+						Statements: []core.Statement{
+							core.ExpressionStatement{
+								Expression: &core.VariableExpression{
+									Name:   "b",
+									Line:   1,
+									CharAt: 10,
+								},
 								Line:   1,
 								CharAt: 10,
 							},
-							Line:   1,
-							CharAt: 10,
 						},
+						Line:   1,
+						CharAt: 9,
 					},
 					Line:   1,
 					CharAt: 1,
